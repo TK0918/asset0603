@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>资产中台管理系统</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Header */
+    header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: #2563eb;
+      text-decoration: none;
+    }
+
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      gap: 30px;
+    }
+
+    .nav-menu li a {
+      text-decoration: none;
+      color: #64748b;
+      font-weight: 500;
+      transition: color 0.3s ease;
+      padding: 10px 15px;
+      border-radius: 8px;
+    }
+
+    .nav-menu li a:hover,
+    .nav-menu li a.active {
+      color: #2563eb;
+      background: rgba(37, 99, 235, 0.1);
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #64748b;
+    }
+
+    /* Main Content */
+    main {
+      padding: 40px 30px;
+    }
+
+    .welcome-section {
+      text-align: center;
+      margin-bottom: 50px;
+      color: white;
+    }
+
+    .welcome-section h1 {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 15px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .welcome-section p {
+      font-size: 18px;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Function Cards */
+    .function-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+
+    .function-card {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .function-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #2563eb, #1d4ed8);
+    }
+
+    .function-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(37, 99, 235, 0.2);
+    }
+
+    .function-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+      color: white;
+    }
+
+    .function-card h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 10px;
+    }
+
+    .function-card p {
+      color: #64748b;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .function-features {
+      list-style: none;
+    }
+
+    .function-features li {
+      color: #475569;
+      font-size: 14px;
+      margin-bottom: 8px;
+      position: relative;
+      padding-left: 20px;
+    }
+
+    .function-features li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #2563eb;
+      font-weight: bold;
+    }
+
+    /* Stats Section */
+    .stats-section {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 36px;
+      font-weight: 700;
+      color: #2563eb;
+      display: block;
+    }
+
+    .stat-label {
+      color: #64748b;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    /* Footer */
+    footer {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      text-align: center;
+      color: #64748b;
+      margin-top: 50px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .nav-menu {
+        gap: 15px;
+      }
+
+      .welcome-section h1 {
+        font-size: 32px;
+      }
+
+      .function-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 10px;
+      }
+
+      main {
+        padding: 20px 15px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <a href="#" class="logo">资产中台</a>
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="index.html" class="active">首页</a></li>
+          <li><a href="customer-management.html">客户管理</a></li>
+          <li><a href="transfer-audit.html">转账审核</a></li>
+          <li><a href="credit-audit.html">信用额度</a></li>
+          <li><a href="transaction-details.html">交易明细</a></li>
+          <li><a href="permission-config.html">权限配置</a></li>
+        </ul>
+      </nav>
+      <div class="user-info">
+        <span>👤 管理员</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="welcome-section">
+      <h1>资产中台管理系统</h1>
+      <p>统一管理各子业务客户资产，提供高效的资金管理和审核服务</p>
+    </section>
+
+    <section class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-number">1,234</span>
+          <div class="stat-label">总客户数</div>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">¥2.8M</span>
+          <div class="stat-label">资金总额</div>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">156</span>
+          <div class="stat-label">待审核事项</div>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">98.5%</span>
+          <div class="stat-label">系统可用性</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="function-grid">
+      <div class="function-card" onclick="location.href='customer-management.html'">
+        <div class="function-icon">👥</div>
+        <h3>客户管理</h3>
+        <p>统一管理客户档案、钱包信息和账号</p>
+        <ul class="function-features">
+          <li>客户档案管理</li>
+          <li>钱包信息维护</li>
+          <li>信用额度调整</li>
+          <li>账号创建管理</li>
+        </ul>
+      </div>
+
+      <div class="function-card" onclick="location.href='transfer-audit.html'">
+        <div class="function-icon">💰</div>
+        <h3>线下转账审核</h3>
+        <p>处理各子业务线的转账申请审核</p>
+        <ul class="function-features">
+          <li>转账申请接收</li>
+          <li>审核流程管理</li>
+          <li>批量操作支持</li>
+          <li>状态实时更新</li>
+        </ul>
+      </div>
+
+      <div class="function-card" onclick="location.href='credit-audit.html'">
+        <div class="function-icon">📊</div>
+        <h3>信用额度审核</h3>
+        <p>管理客户信用额度变更审核流程</p>
+        <ul class="function-features">
+          <li>额度调整申请</li>
+          <li>多级审核流程</li>
+          <li>变更历史记录</li>
+          <li>风险评估支持</li>
+        </ul>
+      </div>
+
+      <div class="function-card" onclick="location.href='transaction-details.html'">
+        <div class="function-icon">📋</div>
+        <h3>交易明细</h3>
+        <p>查看和分析所有客户的交易记录</p>
+        <ul class="function-features">
+          <li>交易记录查询</li>
+          <li>多维度筛选</li>
+          <li>数据导出功能</li>
+          <li>统计分析报表</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2024 资产中台管理系统. 保留所有权利.</p>
+    </div>
+  </footer>
+
+  <script>
+    // 页面加载动画
+    document.addEventListener('DOMContentLoaded', function() {
+      const cards = document.querySelectorAll('.function-card');
+      cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+          card.style.transition = 'all 0.6s ease';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, index * 200);
+      });
+    });
+
+    // 统计数字动画
+    function animateNumbers() {
+      const numbers = document.querySelectorAll('.stat-number');
+      numbers.forEach(number => {
+        const target = number.textContent;
+        if (target.includes('¥')) {
+          return; // 跳过货币格式
+        }
+        if (target.includes('%')) {
+          const value = parseFloat(target);
+          animateNumber(number, 0, value, '%');
+        } else {
+          const value = parseInt(target.replace(/,/g, ''));
+          animateNumber(number, 0, value, '');
+        }
+      });
+    }
+
+    function animateNumber(element, start, end, suffix) {
+      const duration = 2000;
+      const increment = (end - start) / (duration / 16);
+      let current = start;
+      
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= end) {
+          current = end;
+          clearInterval(timer);
+        }
+        
+        if (suffix === '%') {
+          element.textContent = current.toFixed(1) + suffix;
+        } else {
+          element.textContent = Math.floor(current).toLocaleString() + suffix;
+        }
+      }, 16);
+    }
+
+    // 页面加载完成后启动动画
+    setTimeout(animateNumbers, 1000);
+  </script>
+</body>
+</html> 
