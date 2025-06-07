@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BESTFULFILL - Order Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'gray-950': '#0a0a0a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+
+
+
+
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .switch {
+            width: 40px;
+            height: 20px;
+            background-color: #00ff88;
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .switch::after {
+            content: '';
+            width: 16px;
+            height: 16px;
+            background-color: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            transition: transform 0.2s;
+        }
+
+        .header-btn {
+            padding: 8px 16px;
+            background-color: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .header-btn:hover {
+            background-color: #333;
+        }
+
+        /* 订单状态标签 */
+        .order-tabs {
+            display: flex;
+            padding: 20px 30px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .order-tab {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            margin-right: 20px;
+            border-radius: 6px 6px 0 0;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .order-tab.active {
+            background-color: #1a1a1a;
+            color: #00ff88;
+        }
+
+        .order-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #00ff88;
+        }
+
+        .tab-count {
+            background-color: #333;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            margin-left: 8px;
+        }
+
+        .tab-count.active {
+            background-color: #00ff88;
+            color: #000;
+        }
+
+        /* 过滤器和搜索 */
+        .filters {
+            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 10px 15px;
+            width: 300px;
+        }
+
+        .search-box input {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 14px;
+            flex: 1;
+            outline: none;
+        }
+
+        .search-box input::placeholder {
+            color: #666;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        .filter-btn {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            gap: 8px;
+        }
+
+        /* 订单表格 */
+        .orders-table {
+            flex: 1;
+            overflow: auto;
+            margin: 0 30px 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th {
+            background-color: #2a2a2a;
+            padding: 15px 20px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #333;
+            font-size: 14px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .order-id {
+            color: #00ff88;
+            text-decoration: none;
+        }
+
+        .order-id:hover {
+            text-decoration: underline;
+        }
+
+        .status-badge {
+            background-color: #4a5568;
+            color: #ffd700;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .cost-negative {
+            color: #ff6b6b;
+        }
+
+        .cost-positive {
+            color: #00ff88;
+        }
+
+        .show-products {
+            color: #4a90e2;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .show-products:hover {
+            text-decoration: underline;
+        }
+
+        /* 底部用户信息 */
+        .user-info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background-color: #4a90e2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .user-details {
+            font-size: 12px;
+        }
+
+        .user-id {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .user-email {
+            color: #666;
+        }
+
+        /* 充值弹窗样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .recharge-modal {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 30px;
+            width: 500px;
+            max-width: 90vw;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background-color: #2a2a2a;
+            color: #fff;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #999;
+        }
+
+        .currency-display {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .currency-flag {
+            width: 20px;
+            height: 15px;
+            background-color: #4a90e2;
+            margin-right: 10px;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #fff;
+        }
+
+        .amount-input-wrapper {
+            position: relative;
+        }
+
+        .amount-input {
+            width: 100%;
+            padding: 12px 16px;
+            padding-left: 40px;
+            background-color: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .amount-input:focus {
+            border-color: #00ff88;
+            box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.1);
+        }
+
+        .currency-symbol {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        .payment-methods {
+            display: grid;
+            gap: 12px;
+        }
+
+        .payment-method {
+            padding: 16px;
+            background-color: #2a2a2a;
+            border: 2px solid #333;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .payment-method:hover {
+            background-color: #333;
+        }
+
+        .payment-method.selected {
+            border-color: #00ff88;
+            background-color: rgba(0, 255, 136, 0.1);
+        }
+
+        .payment-method input[type="radio"] {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+        }
+
+        .payment-logo {
+            width: 40px;
+            height: 40px;
+            background-color: #4a90e2;
+            border-radius: 6px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .payment-logo.stripe {
+            background: linear-gradient(135deg, #635bff, #4dabf7);
+        }
+
+        .payment-logo.paypal {
+            background: linear-gradient(135deg, #0070ba, #009cde);
+        }
+
+        .payment-info {
+            flex: 1;
+        }
+
+        .payment-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .payment-desc {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .payment-status {
+            margin-left: auto;
+            padding: 4px 8px;
+            background-color: #00ff88;
+            color: #000;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .recharge-button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #00ff88, #00cc6a);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 25px;
+        }
+
+        .recharge-button:hover {
+            background: linear-gradient(135deg, #00cc6a, #00aa55);
+            transform: translateY(-1px);
+        }
+
+        .recharge-button:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .quick-amounts {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .quick-amount {
+            padding: 8px 16px;
+            background-color: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: #999;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-amount:hover {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .quick-amount.selected {
+            background-color: #00ff88;
+            color: #000;
+            border-color: #00ff88;
+        }
+    </style>
+</head>
+<body class="antialiased w-full custom-scrollbar bg-black text-white">
+    <div class="flex min-h-screen w-full">
+        <!-- 移动端顶部栏 -->
+        <div class="lg:hidden fixed top-0 left-0 right-0 z-50 bg-black border-b border-gray-800 px-4 py-3">
+            <div class="flex items-center justify-between">
+                <span class="text-xl font-bold">BEST</span>
+                <button class="p-2 hover:bg-gray-800 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu">
+                        <line x1="4" x2="20" y1="12" y2="12"></line>
+                        <line x1="4" x2="20" y1="6" y2="6"></line>
+                        <line x1="4" x2="20" y1="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="max-w-[1400px] w-full mx-auto flex">
+            <!-- 侧边栏 -->
+            <div class="fixed w-64 h-screen flex flex-col justify-between border-r border-gray-800 bg-black z-40 lg:translate-x-0 transition-transform duration-200 -translate-x-full">
+                <div class="flex-1 overflow-y-auto">
+                    <!-- Logo -->
+                    <div class="px-6 mt-6 mb-6 h-[80px] w-full cursor-pointer">
+                        <div class="px-8 h-full bg-black">
+                            <svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 565 359" width="150" height="95">
+                                <style>.s0 { fill: #ffffff } .s1 { fill: #ffffff; stroke: #ffffff; stroke-miterlimit: 10; stroke-width: 2 }</style>
+                                <path class="s0" d="m202.2 105.6q0-39.4 0-78.8 0-0.4 0-0.8c0.1-3.1 0.5-3.5 3.5-3.5q8.3 0 16.6 0 4.2 0 8.4 0c4.6 0 5.1 0.5 5.1 5.2q0 52.4 0 104.8 0 9.5 0 19c0 2.8 0.2 3 3.1 3q45.5 0 91 0c4.4 0 4.4 0 4.4-4.5q0-45.5 0-91c0-1.7-0.4-2.2-2.1-2.2-20.7 0.1-41.5 0-62.2 0.1-3.6 0-4.1-0.5-4.1-4q0-13.4 0-26.8c0-3.3 0.4-3.6 3.7-3.6q47.1 0 94.2 0 0.8-0.1 1.6 0c2.6 0.2 3.2 0.8 3.2 3.3q0 78.9 0 157.8c0 4.9-0.3 5.3-5.2 5.3q-79.1 0-158.2 0c-2.5 0-3-0.5-3-3.1q0-20.9 0-41.8 0-19.2 0-38.4z"></path>
+                                <path class="s0" d="m265.9 105.4q0-7.1 0-14.1c0-4.2 0.7-4.8 4.7-4.8q13.6 0 27.2 0c6.3 0 6.8 0.6 6.8 6.9q0 13 0 26.1c0 0.8 0 1.5-0.1 2.2-0.2 1.7-1.1 2.8-3 2.8-9 0-18 0.2-27 0.3q-2.5 0-5-0.1c-2.4 0-3.4-0.8-3.5-3.3-0.2-2.2-0.1-4.4-0.1-6.6q0-4.7 0-9.4z"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- 用户选择器 -->
+                    <nav class="space-y-1 px-3 pb-3">
+                        <div class="mb-4 relative">
+                            <button class="w-full flex items-center justify-between p-3 bg-zinc-900 border border-gray-800 rounded-lg text-white hover:bg-zinc-800 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108.44 122.88" width="24" height="24" class="" aria-hidden="true">
+                                    <g>
+                                        <path fill-rule="evenodd" clip-rule="evenodd" fill="#95BF47" d="M94.98,23.66c-0.09-0.62-0.63-0.96-1.08-1c-0.45-0.04-9.19-0.17-9.19-0.17s-7.32-7.1-8.04-7.83 c-0.72-0.72-2.13-0.5-2.68-0.34c-0.01,0-1.37,0.43-3.68,1.14c-0.38-1.25-0.95-2.78-1.76-4.32c-2.6-4.97-6.42-7.6-11.03-7.61 c-0.01,0-0.01,0-0.02,0c-0.32,0-0.64,0.03-0.96,0.06c-0.14-0.16-0.27-0.32-0.42-0.48c-2.01-2.15-4.58-3.19-7.67-3.1 c-5.95,0.17-11.88,4.47-16.69,12.11c-3.38,5.37-5.96,12.12-6.69,17.35c-6.83,2.12-11.61,3.6-11.72,3.63 c-3.45,1.08-3.56,1.19-4.01,4.44C9.03,39.99,0,109.8,0,109.8l75.65,13.08l32.79-8.15C108.44,114.73,95.06,24.28,94.98,23.66 L94.98,23.66z M66.52,16.63c-1.74,0.54-3.72,1.15-5.87,1.82c-0.04-3.01-0.4-7.21-1.81-10.83C63.36,8.47,65.58,13.58,66.52,16.63 L66.52,16.63z M56.69,19.68c-3.96,1.23-8.29,2.57-12.63,3.91c1.22-4.67,3.54-9.33,6.38-12.38c1.06-1.14,2.54-2.4,4.29-3.12 C56.38,11.52,56.73,16.39,56.69,19.68L56.69,19.68z M48.58,3.97c1.4-0.03,2.57,0.28,3.58,0.94C50.55,5.74,49,6.94,47.54,8.5 c-3.78,4.06-6.68,10.35-7.83,16.43c-3.6,1.11-7.13,2.21-10.37,3.21C31.38,18.58,39.4,4.23,48.58,3.97L48.58,3.97z"></path>
+                                    </g>
+                                </svg>
+                                <div class="flex-1 min-w-0 overflow-hidden mx-4">
+                                    <span class="text-lg font-medium text-white">scale-ee</span>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-5 w-5 transition-transform">
+                                    <path d="m6 9 6 6 6-6"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- 导航菜单 -->
+                        <a class="block" href="/">
+                            <div class="flex items-center space-x-3 p-3 rounded-full w-full transition-colors hover:bg-gray-800 text-gray-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-bag h-6 w-6 flex-shrink-0">
+                                    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+                                    <path d="M3 6h18"></path>
+                                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                                </svg>
+                                <span class="text-xl flex-1 text-left whitespace-nowrap">Profit Dashboard</span>
+                            </div>
+                        </a>
+
+                        <button class="w-full">
+                            <div class="flex items-center space-x-3 p-3 rounded-full w-full transition-colors hover:bg-gray-800 text-gray-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-box h-6 w-6">
+                                    <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path>
+                                    <path d="m3.3 7 8.7 5 8.7-5"></path>
+                                    <path d="M12 22V12"></path>
+                                </svg>
+                                <span class="text-xl flex-1 text-left whitespace-nowrap text-white font-bold">Orders</span>
+                                <span class="bg-gray-300 text-gray-800 rounded-full px-2 text-sm">87</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-5 w-5 transition-transform rotate-180">
+                                    <path d="m6 9 6 6 6-6"></path>
+                                </svg>
+                            </div>
+                        </button>
+                        <div class="ml-12 mt-2 space-y-1">
+                            <a class="flex items-center py-2 gap-2 px-3 rounded-md transition-colors text-white font-bold" href="/orders/all">
+                                <span class="text-sm">Pending</span>
+                                <span class="bg-gray-300 text-gray-800 rounded-full px-2 text-sm">87</span>
+                            </a>
+                            <a class="flex items-center py-2 gap-2 px-3 rounded-md transition-colors text-gray-300 hover:text-white hover:bg-gray-800" href="/orders/ai-tracking">
+                                <span class="text-sm">AI Trackings</span>
+                            </a>
+                        </div>
+
+                        <!-- 其他菜单项 -->
+                        <a class="block" href="/my-product">
+                            <div class="flex items-center space-x-3 p-3 rounded-full w-full transition-colors hover:bg-gray-800 text-gray-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shirt h-6 w-6 flex-shrink-0">
+                                    <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path>
+                                </svg>
+                                <span class="text-xl flex-1 text-left whitespace-nowrap">My Products</span>
+                            </div>
+                        </a>
+
+                        <a class="block" href="/branding">
+                            <div class="flex items-center space-x-3 p-3 rounded-full w-full transition-colors hover:bg-gray-800 text-gray-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-palette h-6 w-6 flex-shrink-0">
+                                    <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+                                    <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+                                    <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                                    <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+                                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path>
+                                </svg>
+                                <span class="text-xl flex-1 text-left whitespace-nowrap">Branding</span>
+                            </div>
+                        </a>
+
+                        <div class="my-3 border-t border-gray-800"></div>
+
+                        <a class="block" href="/setting/organization">
+                            <div class="flex items-center space-x-3 p-3 rounded-full w-full transition-colors hover:bg-gray-800 text-gray-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings h-6 w-6 flex-shrink-0">
+                                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                <span class="text-xl flex-1 text-left whitespace-nowrap">Settings</span>
+                            </div>
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- 底部用户信息 -->
+                <div class="p-4 mb-4">
+                    <button type="button" class="w-full">
+                        <div class="flex items-center justify-between p-3 hover:bg-gray-800 rounded-full">
+                            <div class="flex items-center space-x-3 overflow-hidden">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-full">
+                                    <img src="https://cdn-icons-png.flaticon.com/128/924/924915.png" alt="User">
+                                </div>
+                                <div class="text-left overflow-hidden">
+                                    <div class="font-bold whitespace-nowrap text-ellipsis overflow-hidden">895145812</div>
+                                    <div class="text-gray-500 whitespace-nowrap text-ellipsis overflow-hidden">@qq.com</div>
+                                </div>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis ml-2 h-5 w-5 text-gray-500 cursor-pointer">
+                                <circle cx="12" cy="12" r="1"></circle>
+                                <circle cx="19" cy="12" r="1"></circle>
+                                <circle cx="5" cy="12" r="1"></circle>
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 主内容区 -->
+            <div class="flex-1 lg:ml-64 pt-16 lg:pt-0">
+                <div class="h-full flex flex-col">
+                    <!-- 头部 -->
+                    <header class="border-b border-gray-800 px-4 py-4">
+                        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                            <div class="flex items-center gap-6">
+                                <h1 class="text-2xl font-bold text-white">Orders</h1>
+                                
+                                <!-- Credit Balance -->
+                                <button class="flex items-center gap-2 px-3 py-2 bg-zinc-900 border border-gray-700 rounded-lg hover:bg-zinc-800 transition-colors" onclick="showRechargeModal()">
+                                    <div class="w-4 h-3 bg-red-500 rounded-sm"></div>
+                                    <span class="text-sm text-gray-300">Credit Balance</span>
+                                    <span class="text-sm font-semibold text-green-400">$2,247.80</span>
+                                </button>
+                            </div>
+                            
+                            <!-- 右侧控制区 -->
+                            <div class="flex items-center gap-3 flex-wrap">
+                                <!-- 切换开关 -->
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm text-gray-300">Auto Fulfill</span>
+                                    <div class="relative w-11 h-6">
+                                        <input type="checkbox" class="sr-only">
+                                        <div class="w-11 h-6 bg-gray-700 rounded-full shadow-inner"></div>
+                                        <div class="dot absolute w-4 h-4 bg-white rounded-full shadow top-1 left-1 transition"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm text-gray-300">Apply Branding</span>
+                                    <div class="relative w-11 h-6">
+                                        <input type="checkbox" class="sr-only">
+                                        <div class="w-11 h-6 bg-gray-700 rounded-full shadow-inner"></div>
+                                        <div class="dot absolute w-4 h-4 bg-white rounded-full shadow top-1 left-1 transition"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 操作按钮 -->
+                                <button class="px-4 py-2 bg-zinc-900 border border-gray-700 rounded-lg text-sm text-white hover:bg-zinc-800 transition-colors">
+                                    📤 Export
+                                </button>
+                                <button class="px-4 py-2 bg-zinc-900 border border-gray-700 rounded-lg text-sm text-white hover:bg-zinc-800 transition-colors">
+                                    Upload CSV
+                                </button>
+                                <button class="px-4 py-2 bg-zinc-900 border border-gray-700 rounded-lg text-sm text-white hover:bg-zinc-800 transition-colors">
+                                    Template CSV
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    <!-- 订单状态标签 -->
+                    <div class="border-b border-gray-800 px-4">
+                        <div class="flex flex-wrap gap-1">
+                            <button class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-t-lg transition-colors">
+                                ⏸️ All Orders
+                            </button>
+                            <button class="px-4 py-2 text-sm text-white bg-gray-800 rounded-t-lg flex items-center gap-2">
+                                ⏸️ Pending
+                                <span class="bg-green-400 text-gray-800 rounded-full px-2 text-xs font-medium">87</span>
+                            </button>
+                            <button class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-t-lg flex items-center gap-2">
+                                ⚡ Processing
+                                <span class="bg-gray-600 text-white rounded-full px-2 text-xs">46</span>
+                            </button>
+                            <button class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-t-lg flex items-center gap-2">
+                                ✅ Fulfilled
+                                <span class="bg-gray-600 text-white rounded-full px-2 text-xs">15</span>
+                            </button>
+                            <button class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-t-lg flex items-center gap-2">
+                                ❌ Cancelled
+                                <span class="bg-gray-600 text-white rounded-full px-2 text-xs">0</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 过滤器和搜索 -->
+                    <div class="px-4 py-4 border-b border-gray-800">
+                        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                            <div class="relative max-w-md">
+                                <input type="text" placeholder="Search orders..." class="pl-10 pr-4 py-2 bg-zinc-900 border border-gray-700 rounded-lg text-white text-sm placeholder-gray-400 w-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search absolute left-3 top-2.5 text-gray-400">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <path d="m21 21-4.35-4.35"></path>
+                                </svg>
+                            </div>
+                            
+                            <div class="flex items-center gap-3">
+                                <button class="px-4 py-2 bg-zinc-900 border border-gray-700 rounded-lg text-sm text-white hover:bg-zinc-800 transition-colors flex items-center gap-2">
+                                    📋 Filters
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down">
+                                        <path d="m6 9 6 6 6-6"></path>
+                                    </svg>
+                                </button>
+                                <button class="px-4 py-2 bg-zinc-900 border border-gray-700 rounded-lg text-sm text-white hover:bg-zinc-800 transition-colors flex items-center gap-2">
+                                    📅 Date Range
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down">
+                                        <path d="m6 9 6 6 6-6"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 订单表格 -->
+                    <div class="flex-1 overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-zinc-900 border-b border-gray-800">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-12">
+                                        <input type="checkbox" class="rounded border-gray-600 bg-zinc-900 text-green-400">
+                                    </th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">BEST ID</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Order</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">BEST Status</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Fulfillment Cost</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Total</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">COGS %</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">beROAS</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Product</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-800">
+                                <tr class="hover:bg-gray-900 transition-colors">
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <input type="checkbox" class="rounded border-gray-600 bg-zinc-900 text-green-400">
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-white">239757</td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <a href="#" class="text-green-400 hover:underline text-sm">#1219</a>
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-900 text-yellow-200">Pending</span>
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-red-400">-$0.50</td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-green-400">HK$ 2057.20</td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-300">-</td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-300">-</td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <button class="text-blue-400 hover:underline text-sm flex items-center gap-1">
+                                            Show products
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down">
+                                                <path d="m6 9 6 6 6-6"></path>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-900 transition-colors">
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <input type="checkbox" class="rounded border-gray-600 bg-zinc-900 text-green-400">
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-white">238697</td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <a href="#" class="text-green-400 hover:underline text-sm">#1218</a>
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-900 text-yellow-200">Pending</span>
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-red-400">-$0.50</td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-green-400">HK$ 2057.20</td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-300">-</td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-300">-</td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <button class="text-blue-400 hover:underline text-sm flex items-center gap-1">
+                                            Show products
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down">
+                                                <path d="m6 9 6 6 6-6"></path>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-900 transition-colors">
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <input type="checkbox" class="rounded border-gray-600 bg-zinc-900 text-green-400">
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-white">239647</td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <a href="#" class="text-green-400 hover:underline text-sm">#1213</a>
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-900 text-yellow-200">Pending</span>
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-red-400">-$160.79</td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-green-400">HK$ 8785.40</td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-300">-</td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-300">-</td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <button class="text-blue-400 hover:underline text-sm flex items-center gap-1">
+                                            Show products
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down">
+                                                <path d="m6 9 6 6 6-6"></path>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-900 transition-colors">
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <input type="checkbox" class="rounded border-gray-600 bg-zinc-900 text-green-400">
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-white">239646</td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <a href="#" class="text-green-400 hover:underline text-sm">#1212</a>
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-900 text-yellow-200">Pending</span>
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-red-400">-$120.91</td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-green-400">HK$ 8120.00</td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-300">-</td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-300">-</td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <button class="text-blue-400 hover:underline text-sm flex items-center gap-1">
+                                            Show products
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down">
+                                                <path d="m6 9 6 6 6-6"></path>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-900 transition-colors">
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <input type="checkbox" class="rounded border-gray-600 bg-zinc-900 text-green-400">
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-white">239618</td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <a href="#" class="text-green-400 hover:underline text-sm">#1211</a>
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-900 text-yellow-200">Pending</span>
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-red-400">-$120.91</td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-green-400">HK$ 8120.00</td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-300">-</td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-300">-</td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <button class="text-blue-400 hover:underline text-sm flex items-center gap-1">
+                                            Show products
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down">
+                                                <path d="m6 9 6 6 6-6"></path>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>239614</td>
+                        <td><a href="#" class="order-id">#1210</a></td>
+                        <td><span class="status-badge">Pending</span></td>
+                        <td class="cost-negative">-$0.50</td>
+                        <td class="cost-positive">HK$ 8120.00</td>
+                        <td></td>
+                        <td></td>
+                        <td><a href="#" class="show-products">Show products ▼</a></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>239563</td>
+                        <td><a href="#" class="order-id">#1207</a></td>
+                        <td><span class="status-badge">Pending</span></td>
+                        <td class="cost-negative">-$0.50</td>
+                        <td class="cost-positive">HK$ 300.00</td>
+                        <td></td>
+                        <td></td>
+                        <td><a href="#" class="show-products">Show products ▼</a></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>238662</td>
+                        <td><a href="#" class="order-id">#1206</a></td>
+                        <td><span class="status-badge">Pending</span></td>
+                        <td class="cost-negative">-$17.57</td>
+                        <td class="cost-positive">HK$ 533.00</td>
+                        <td></td>
+                        <td></td>
+                        <td><a href="#" class="show-products">Show products ▼</a></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>238584</td>
+                        <td><a href="#" class="order-id">#1204</a></td>
+                        <td><span class="status-badge">Pending</span></td>
+                        <td class="cost-negative">-$63.50</td>
+                        <td class="cost-positive">HK$ 6950.00</td>
+                        <td></td>
+                        <td></td>
+                        <td><a href="#" class="show-products">Show products ▼</a></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>238568</td>
+                        <td><a href="#" class="order-id">#1203</a></td>
+                        <td><span class="status-badge">Pending</span></td>
+                        <td class="cost-negative">-$63.50</td>
+                        <td class="cost-positive">HK$ 6950.00</td>
+                        <td></td>
+                        <td></td>
+                        <td><a href="#" class="show-products">Show products ▼</a></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>238560</td>
+                        <td><a href="#" class="order-id">#1202</a></td>
+                        <td><span class="status-badge">Pending</span></td>
+                        <td class="cost-negative">-$63.50</td>
+                        <td class="cost-positive">HK$ 6950.00</td>
+                        <td></td>
+                        <td></td>
+                        <td><a href="#" class="show-products">Show products ▼</a></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>238517</td>
+                        <td><a href="#" class="order-id">#1200</a></td>
+                        <td><span class="status-badge">Pending</span></td>
+                        <td class="cost-negative">-$0.50</td>
+                        <td class="cost-positive">HK$ 4335.00</td>
+                        <td></td>
+                        <td></td>
+                        <td><a href="#" class="show-products">Show products ▼</a></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>238491</td>
+                        <td><a href="#" class="order-id">#1199</a></td>
+                        <td><span class="status-badge">Pending</span></td>
+                        <td class="cost-negative">-$0.50</td>
+                        <td class="cost-positive">HK$ 2880.00</td>
+                        <td></td>
+                        <td></td>
+                        <td><a href="#" class="show-products">Show products ▼</a></td>
+                    </tr>
+                                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 充值弹窗 -->
+    <div class="modal-overlay" id="rechargeModal">
+        <div class="recharge-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Top up</h2>
+                <button class="modal-close" onclick="closeRechargeModal()">×</button>
+            </div>
+            
+            <form id="rechargeForm">
+                <div class="form-group">
+                                         <label class="form-label">Currency</label>
+                     <div class="currency-display">
+                         <div class="currency-flag">US</div>
+                         <span>US Dollar (USD)</span>
+                         <span style="margin-left: auto; color: #666; font-size: 12px;">USD Only</span>
+                     </div>
+                </div>
+
+                <div class="form-group">
+                                         <label class="form-label">Amount</label>
+                     <div class="amount-input-wrapper">
+                         <span class="currency-symbol">$</span>
+                         <input type="number" class="amount-input" id="rechargeAmount" placeholder="Enter amount" min="1" step="0.01">
+                     </div>
+                    <div class="quick-amounts">
+                        <div class="quick-amount" onclick="setQuickAmount(50)">$50</div>
+                        <div class="quick-amount" onclick="setQuickAmount(100)">$100</div>
+                        <div class="quick-amount" onclick="setQuickAmount(200)">$200</div>
+                        <div class="quick-amount" onclick="setQuickAmount(500)">$500</div>
+                        <div class="quick-amount" onclick="setQuickAmount(1000)">$1000</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                                         <label class="form-label">Payment Method</label>
+                     <div class="payment-methods">
+                         <div class="payment-method" onclick="selectPaymentMethod('stripe')">
+                             <input type="radio" name="paymentMethod" value="stripe" id="stripe">
+                             <div class="payment-logo stripe">Stripe</div>
+                             <div class="payment-info">
+                                 <div class="payment-name">Stripe</div>
+                                 <div class="payment-desc">Supports credit cards, debit cards and more</div>
+                             </div>
+                             <div class="payment-status">Recommended</div>
+                         </div>
+                         
+                         <div class="payment-method" onclick="selectPaymentMethod('paypal')">
+                             <input type="radio" name="paymentMethod" value="paypal" id="paypal">
+                             <div class="payment-logo paypal">PayPal</div>
+                             <div class="payment-info">
+                                 <div class="payment-name">PayPal</div>
+                                 <div class="payment-desc">Secure and convenient online payment platform</div>
+                             </div>
+                         </div>
+                     </div>
+                </div>
+
+                                 <button type="button" class="recharge-button" id="rechargeBtn" onclick="processRecharge()" disabled>
+                     Top up
+                 </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 充值弹窗相关功能
+        function showRechargeModal() {
+            document.getElementById('rechargeModal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeRechargeModal() {
+            document.getElementById('rechargeModal').classList.remove('show');
+            document.body.style.overflow = 'auto';
+            resetRechargeForm();
+        }
+
+        function resetRechargeForm() {
+            document.getElementById('rechargeAmount').value = '';
+            document.querySelectorAll('.payment-method').forEach(method => {
+                method.classList.remove('selected');
+            });
+            document.querySelectorAll('.quick-amount').forEach(amount => {
+                amount.classList.remove('selected');
+            });
+            document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+                radio.checked = false;
+            });
+            updateRechargeButton();
+        }
+
+        function setQuickAmount(amount) {
+            document.getElementById('rechargeAmount').value = amount;
+            document.querySelectorAll('.quick-amount').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+            updateRechargeButton();
+        }
+
+        function selectPaymentMethod(method) {
+            document.querySelectorAll('.payment-method').forEach(m => {
+                m.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            document.getElementById(method).checked = true;
+            updateRechargeButton();
+        }
+
+        function updateRechargeButton() {
+            const amount = document.getElementById('rechargeAmount').value;
+            const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
+            const rechargeBtn = document.getElementById('rechargeBtn');
+            
+            if (amount && parseFloat(amount) > 0 && selectedPayment) {
+                rechargeBtn.disabled = false;
+                rechargeBtn.textContent = `Add $${parseFloat(amount).toFixed(2)}`;
+            } else {
+                rechargeBtn.disabled = true;
+                rechargeBtn.textContent = 'Top up';
+            }
+        }
+
+        function processRecharge() {
+            const amount = document.getElementById('rechargeAmount').value;
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+            
+            if (!amount || parseFloat(amount) <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+
+            if (!paymentMethod) {
+                alert('Please select a payment method');
+                return;
+            }
+
+            // 模拟跳转到第三方支付平台
+            let paymentUrl = '';
+            if (paymentMethod === 'stripe') {
+                paymentUrl = `https://checkout.stripe.com/pay?amount=${amount * 100}&currency=usd&return_url=${encodeURIComponent(window.location.origin)}`;
+            } else if (paymentMethod === 'paypal') {
+                paymentUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_express-checkout&amount=${amount}&currency_code=USD&return=${encodeURIComponent(window.location.origin)}`;
+            }
+
+            // 在新标签页打开支付页面
+            window.open(paymentUrl, '_blank');
+            
+            // 关闭弹窗
+            closeRechargeModal();
+        }
+
+        // 监听金额输入变化
+        document.addEventListener('DOMContentLoaded', function() {
+            const amountInput = document.getElementById('rechargeAmount');
+            if (amountInput) {
+                amountInput.addEventListener('input', function() {
+                    document.querySelectorAll('.quick-amount').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                    updateRechargeButton();
+                });
+            }
+        });
+
+        // 点击弹窗外部关闭弹窗
+        document.getElementById('rechargeModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeRechargeModal();
+            }
+        });
+
+        // ESC键关闭弹窗
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeRechargeModal();
+            }
+        });
+    </script>
+</body>
+</html> 
