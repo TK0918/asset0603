@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>线下转账审核 - 资产中台管理系统</title>
+  <title>线下充值审核 - 资金中台管理系统</title>
   <style>
     * {
       margin: 0;
@@ -540,11 +540,11 @@
 <body>
   <header>
     <div class="header-content">
-      <a href="index.html" class="logo">资产中台</a>
+      <a href="index.html" class="logo">资金中台</a>
       <nav>
         <ul class="nav-menu">
           <li><a href="index.html">首页</a></li>
-          <li><a href="customer-management.html">客户管理</a></li>
+          <li><a href="customer-management.html">账户管理</a></li>
           <li><a href="transfer-audit.html" class="active">转账审核</a></li>
           <li><a href="credit-audit.html">信用额度</a></li>
           <li><a href="transaction-details.html">交易明细</a></li>
@@ -556,7 +556,7 @@
 
   <main class="container">
     <div class="page-header">
-      <h1 class="page-title">线下转账审核</h1>
+      <h1 class="page-title">线下充值审核</h1>
       <p class="page-description">处理来自各子业务线的转账申请，支持批量审核和状态管理</p>
     </div>
 
@@ -582,16 +582,16 @@
     <div class="search-section">
       <div class="search-row">
         <div class="search-group">
-          <label>主体ID</label>
-          <input type="text" class="search-input" placeholder="输入主体ID">
+          <label>账户ID</label>
+          <input type="text" class="search-input" placeholder="输入账户ID">
         </div>
         <div class="search-group">
-          <label>客户邮箱</label>
-          <input type="text" class="search-input" placeholder="输入客户邮箱">
+          <label>商户邮箱</label>
+          <input type="text" class="search-input" placeholder="输入商户邮箱">
         </div>
         <div class="search-group">
-          <label>主体名称</label>
-          <input type="text" class="search-input" placeholder="输入主体名称">
+          <label>商户名称</label>
+          <input type="text" class="search-input" placeholder="输入商户名称">
         </div>
         <div class="search-group">
           <label>子业务名称</label>
@@ -634,9 +634,9 @@
           <thead>
             <tr>
               <th width="40px"><input type="checkbox" id="selectAll"></th>
-              <th width="120px">主体ID</th>
-              <th width="150px">客户邮箱</th>
-              <th width="120px">主体名称</th>
+              <th width="120px">账户ID</th>
+              <th width="150px">商户邮箱</th>
+              <th width="120px">商户名称</th>
               <th width="100px">子业务名称</th>
               <th width="100px">转账平台</th>
               <th width="120px">转账凭证号</th>
@@ -778,18 +778,18 @@
         <button class="close-btn" onclick="closeModal()">&times;</button>
       </div>
       <div class="detail-section">
-        <h4>客户信息</h4>
+        <h4>账户信息</h4>
         <div class="detail-grid">
           <div class="detail-item">
-            <span class="detail-label">主体ID</span>
+            <span class="detail-label">账户ID</span>
             <span class="detail-value" id="detail-entity-id">US001</span>
           </div>
           <div class="detail-item">
-            <span class="detail-label">客户邮箱</span>
+            <span class="detail-label">商户邮箱</span>
             <span class="detail-value" id="detail-email">contact@apple.com</span>
           </div>
           <div class="detail-item">
-            <span class="detail-label">主体名称</span>
+            <span class="detail-label">商户名称</span>
             <span class="detail-value" id="detail-entity-name">Apple Inc.</span>
           </div>
           <div class="detail-item">

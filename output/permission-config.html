@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>权限配置 - 资产中台管理系统</title>
+  <title>权限配置 - 资金中台管理系统</title>
   <style>
     * {
       margin: 0;
@@ -415,11 +415,11 @@
 <body>
   <header>
     <div class="header-content">
-      <a href="index.html" class="logo">资产中台</a>
+      <a href="index.html" class="logo">资金中台</a>
       <nav>
         <ul class="nav-menu">
           <li><a href="index.html">首页</a></li>
-          <li><a href="customer-management.html">客户管理</a></li>
+          <li><a href="customer-management.html">账户管理</a></li>
           <li><a href="transfer-audit.html">转账审核</a></li>
           <li><a href="credit-audit.html">信用额度</a></li>
           <li><a href="transaction-details.html">交易明细</a></li>
@@ -602,7 +602,7 @@
               </tr>
               <tr>
                 <td>客户经理</td>
-                <td>负责客户管理、交易明细查看等客户服务功能</td>
+                <td>负责账户管理、交易明细查看等客户服务功能</td>
                 <td>10</td>
                 <td>8</td>
                 <td><span class="status-badge status-active">启用</span></td>
@@ -711,7 +711,7 @@
               </div>
               <div class="permission-item">
                 <input type="checkbox" name="permissions" value="page.customer" id="page-customer">
-                <label for="page-customer">客户管理</label>
+                <label for="page-customer">账户管理</label>
               </div>
               <div class="permission-item">
                 <input type="checkbox" name="permissions" value="page.transfer" id="page-transfer">
@@ -734,7 +734,7 @@
             <div class="permission-group">
               <div class="permission-group-title">
                 <input type="checkbox" id="customer-all" onchange="toggleGroupPermissions('customer')">
-                <label for="customer-all">客户管理权限</label>
+                <label for="customer-all">账户管理权限</label>
               </div>
               <div class="permission-item">
                 <input type="checkbox" name="permissions" value="customer.view" id="customer-view">

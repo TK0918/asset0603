@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>交易明细 - 资产中台管理系统</title>
+  <title>交易明细 - 资金中台管理系统</title>
   <style>
     * {
       margin: 0;
@@ -535,11 +535,11 @@
 <body>
   <header>
     <div class="header-content">
-      <a href="index.html" class="logo">资产中台</a>
+      <a href="index.html" class="logo">资金中台</a>
       <nav>
         <ul class="nav-menu">
           <li><a href="index.html">首页</a></li>
-          <li><a href="customer-management.html">客户管理</a></li>
+          <li><a href="customer-management.html">账户管理</a></li>
           <li><a href="transfer-audit.html">转账审核</a></li>
           <li><a href="credit-audit.html">信用额度</a></li>
           <li><a href="transaction-details.html" class="active">交易明细</a></li>
@@ -552,7 +552,7 @@
   <main class="container">
     <div class="page-header">
       <h1 class="page-title">交易明细</h1>
-      <p class="page-description">查看和分析所有客户的交易记录，支持多维度筛选和数据导出</p>
+      <p class="page-description">查看和分析所有账户的交易记录，支持多维度筛选和数据导出</p>
     </div>
 
     <div class="chart-section">
@@ -597,16 +597,16 @@
     <div class="search-section">
       <div class="search-row">
         <div class="search-group">
-          <label>主体ID</label>
-          <input type="text" class="search-input" placeholder="输入主体ID">
+          <label>账户ID</label>
+          <input type="text" class="search-input" placeholder="输入账户ID">
         </div>
         <div class="search-group">
-          <label>客户主体邮箱</label>
-          <input type="text" class="search-input" placeholder="输入客户主体邮箱">
+          <label>商户邮箱</label>
+          <input type="text" class="search-input" placeholder="输入商户邮箱">
         </div>
         <div class="search-group">
-          <label>主体名称</label>
-          <input type="text" class="search-input" placeholder="输入主体名称">
+          <label>商户名称</label>
+          <input type="text" class="search-input" placeholder="输入商户名称">
         </div>
         <div class="search-group">
           <label>所属业务</label>
@@ -661,8 +661,8 @@
           <thead>
             <tr>
               <th width="150px">时间</th>
-              <th width="120px">主体ID</th>
-              <th width="150px">客户主体名称</th>
+              <th width="120px">账户ID</th>
+              <th width="150px">商户名称</th>
               <th width="100px">所属业务</th>
               <th width="100px">钱包类型</th>
               <th width="100px">变动类型</th>
@@ -798,18 +798,18 @@
         <button class="close-btn" onclick="closeModal()">&times;</button>
       </div>
       <div class="detail-section">
-        <h4>客户信息</h4>
+        <h4>账户信息</h4>
         <div class="detail-grid">
           <div class="detail-item">
-            <span class="detail-label">主体ID</span>
+            <span class="detail-label">账户ID</span>
             <span class="detail-value">US001</span>
           </div>
           <div class="detail-item">
-            <span class="detail-label">客户主体邮箱</span>
+            <span class="detail-label">商户邮箱</span>
             <span class="detail-value">contact@apple.com</span>
           </div>
           <div class="detail-item">
-            <span class="detail-label">主体名称</span>
+            <span class="detail-label">商户名称</span>
             <span class="detail-value">Apple Inc.</span>
           </div>
           <div class="detail-item">
