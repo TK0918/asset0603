@@ -817,3 +817,28 @@ git push -u origin main
 5. **报表系统**：更丰富的数据分析和报表功能
 
 项目已成功上传至GitHub，为后续开发和部署奠定了基础。 
+
+### [Git更新] 系统名称统一修改 - 2024年
+**修改内容：**
+- 将所有文件中的"资产中台"统一修改为"资金中台"
+- 更新系统名称，保持整体项目命名的一致性
+- 涉及HTML页面、文档文件、配置文件的批量更新
+
+**修改文件：**
+- log.md（本文件）
+- 资金中台需求文档.md → 资金中台需求文档.md
+- .cursor/rules/zichanzhongtai-ui-design.mdc
+- output/index.html
+- output/customer-management.html
+- output/transfer-audit.html
+- output/credit-audit.html
+- output/transaction-details.html
+- output/permission-config.html
+
+**Git操作：**
+- 提交信息：更新系统名称：将资产中台统一修改为资金中台，包含所有HTML页面、文档和配置文件
+- 提交哈希：eb9b87c
+- 修改统计：10个文件，200行插入，132行删除
+- 推送到远程仓库：成功
+
+**文件位置：** 整个项目目录 
