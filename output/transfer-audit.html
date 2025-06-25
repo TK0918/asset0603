@@ -259,9 +259,9 @@
     .transfer-table th:nth-child(2),
     .transfer-table td:nth-child(2) { left: 40px; }
     .transfer-table th:nth-child(3),
-    .transfer-table td:nth-child(3) { left: 180px; }
+    .transfer-table td:nth-child(3) { left: 160px; }
     .transfer-table th:nth-child(4),
-    .transfer-table td:nth-child(4) { left: 350px; }
+    .transfer-table td:nth-child(4) { left: 310px; }
 
     /* Fixed operation column */
     .transfer-table th:last-child,
@@ -637,20 +637,18 @@
               <th width="120px">账户ID</th>
               <th width="150px">商户邮箱</th>
               <th width="120px">商户名称</th>
-              <th width="100px">子业务名称</th>
+              <th width="120px">提交时间</th>
+              <th width="80px">审核状态</th>
+              <th width="100px">子业务</th>
               <th width="100px">转账平台</th>
               <th width="120px">转账凭证号</th>
-              <th width="80px">转账币种</th>
-              <th width="100px">转账金额</th>
               <th width="80px">转账截图</th>
-              <th width="120px">提交时间</th>
               <th width="120px">审核时间</th>
               <th width="80px">审核人</th>
               <th width="80px">入账币种</th>
               <th width="100px">入账金额</th>
               <th width="120px">备注</th>
-              <th width="80px">当前状态</th>
-              <th width="200px">操作</th>
+              <th width="150px">操作</th>
             </tr>
           </thead>
           <tbody>
@@ -659,13 +657,12 @@
               <td>US001</td>
               <td>contact@apple.com</td>
               <td>Apple Inc.</td>
+              <td>2024-01-15 14:30</td>
+              <td><span class="status-badge status-pending">待审核</span></td>
               <td><span class="business-tag">Advertising</span></td>
               <td><span class="platform-tag">Wise</span></td>
               <td>WS202401150001</td>
-              <td>USD</td>
-              <td class="amount-large amount-positive">50,000</td>
               <td><a href="#" class="screenshot-link" onclick="viewScreenshot('screenshot1.jpg')">查看</a></td>
-              <td>2024-01-15 14:30</td>
               <td>-</td>
               <td>-</td>
               <td>-</td>
@@ -673,12 +670,10 @@
               <td class="remark-cell">
                 -
               </td>
-              <td><span class="status-badge status-pending">待审核</span></td>
               <td>
                 <div class="action-buttons">
                   <button class="btn btn-success btn-small" onclick="openModal('audit', 'approve', this)">通过</button>
                   <button class="btn btn-danger btn-small" onclick="openModal('audit', 'reject', this)">拒绝</button>
-                  <button class="btn btn-secondary btn-small" onclick="openModal('detail', '', this)">详情</button>
                 </div>
               </td>
             </tr>
@@ -687,13 +682,12 @@
               <td>US002</td>
               <td>service@microsoft.com</td>
               <td>Microsoft Corporation</td>
+              <td>2024-01-15 16:45</td>
+              <td><span class="status-badge status-pending">待审核</span></td>
               <td><span class="business-tag">Fulfillment</span></td>
               <td><span class="platform-tag">PayPal</span></td>
               <td>PP202401150002</td>
-              <td>EUR</td>
-              <td class="amount-large amount-positive">35,000</td>
               <td><a href="#" class="screenshot-link" onclick="viewScreenshot('screenshot2.jpg')">查看</a></td>
-              <td>2024-01-15 16:45</td>
               <td>-</td>
               <td>-</td>
               <td>-</td>
@@ -701,12 +695,10 @@
               <td class="remark-cell">
                 -
               </td>
-              <td><span class="status-badge status-pending">待审核</span></td>
               <td>
                 <div class="action-buttons">
                   <button class="btn btn-success btn-small" onclick="openModal('audit', 'approve', this)">通过</button>
                   <button class="btn btn-danger btn-small" onclick="openModal('audit', 'reject', this)">拒绝</button>
-                  <button class="btn btn-secondary btn-small" onclick="openModal('detail', '', this)">详情</button>
                 </div>
               </td>
             </tr>
@@ -715,13 +707,12 @@
               <td>US003</td>
               <td>contact@google.com</td>
               <td>Google LLC</td>
+              <td>2024-01-14 09:20</td>
+              <td><span class="status-badge status-approved">已通过</span></td>
               <td><span class="business-tag">Advertising</span></td>
               <td><span class="platform-tag">Bank Transfer</span></td>
               <td>BT202401140001</td>
-              <td>USD</td>
-              <td class="amount-large amount-positive">80,000</td>
               <td><a href="#" class="screenshot-link" onclick="viewScreenshot('screenshot3.jpg')">查看</a></td>
-              <td>2024-01-14 09:20</td>
               <td>2024-01-14 15:30</td>
               <td>张经理</td>
               <td>USD</td>
@@ -730,10 +721,8 @@
                 客户信用良好...
                 <div class="tooltip">客户历史还款记录良好，业务规模稳定增长，财务状况健康，无逾期记录。同意入账。</div>
               </td>
-              <td><span class="status-badge status-approved">已通过</span></td>
               <td>
                 <div class="action-buttons">
-                  <button class="btn btn-secondary btn-small" onclick="openModal('detail', '', this)">详情</button>
                 </div>
               </td>
             </tr>
@@ -742,13 +731,12 @@
               <td>US001</td>
               <td>contact@apple.com</td>
               <td>Apple Inc.</td>
+              <td>2024-01-13 11:15</td>
+              <td><span class="status-badge status-rejected">已拒绝</span></td>
               <td><span class="business-tag">Fulfillment</span></td>
               <td><span class="platform-tag">Wise</span></td>
               <td>WS202401130001</td>
-              <td>EUR</td>
-              <td class="amount-large amount-positive">25,000</td>
               <td><a href="#" class="screenshot-link" onclick="viewScreenshot('screenshot4.jpg')">查看</a></td>
-              <td>2024-01-13 11:15</td>
               <td>2024-01-13 17:20</td>
               <td>李经理</td>
               <td>-</td>
@@ -757,10 +745,8 @@
                 转账截图不清晰...
                 <div class="tooltip">转账截图不清晰，无法确认交易真实性。建议重新提供高清截图后再次申请。</div>
               </td>
-              <td><span class="status-badge status-rejected">已拒绝</span></td>
               <td>
                 <div class="action-buttons">
-                  <button class="btn btn-secondary btn-small" onclick="openModal('detail', '', this)">详情</button>
                 </div>
               </td>
             </tr>
@@ -822,7 +808,7 @@
             <span class="detail-value" id="detail-submit-time">2024-01-15 14:30</span>
           </div>
           <div class="detail-item">
-            <span class="detail-label">当前状态</span>
+            <span class="detail-label">审核状态</span>
             <span class="detail-value" id="detail-status">待审核</span>
           </div>
         </div>

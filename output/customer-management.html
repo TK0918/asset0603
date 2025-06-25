@@ -569,20 +569,20 @@
         <thead>
           <tr>
             <th width="50px">展开</th>
-            <th>账户ID</th>
             <th>商户ID</th>
             <th>商户名称</th>
             <th>商户邮箱</th>
+            <th>币种</th>
             <th>状态</th>
             <th>创建时间</th>
             <th>可用余额</th>
             <th>子业务</th>
+            <th>账户ID</th>
             <th>待入账金额</th>
             <th>真实金额</th>
             <th>冻结金额</th>
             <th>信用额度</th>
             <th>已用额度</th>
-            <th>操作</th>
           </tr>
         </thead>
         <tbody>
@@ -593,10 +593,10 @@
                 <span class="expand-icon">▶</span>
               </button>
             </td>
-            <td>US001</td>
             <td>Apple Inc.</td>
             <td>Apple</td>
             <td>contact@apple.com</td>
+            <td>USD</td>
             <td>
               <div class="status-toggle" onclick="event.stopPropagation()">
                 <input type="checkbox" id="status1" checked onchange="toggleStatus(1, this.checked)">
@@ -605,49 +605,40 @@
               <div class="status-label">激活</div>
             </td>
             <td>2024-01-15</td>
-            <td class="amount-available"><strong>$152,000</strong></td>
+            <td class="amount-available"><strong>152,000</strong></td>
             <td>Advertising+Fulfillment</td>
-            <td class="amount-transit">$5,000</td>
-            <td class="amount-real">$120,000</td>
-            <td class="amount-frozen">$8,000</td>
-            <td class="amount-credit">$50,000</td>
-            <td class="amount-used">$10,000</td>
-            <td onclick="event.stopPropagation()">
-              <div class="action-buttons">
-                <button class="btn btn-primary btn-small" onclick="openModal('edit', 1)">编辑</button>
-                <button class="btn btn-secondary btn-small" onclick="openModal('quota', 1)">调整额度</button>
-              </div>
-            </td>
+            <td></td>
+            <td class="amount-transit">5,000</td>
+            <td class="amount-real">120,000</td>
+            <td class="amount-frozen">8,000</td>
+            <td class="amount-credit">50,000</td>
+            <td class="amount-used">10,000</td>
           </tr>
           <!-- 账户1 - 子级 (广告业务) -->
           <tr class="child-row" data-parent="1">
             <td></td>
             <td colspan="6"></td>
-            <td class="amount-available">$92,000</td>
+            <td class="amount-available">92,000</td>
             <td><span class="business-tag">Advertising</span></td>
-            <td class="amount-transit">$3,000</td>
-            <td class="amount-real">$70,000</td>
-            <td class="amount-frozen">$5,000</td>
-            <td class="amount-credit">$30,000</td>
-            <td class="amount-used">$6,000</td>
-            <td>
-              <button class="btn btn-secondary btn-small" onclick="openModal('quota', 1, 'advertising')">调整额度</button>
-            </td>
+            <td>US001-ADV</td>
+            <td class="amount-transit">3,000</td>
+            <td class="amount-real">70,000</td>
+            <td class="amount-frozen">5,000</td>
+            <td class="amount-credit">30,000</td>
+            <td class="amount-used">6,000</td>
           </tr>
           <!-- 账户1 - 子级 (履约业务) -->
           <tr class="child-row" data-parent="1">
             <td></td>
             <td colspan="6"></td>
-            <td class="amount-available">$60,000</td>
+            <td class="amount-available">60,000</td>
             <td><span class="business-tag">Fulfillment</span></td>
-            <td class="amount-transit">$2,000</td>
-            <td class="amount-real">$50,000</td>
-            <td class="amount-frozen">$3,000</td>
-            <td class="amount-credit">$20,000</td>
-            <td class="amount-used">$4,000</td>
-            <td>
-              <button class="btn btn-secondary btn-small" onclick="openModal('quota', 1, 'fulfillment')">调整额度</button>
-            </td>
+            <td>US001-FUL</td>
+            <td class="amount-transit">2,000</td>
+            <td class="amount-real">50,000</td>
+            <td class="amount-frozen">3,000</td>
+            <td class="amount-credit">20,000</td>
+            <td class="amount-used">4,000</td>
           </tr>
           
           <!-- 账户2 - 父级 -->
@@ -657,10 +648,10 @@
                 <span class="expand-icon">▶</span>
               </button>
             </td>
-            <td>US002</td>
             <td>Microsoft Corporation</td>
             <td>Microsoft</td>
             <td>service@microsoft.com</td>
+            <td>USD</td>
             <td>
               <div class="status-toggle" onclick="event.stopPropagation()">
                 <input type="checkbox" id="status2" checked onchange="toggleStatus(2, this.checked)">
@@ -669,49 +660,40 @@
               <div class="status-label">激活</div>
             </td>
             <td>2024-01-20</td>
-            <td class="amount-available"><strong>$99,000</strong></td>
+            <td class="amount-available"><strong>99,000</strong></td>
             <td>Advertising+Fulfillment</td>
-            <td class="amount-transit">$3,000</td>
-            <td class="amount-real">$80,000</td>
-            <td class="amount-frozen">$6,000</td>
-            <td class="amount-credit">$30,000</td>
-            <td class="amount-used">$5,000</td>
-            <td onclick="event.stopPropagation()">
-              <div class="action-buttons">
-                <button class="btn btn-primary btn-small" onclick="openModal('edit', 2)">编辑</button>
-                <button class="btn btn-secondary btn-small" onclick="openModal('quota', 2)">调整额度</button>
-              </div>
-            </td>
+            <td></td>
+            <td class="amount-transit">3,000</td>
+            <td class="amount-real">80,000</td>
+            <td class="amount-frozen">6,000</td>
+            <td class="amount-credit">30,000</td>
+            <td class="amount-used">5,000</td>
           </tr>
           <!-- 账户2 - 子级 (广告业务) -->
           <tr class="child-row" data-parent="2">
             <td></td>
             <td colspan="6"></td>
-            <td class="amount-available">$59,000</td>
+            <td class="amount-available">59,000</td>
             <td><span class="business-tag">Advertising</span></td>
-            <td class="amount-transit">$2,000</td>
-            <td class="amount-real">$48,000</td>
-            <td class="amount-frozen">$4,000</td>
-            <td class="amount-credit">$18,000</td>
-            <td class="amount-used">$3,000</td>
-            <td>
-              <button class="btn btn-secondary btn-small" onclick="openModal('quota', 2, 'advertising')">调整额度</button>
-            </td>
+            <td>US002-ADV</td>
+            <td class="amount-transit">2,000</td>
+            <td class="amount-real">48,000</td>
+            <td class="amount-frozen">4,000</td>
+            <td class="amount-credit">18,000</td>
+            <td class="amount-used">3,000</td>
           </tr>
           <!-- 账户2 - 子级 (履约业务) -->
           <tr class="child-row" data-parent="2">
             <td></td>
             <td colspan="6"></td>
-            <td class="amount-available">$40,000</td>
+            <td class="amount-available">40,000</td>
             <td><span class="business-tag">Fulfillment</span></td>
-            <td class="amount-transit">$1,000</td>
-            <td class="amount-real">$32,000</td>
-            <td class="amount-frozen">$2,000</td>
-            <td class="amount-credit">$12,000</td>
-            <td class="amount-used">$2,000</td>
-            <td>
-              <button class="btn btn-secondary btn-small" onclick="openModal('quota', 2, 'fulfillment')">调整额度</button>
-            </td>
+            <td>US002-FUL</td>
+            <td class="amount-transit">1,000</td>
+            <td class="amount-real">32,000</td>
+            <td class="amount-frozen">2,000</td>
+            <td class="amount-credit">12,000</td>
+            <td class="amount-used">2,000</td>
           </tr>
 
           <!-- 账户3 - 父级 -->
@@ -721,10 +703,10 @@
                 <span class="expand-icon">▶</span>
               </button>
             </td>
-            <td>US003</td>
             <td>Google LLC</td>
             <td>Google</td>
             <td>contact@google.com</td>
+            <td>USD</td>
             <td>
               <div class="status-toggle" onclick="event.stopPropagation()">
                 <input type="checkbox" id="status3" onchange="toggleStatus(3, this.checked)">
@@ -733,34 +715,27 @@
               <div class="status-label">停用</div>
             </td>
             <td>2024-02-01</td>
-            <td class="amount-available"><strong>$73,000</strong></td>
+            <td class="amount-available"><strong>73,000</strong></td>
             <td>Advertising</td>
-            <td class="amount-transit">$2,000</td>
-            <td class="amount-real">$60,000</td>
-            <td class="amount-frozen">$4,000</td>
-            <td class="amount-credit">$20,000</td>
-            <td class="amount-used">$3,000</td>
-            <td onclick="event.stopPropagation()">
-              <div class="action-buttons">
-                <button class="btn btn-primary btn-small" onclick="openModal('edit', 3)">编辑</button>
-                <button class="btn btn-secondary btn-small" onclick="openModal('quota', 3)">调整额度</button>
-              </div>
-            </td>
+            <td></td>
+            <td class="amount-transit">2,000</td>
+            <td class="amount-real">60,000</td>
+            <td class="amount-frozen">4,000</td>
+            <td class="amount-credit">20,000</td>
+            <td class="amount-used">3,000</td>
           </tr>
           <!-- 账户3 - 子级 (广告业务) -->
           <tr class="child-row" data-parent="3">
             <td></td>
             <td colspan="6"></td>
-            <td class="amount-available">$73,000</td>
+            <td class="amount-available">73,000</td>
             <td><span class="business-tag">Advertising</span></td>
-            <td class="amount-transit">$2,000</td>
-            <td class="amount-real">$60,000</td>
-            <td class="amount-frozen">$4,000</td>
-            <td class="amount-credit">$20,000</td>
-            <td class="amount-used">$3,000</td>
-            <td>
-              <button class="btn btn-secondary btn-small" onclick="openModal('quota', 3, 'advertising')">调整额度</button>
-            </td>
+            <td>US003-ADV</td>
+            <td class="amount-transit">2,000</td>
+            <td class="amount-real">60,000</td>
+            <td class="amount-frozen">4,000</td>
+            <td class="amount-credit">20,000</td>
+            <td class="amount-used">3,000</td>
           </tr>
         </tbody>
       </table>
