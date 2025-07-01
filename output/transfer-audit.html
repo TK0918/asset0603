@@ -342,46 +342,7 @@
       text-decoration: underline;
     }
 
-    /* Tooltip for remarks */
-    .remark-cell {
-      position: relative;
-      max-width: 120px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      cursor: help;
-    }
 
-    .remark-cell:hover .tooltip {
-      display: block;
-    }
-
-    .tooltip {
-      display: none;
-      position: absolute;
-      top: -5px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1f2937;
-      color: white;
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-size: 12px;
-      white-space: normal;
-      width: 200px;
-      z-index: 1000;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .tooltip::before {
-      content: '';
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      margin-left: -5px;
-      border-width: 5px;
-      border-style: solid;
-      border-color: #1f2937 transparent transparent transparent;
-    }
 
     /* Modal */
     .modal {
@@ -647,7 +608,6 @@
               <th width="80px">审核人</th>
               <th width="80px">入账币种</th>
               <th width="100px">入账金额</th>
-              <th width="120px">备注</th>
               <th width="150px">操作</th>
             </tr>
           </thead>
@@ -667,9 +627,6 @@
               <td>-</td>
               <td>-</td>
               <td>-</td>
-              <td class="remark-cell">
-                -
-              </td>
               <td>
                 <div class="action-buttons">
                   <button class="btn btn-success btn-small" onclick="openModal('audit', 'approve', this)">通过</button>
@@ -692,9 +649,6 @@
               <td>-</td>
               <td>-</td>
               <td>-</td>
-              <td class="remark-cell">
-                -
-              </td>
               <td>
                 <div class="action-buttons">
                   <button class="btn btn-success btn-small" onclick="openModal('audit', 'approve', this)">通过</button>
@@ -717,10 +671,6 @@
               <td>张经理</td>
               <td>USD</td>
               <td class="amount-large amount-positive">80,000</td>
-              <td class="remark-cell">
-                客户信用良好...
-                <div class="tooltip">客户历史还款记录良好，业务规模稳定增长，财务状况健康，无逾期记录。同意入账。</div>
-              </td>
               <td>
                 <div class="action-buttons">
                 </div>
@@ -741,10 +691,6 @@
               <td>李经理</td>
               <td>-</td>
               <td>-</td>
-              <td class="remark-cell">
-                转账截图不清晰...
-                <div class="tooltip">转账截图不清晰，无法确认交易真实性。建议重新提供高清截图后再次申请。</div>
-              </td>
               <td>
                 <div class="action-buttons">
                 </div>
