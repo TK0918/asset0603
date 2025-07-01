@@ -218,7 +218,7 @@
 
     .transfer-table {
       width: 100%;
-      min-width: 1800px;
+      min-width: 1950px;
       border-collapse: collapse;
       position: relative;
     }
@@ -342,7 +342,14 @@
       text-decoration: underline;
     }
 
-
+    .audit-remark {
+      max-width: 150px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 12px;
+      color: #374151;
+    }
 
     /* Modal */
     .modal {
@@ -608,6 +615,7 @@
               <th width="80px">审核人</th>
               <th width="80px">入账币种</th>
               <th width="100px">入账金额</th>
+              <th width="150px">审核备注</th>
               <th width="150px">操作</th>
             </tr>
           </thead>
@@ -627,6 +635,7 @@
               <td>-</td>
               <td>-</td>
               <td>-</td>
+              <td class="audit-remark">-</td>
               <td>
                 <div class="action-buttons">
                   <button class="btn btn-success btn-small" onclick="openModal('audit', 'approve', this)">通过</button>
@@ -649,6 +658,7 @@
               <td>-</td>
               <td>-</td>
               <td>-</td>
+              <td class="audit-remark">-</td>
               <td>
                 <div class="action-buttons">
                   <button class="btn btn-success btn-small" onclick="openModal('audit', 'approve', this)">通过</button>
@@ -671,6 +681,7 @@
               <td>张经理</td>
               <td>USD</td>
               <td class="amount-large amount-positive">80,000</td>
+              <td class="audit-remark">客户信用良好，业务稳定，同意入账</td>
               <td>
                 <div class="action-buttons">
                 </div>
@@ -691,6 +702,7 @@
               <td>李经理</td>
               <td>-</td>
               <td>-</td>
+              <td class="audit-remark">转账截图不清晰，无法确认真实性</td>
               <td>
                 <div class="action-buttons">
                 </div>
@@ -819,8 +831,8 @@
           </div>
         </div>
         <div class="form-group">
-          <label id="commentLabel">备注 *</label>
-          <textarea class="form-input" name="auditComment" rows="4" placeholder="请填写备注信息" required></textarea>
+          <label id="commentLabel">审核备注 *</label>
+          <textarea class="form-input" name="auditComment" rows="4" placeholder="请填写审核备注信息" required></textarea>
         </div>
         <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 30px;">
           <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
@@ -957,7 +969,7 @@
           submitBtn.textContent = '确认通过';
           submitBtn.className = 'btn btn-success';
           creditInfoGroup.style.display = 'block';
-          commentLabel.textContent = '备注';
+          commentLabel.textContent = '审核备注';
           document.querySelector('textarea[name="auditComment"]').required = false;
           document.querySelector('select[name="creditCurrency"]').required = true;
           document.querySelector('input[name="creditAmount"]').required = true;
@@ -966,7 +978,7 @@
           submitBtn.textContent = '确认拒绝';
           submitBtn.className = 'btn btn-danger';
           creditInfoGroup.style.display = 'none';
-          commentLabel.textContent = '备注 *';
+          commentLabel.textContent = '审核备注 *';
           document.querySelector('textarea[name="auditComment"]').required = true;
           document.querySelector('select[name="creditCurrency"]').required = false;
           document.querySelector('input[name="creditAmount"]').required = false;
@@ -1046,18 +1058,36 @@
         const statusCell = row.querySelector('.status-badge');
         const checkboxCell = row.querySelector('.row-select');
         const actionCell = row.querySelector('.action-buttons');
+        const remarkCell = row.querySelector('.audit-remark');
+        const auditComment = document.querySelector('textarea[name="auditComment"]').value;
         
         if (currentAuditAction === 'approve') {
           statusCell.textContent = '已通过';
           statusCell.className = 'status-badge status-approved';
+          // 填入审核时间、审核人、入账信息
+          const cells = row.querySelectorAll('td');
+          cells[10].textContent = new Date().toLocaleString('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}).replace(/\//g, '-');
+          cells[11].textContent = '当前用户';
+          cells[12].textContent = document.querySelector('select[name="creditCurrency"]').value;
+          cells[13].innerHTML = `<span class="amount-large amount-positive">${parseFloat(document.querySelector('input[name="creditAmount"]').value).toLocaleString()}</span>`;
         } else {
           statusCell.textContent = '已拒绝';
           statusCell.className = 'status-badge status-rejected';
+          // 填入审核时间、审核人
+          const cells = row.querySelectorAll('td');
+          cells[10].textContent = new Date().toLocaleString('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}).replace(/\//g, '-');
+          cells[11].textContent = '当前用户';
+        }
+        
+        // 更新备注信息
+        if (auditComment.trim()) {
+          remarkCell.textContent = auditComment;
+          remarkCell.title = auditComment; // 添加完整内容的提示
         }
         
         checkboxCell.disabled = true;
         checkboxCell.checked = false;
-        actionCell.innerHTML = '<button class="btn btn-secondary btn-small" onclick="openModal(\'detail\', \'\', this)">详情</button>';
+        actionCell.innerHTML = '';
       }
     });
 
