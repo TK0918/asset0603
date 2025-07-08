@@ -251,6 +251,12 @@
             font-size: 14px;
         }
 
+        .form-label.required::after {
+            content: ' *';
+            color: var(--danger-color);
+            font-weight: bold;
+        }
+
         .form-input,
         .form-select {
             width: 100%;
@@ -270,8 +276,22 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
+        .form-input.error,
+        .form-select.error {
+            border-color: var(--danger-color);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+
         .form-input::placeholder {
             color: var(--text-secondary);
+        }
+
+        .error-message {
+            display: block;
+            color: var(--danger-color);
+            font-size: 12px;
+            margin-top: 4px;
+            min-height: 16px;
         }
 
         /* 文件上传 */
@@ -489,24 +509,27 @@
                 <div id="onlineForm" class="tab-content">
                     <form id="onlineRechargeForm">
                         <div class="form-group">
-                            <label class="form-label" data-i18n="currency">充值币种</label>
-                            <select class="form-select" id="currency">
+                            <label class="form-label required" data-i18n="currency">充值币种</label>
+                            <select class="form-select" id="currency" required>
                                 <option value="USD">USD - 美元</option>
                             </select>
+                            <span class="error-message" id="currency-error"></span>
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label" data-i18n="amount">充值金额</label>
+                            <label class="form-label required" data-i18n="amount">充值金额</label>
                             <input type="number" class="form-input" id="amount" placeholder="请输入充值金额" min="1" step="0.01" required data-i18n-placeholder="amount-placeholder">
+                            <span class="error-message" id="amount-error"></span>
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label" data-i18n="payment-platform">支付平台</label>
+                            <label class="form-label required" data-i18n="payment-platform">支付平台</label>
                             <select class="form-select" id="paymentPlatform" required>
                                 <option value="" data-i18n="select-platform">请选择支付平台</option>
                                 <option value="stripe">Stripe</option>
                                 <option value="paypal">PayPal</option>
                             </select>
+                            <span class="error-message" id="paymentPlatform-error"></span>
                         </div>
                         
                         <button type="submit" class="btn btn-primary btn-full" data-i18n="go-payment">去支付</button>
@@ -517,7 +540,7 @@
                 <div id="offlineForm" class="tab-content hidden">
                     <form id="offlineTransferForm">
                         <div class="form-group">
-                            <label class="form-label" data-i18n="transfer-platform">第三方支付平台</label>
+                            <label class="form-label required" data-i18n="transfer-platform">第三方支付平台</label>
                             <select class="form-select" id="transferPlatform" required>
                                 <option value="" data-i18n="select-platform">请选择支付平台</option>
                                 <option value="stripe">Stripe</option>
@@ -525,15 +548,17 @@
                                 <option value="wise">Wise</option>
                                 <option value="remitly">Remitly</option>
                             </select>
+                            <span class="error-message" id="transferPlatform-error"></span>
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label" data-i18n="transaction-id">交易ID</label>
+                            <label class="form-label required" data-i18n="transaction-id">交易ID</label>
                             <input type="text" class="form-input" id="transactionId" placeholder="请输入转账交易ID" required data-i18n-placeholder="transaction-id-placeholder">
+                            <span class="error-message" id="transactionId-error"></span>
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label" data-i18n="upload-files">上传文件</label>
+                            <label class="form-label required" data-i18n="upload-files">上传文件</label>
                             <div class="file-upload" onclick="document.getElementById('fileInput').click()" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
                                 <div class="file-upload-icon">📁</div>
                                 <div class="file-upload-text" data-i18n="upload-text">点击或拖拽文件到此处上传</div>
@@ -541,6 +566,7 @@
                                 <input type="file" id="fileInput" multiple accept=".jpg,.jpeg,.png,.pdf" style="display: none;" onchange="handleFileSelect(event)">
                             </div>
                             <div id="fileList" class="file-list"></div>
+                            <span class="error-message" id="files-error"></span>
                         </div>
                         
                         <button type="submit" class="btn btn-primary btn-full" data-i18n="submit">提交</button>
@@ -606,7 +632,14 @@
                 'file-too-large': '文件大小不能超过20MB',
                 'too-many-files': '最多只能上传10个文件',
                 'invalid-file-type': '仅支持JPG、PNG、PDF格式文件',
-                'remove': '移除'
+                'remove': '移除',
+                'validation-currency': '请选择充值币种',
+                'validation-amount': '请输入有效的充值金额',
+                'validation-amount-min': '充值金额不能小于1',
+                'validation-payment-platform': '请选择支付平台',
+                'validation-transfer-platform': '请选择第三方支付平台',
+                'validation-transaction-id': '请输入转账交易ID',
+                'validation-files': '请至少上传一个文件'
             },
             en: {
                 'title': 'Recharge & Transfer Component',
@@ -642,7 +675,14 @@
                 'file-too-large': 'File size cannot exceed 20MB',
                 'too-many-files': 'You can upload up to 10 files',
                 'invalid-file-type': 'Only JPG, PNG, PDF formats are supported',
-                'remove': 'Remove'
+                'remove': 'Remove',
+                'validation-currency': 'Please select a currency',
+                'validation-amount': 'Please enter a valid amount',
+                'validation-amount-min': 'Amount cannot be less than 1',
+                'validation-payment-platform': 'Please select a payment platform',
+                'validation-transfer-platform': 'Please select a third-party payment platform',
+                'validation-transaction-id': 'Please enter transaction ID',
+                'validation-files': 'Please upload at least one file'
             }
         };
 
@@ -724,22 +764,143 @@
                 e.preventDefault();
                 handleOfflineTransfer();
             });
+            
+            // 添加输入监听，实时清除错误状态
+            addInputListeners();
+        }
+        
+        // 添加输入监听器
+        function addInputListeners() {
+            // 在线充值表单字段
+            ['currency', 'amount', 'paymentPlatform'].forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.addEventListener('input', function() {
+                        clearFieldError(fieldId);
+                    });
+                    field.addEventListener('change', function() {
+                        clearFieldError(fieldId);
+                    });
+                }
+            });
+            
+            // 线下转账表单字段
+            ['transferPlatform', 'transactionId'].forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.addEventListener('input', function() {
+                        clearFieldError(fieldId);
+                    });
+                    field.addEventListener('change', function() {
+                        clearFieldError(fieldId);
+                    });
+                }
+            });
+        }
+        
+        // 清除单个字段的错误状态
+        function clearFieldError(fieldId) {
+            const field = document.getElementById(fieldId);
+            const errorElement = document.getElementById(fieldId + '-error');
+            
+            if (field) {
+                field.classList.remove('error');
+            }
+            if (errorElement) {
+                errorElement.textContent = '';
+            }
+        }
+
+        // 表单验证函数
+        function validateOnlineForm() {
+            let isValid = true;
+            
+            // 清除之前的错误状态
+            clearFormErrors('onlineRechargeForm');
+            
+            // 验证币种
+            const currency = document.getElementById('currency');
+            if (!currency.value || currency.value === '') {
+                showFieldError('currency', 'validation-currency');
+                isValid = false;
+            }
+            
+            // 验证金额
+            const amount = document.getElementById('amount');
+            if (!amount.value || amount.value === '') {
+                showFieldError('amount', 'validation-amount');
+                isValid = false;
+            } else if (parseFloat(amount.value) < 1) {
+                showFieldError('amount', 'validation-amount-min');
+                isValid = false;
+            }
+            
+            // 验证支付平台
+            const platform = document.getElementById('paymentPlatform');
+            if (!platform.value || platform.value === '') {
+                showFieldError('paymentPlatform', 'validation-payment-platform');
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        function validateOfflineForm() {
+            let isValid = true;
+            
+            // 清除之前的错误状态
+            clearFormErrors('offlineTransferForm');
+            
+            // 验证支付平台
+            const platform = document.getElementById('transferPlatform');
+            if (!platform.value || platform.value === '') {
+                showFieldError('transferPlatform', 'validation-transfer-platform');
+                isValid = false;
+            }
+            
+            // 验证交易ID
+            const transactionId = document.getElementById('transactionId');
+            if (!transactionId.value || transactionId.value.trim() === '') {
+                showFieldError('transactionId', 'validation-transaction-id');
+                isValid = false;
+            }
+            
+            // 验证文件上传
+            if (uploadedFiles.length === 0) {
+                showFieldError('files', 'validation-files');
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        function showFieldError(fieldId, messageKey) {
+            const field = document.getElementById(fieldId);
+            const errorElement = document.getElementById(fieldId + '-error');
+            
+            field.classList.add('error');
+            if (errorElement) {
+                errorElement.textContent = translations[currentLang][messageKey];
+            }
+        }
+        
+        function clearFormErrors(formId) {
+            const form = document.getElementById(formId);
+            const errorFields = form.querySelectorAll('.form-input.error, .form-select.error');
+            const errorMessages = form.querySelectorAll('.error-message');
+            
+            errorFields.forEach(field => field.classList.remove('error'));
+            errorMessages.forEach(msg => msg.textContent = '');
         }
 
         // 处理在线充值
         function handleOnlineRecharge() {
+            if (!validateOnlineForm()) {
+                return;
+            }
+            
             const amount = document.getElementById('amount').value;
             const platform = document.getElementById('paymentPlatform').value;
-
-            if (!amount) {
-                showAlert(translations[currentLang]['error'], translations[currentLang]['please-fill-amount']);
-                return;
-            }
-
-            if (!platform) {
-                showAlert(translations[currentLang]['error'], translations[currentLang]['please-select-platform']);
-                return;
-            }
 
             // 生成支付URL（实际项目中应该从后端获取）
             const paymentUrls = {
@@ -760,18 +921,12 @@
 
         // 处理线下转账
         function handleOfflineTransfer() {
+            if (!validateOfflineForm()) {
+                return;
+            }
+            
             const platform = document.getElementById('transferPlatform').value;
             const transactionId = document.getElementById('transactionId').value;
-
-            if (!platform) {
-                showAlert(translations[currentLang]['error'], translations[currentLang]['please-select-platform']);
-                return;
-            }
-
-            if (!transactionId) {
-                showAlert(translations[currentLang]['error'], translations[currentLang]['please-fill-transaction-id']);
-                return;
-            }
 
             // 这里可以添加实际的提交逻辑
             console.log('Transfer data:', {
@@ -834,11 +989,21 @@
             });
 
             updateFileList();
+            
+            // 如果有文件了，清除文件错误状态
+            if (uploadedFiles.length > 0) {
+                clearFieldError('files');
+            }
         }
 
         function removeFile(index) {
             uploadedFiles.splice(index, 1);
             updateFileList();
+            
+            // 如果没有文件了，需要重新验证
+            if (uploadedFiles.length === 0) {
+                // 但不直接显示错误，等用户提交时再显示
+            }
         }
 
         function updateFileList() {
@@ -885,6 +1050,10 @@
             document.getElementById('offlineTransferForm').reset();
             uploadedFiles = [];
             updateFileList();
+            
+            // 清除所有错误状态
+            clearFormErrors('onlineRechargeForm');
+            clearFormErrors('offlineTransferForm');
             
             // 重置到在线充值标签页
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));

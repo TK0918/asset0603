@@ -1249,3 +1249,80 @@ Public component/
 - CSS样式：约500行  
 - JavaScript逻辑：约200行
 - 总计：918行，32KB
+
+### [优化] 充值转账公共组件表单验证 - 2024年
+**修改内容：**
+- 完善表单验证功能，所有字段设置为必填
+- 添加红色错误提示，支持中英文切换
+- 实现实时错误状态清除功能
+
+**主要改进：**
+
+1. **必填字段标识**
+   - 所有表单标签添加红色星号（*）标识必填
+   - CSS样式：`.form-label.required::after`
+   - 视觉上明确必填要求
+
+2. **表单验证机制**
+   - 在线充值表单：币种、金额、支付平台全部必填
+   - 线下转账表单：支付平台、交易ID、文件上传全部必填
+   - 金额最小值验证（不小于1）
+   - 文件上传至少需要一个文件
+
+3. **错误提示样式**
+   - 错误输入框：红色边框和阴影效果
+   - 错误消息：输入框下方红色文字提示
+   - CSS类：`.form-input.error`, `.error-message`
+   - 最小高度16px，避免页面跳动
+
+4. **多语言错误提示**
+   - 中文错误信息：
+     - "请选择充值币种"
+     - "请输入有效的充值金额"
+     - "充值金额不能小于1"
+     - "请选择支付平台"
+     - "请选择第三方支付平台"
+     - "请输入转账交易ID"
+     - "请至少上传一个文件"
+   - 英文错误信息：
+     - "Please select a currency"
+     - "Please enter a valid amount"
+     - "Amount cannot be less than 1"
+     - "Please select a payment platform"
+     - "Please select a third-party payment platform"
+     - "Please enter transaction ID"
+     - "Please upload at least one file"
+
+5. **实时错误清除**
+   - 用户开始输入时自动清除错误状态
+   - 监听input和change事件
+   - 文件上传成功后自动清除文件错误
+   - 表单重置时清除所有错误状态
+
+6. **验证函数设计**
+   - `validateOnlineForm()` - 在线充值表单验证
+   - `validateOfflineForm()` - 线下转账表单验证
+   - `showFieldError()` - 显示字段错误
+   - `clearFieldError()` - 清除单个字段错误
+   - `clearFormErrors()` - 清除表单所有错误
+   - `addInputListeners()` - 添加输入监听器
+
+7. **用户体验优化**
+   - 点击提交按钮时统一验证所有字段
+   - 错误提示精确到具体字段
+   - 实时清除错误状态，减少用户困扰
+   - 保持原有功能完整性
+
+**技术实现：**
+- CSS伪元素实现必填标识
+- JavaScript事件监听实现实时验证
+- 表单状态管理和错误提示控制
+- 多语言配置扩展
+
+**影响范围：**
+- 提升表单数据质量和用户体验
+- 减少无效提交和错误操作
+- 提供清晰的操作指导和反馈
+- 保持组件的通用性和可维护性
+
+**文件位置：** Public component/button.html
