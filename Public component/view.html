@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>钱包余额展示组件</title>
+    <style>
+        /* 基础变量定义 */
+        :root {
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #06b6d4;
+            --bg-color: #ffffff;
+            --surface-color: #f9fafb;
+            --card-color: #ffffff;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --border-color: #e5e7eb;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        /* 深色主题 */
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --surface-color: #1e293b;
+            --card-color: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #475569;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, var(--bg-color) 0%, var(--surface-color) 100%);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* 主容器 */
+        .demo-container {
+            text-align: center;
+            background: var(--surface-color);
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .demo-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .demo-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* 控制按钮 */
+        .control-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 12px 20px;
+            border: 1px solid var(--border-color);
+            background: var(--card-color);
+            color: var(--text-primary);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .control-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* 钱包余额卡片 */
+        .wallet-card {
+            background: var(--card-color);
+            border-radius: var(--radius);
+            padding: 32px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 auto;
+            max-width: 400px;
+        }
+
+        .wallet-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
+        }
+
+        .wallet-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 24px;
+            color: white;
+            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+        }
+
+        .wallet-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .wallet-balance {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            font-family: 'SF Pro Display', -apple-system, sans-serif;
+        }
+
+        .wallet-currency {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-left: 8px;
+            font-weight: 600;
+        }
+
+        .wallet-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 16px;
+            opacity: 0.8;
+        }
+
+        /* Tooltip样式 */
+        .tooltip {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            min-width: 300px;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            backdrop-filter: blur(12px);
+        }
+
+        .wallet-card:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+            top: -240px;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: var(--card-color);
+        }
+
+        .tooltip-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .tooltip-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tooltip-item:last-child {
+            border-bottom: none;
+        }
+
+        .tooltip-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .tooltip-value {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* 金额颜色 */
+        .amount-available {
+            color: var(--success-color);
+        }
+
+        .amount-frozen {
+            color: var(--warning-color);
+        }
+
+        .amount-credit {
+            color: var(--info-color);
+        }
+
+        .amount-used {
+            color: var(--danger-color);
+        }
+
+        .amount-total {
+            color: var(--primary-color);
+        }
+
+        /* 状态指示器 */
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-available {
+            background: var(--success-color);
+        }
+
+        .status-frozen {
+            background: var(--warning-color);
+        }
+
+        .status-credit {
+            background: var(--info-color);
+        }
+
+        .status-used {
+            background: var(--danger-color);
+        }
+
+        /* 多个钱包展示 */
+        .wallet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .wallet-card-small {
+            background: var(--card-color);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .wallet-card-small:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .small-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+            margin-bottom: 12px;
+        }
+
+        .small-balance {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .small-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .demo-container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .wallet-card {
+                padding: 24px;
+                max-width: 100%;
+            }
+            
+            .wallet-balance {
+                font-size: 28px;
+            }
+            
+            .tooltip {
+                min-width: 280px;
+                left: 10px;
+                right: 10px;
+                transform: none;
+            }
+            
+            .wallet-card:hover .tooltip {
+                left: 10px;
+                transform: none;
+            }
+            
+            .control-buttons {
+                gap: 12px;
+            }
+            
+            .control-btn {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* 加载状态 */
+        .loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container fade-in-up">
+        <h1 class="demo-title" data-i18n="title">钱包余额展示组件</h1>
+        <p class="demo-subtitle" data-i18n="subtitle">悬停查看详细余额信息，支持多主题和国际化</p>
+        
+        <!-- 控制按钮 -->
+        <div class="control-buttons">
+            <button class="control-btn" onclick="toggleTheme()" data-i18n="toggle-theme">切换主题</button>
+            <button class="control-btn" onclick="toggleLanguage()" data-i18n="toggle-language">切换语言</button>
+            <button class="control-btn" onclick="refreshBalance()" data-i18n="refresh">刷新余额</button>
+        </div>
+        
+        <!-- 主钱包卡片 -->
+        <div class="wallet-card" id="mainWallet">
+            <div class="wallet-icon">💰</div>
+            <div class="wallet-label" data-i18n="available-balance">可用余额</div>
+            <div class="wallet-balance" id="mainBalance">
+                $12,580.50
+                <span class="wallet-currency">USD</span>
+            </div>
+            <div class="wallet-hint" data-i18n="hover-hint">悬停查看详细信息</div>
+            
+            <!-- Tooltip详细信息 -->
+            <div class="tooltip">
+                <div class="tooltip-title" data-i18n="balance-details">余额详情</div>
+                <div class="tooltip-item">
+                    <span class="tooltip-label">
+                        <span class="status-indicator status-available"></span>
+                        <span data-i18n="real-amount">真实金额</span>
+                    </span>
+                    <span class="tooltip-value amount-available">$15,230.75</span>
+                </div>
+                <div class="tooltip-item">
+                    <span class="tooltip-label">
+                        <span class="status-indicator status-frozen"></span>
+                        <span data-i18n="frozen-amount">冻结金额</span>
+                    </span>
+                    <span class="tooltip-value amount-frozen">$2,650.25</span>
+                </div>
+                <div class="tooltip-item">
+                    <span class="tooltip-label">
+                        <span class="status-indicator status-credit"></span>
+                        <span data-i18n="credit-limit">信用额度</span>
+                    </span>
+                    <span class="tooltip-value amount-credit">$50,000.00</span>
+                </div>
+                <div class="tooltip-item">
+                    <span class="tooltip-label">
+                        <span class="status-indicator status-used"></span>
+                        <span data-i18n="used-credit">已用额度</span>
+                    </span>
+                    <span class="tooltip-value amount-used">$8,420.15</span>
+                </div>
+                <div class="tooltip-item">
+                    <span class="tooltip-label">
+                        <span class="status-indicator status-available"></span>
+                        <span data-i18n="total-available">总可用</span>
+                    </span>
+                    <span class="tooltip-value amount-total">$54,160.35</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 多币种钱包展示 -->
+        <div class="wallet-grid">
+            <div class="wallet-card-small" onclick="showWalletDetails('USD')">
+                <div class="small-icon" style="background: linear-gradient(135deg, #10b981, #059669);">$</div>
+                <div class="small-balance">12,580.50</div>
+                <div class="small-label" data-i18n="usd-wallet">美元钱包</div>
+            </div>
+            
+            <div class="wallet-card-small" onclick="showWalletDetails('EUR')">
+                <div class="small-icon" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">€</div>
+                <div class="small-balance">8,420.30</div>
+                <div class="small-label" data-i18n="eur-wallet">欧元钱包</div>
+            </div>
+            
+            <div class="wallet-card-small" onclick="showWalletDetails('CNY')">
+                <div class="small-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">¥</div>
+                <div class="small-balance">98,650.80</div>
+                <div class="small-label" data-i18n="cny-wallet">人民币钱包</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let currentLang = 'zh';
+        let currentTheme = 'light';
+        let balanceData = {
+            USD: {
+                available: 12580.50,
+                real: 15230.75,
+                frozen: 2650.25,
+                creditLimit: 50000.00,
+                usedCredit: 8420.15,
+                total: 54160.35
+            },
+            EUR: {
+                available: 8420.30,
+                real: 9850.50,
+                frozen: 1430.20,
+                creditLimit: 30000.00,
+                usedCredit: 5680.40,
+                total: 33850.20
+            },
+            CNY: {
+                available: 98650.80,
+                real: 120350.60,
+                frozen: 21699.80,
+                creditLimit: 300000.00,
+                usedCredit: 45320.75,
+                total: 354029.65
+            }
+        };
+
+        // 多语言配置
+        const translations = {
+            zh: {
+                'title': '钱包余额展示组件',
+                'subtitle': '悬停查看详细余额信息，支持多主题和国际化',
+                'toggle-theme': '切换主题',
+                'toggle-language': '切换语言',
+                'refresh': '刷新余额',
+                'available-balance': '可用余额',
+                'hover-hint': '悬停查看详细信息',
+                'balance-details': '余额详情',
+                'real-amount': '真实金额',
+                'frozen-amount': '冻结金额',
+                'credit-limit': '信用额度',
+                'used-credit': '已用额度',
+                'total-available': '总可用',
+                'usd-wallet': '美元钱包',
+                'eur-wallet': '欧元钱包',
+                'cny-wallet': '人民币钱包',
+                'wallet-details': '钱包详情',
+                'updated': '余额已更新'
+            },
+            en: {
+                'title': 'Wallet Balance Display Component',
+                'subtitle': 'Hover to view detailed balance information with multi-theme and i18n support',
+                'toggle-theme': 'Toggle Theme',
+                'toggle-language': 'Toggle Language',
+                'refresh': 'Refresh Balance',
+                'available-balance': 'Available Balance',
+                'hover-hint': 'Hover for details',
+                'balance-details': 'Balance Details',
+                'real-amount': 'Real Amount',
+                'frozen-amount': 'Frozen Amount',
+                'credit-limit': 'Credit Limit',
+                'used-credit': 'Used Credit',
+                'total-available': 'Total Available',
+                'usd-wallet': 'USD Wallet',
+                'eur-wallet': 'EUR Wallet',
+                'cny-wallet': 'CNY Wallet',
+                'wallet-details': 'Wallet Details',
+                'updated': 'Balance Updated'
+            }
+        };
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateLanguage();
+            updateBalance('USD');
+        });
+
+        // 主题切换
+        function toggleTheme() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            
+            // 添加切换动画
+            document.body.style.transition = 'all 0.3s ease';
+            setTimeout(() => {
+                document.body.style.transition = '';
+            }, 300);
+        }
+
+        // 语言切换
+        function toggleLanguage() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            updateLanguage();
+            updateBalance('USD'); // 重新更新余额显示
+        }
+
+        // 更新语言
+        function updateLanguage() {
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang][key]) {
+                    el.textContent = translations[currentLang][key];
+                }
+            });
+
+            // 更新HTML语言属性
+            document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+        }
+
+        // 更新余额显示
+        function updateBalance(currency) {
+            const data = balanceData[currency];
+            const symbols = { USD: '$', EUR: '€', CNY: '¥' };
+            const symbol = symbols[currency];
+            
+            // 更新主余额
+            document.getElementById('mainBalance').innerHTML = `
+                ${symbol}${formatNumber(data.available)}
+                <span class="wallet-currency">${currency}</span>
+            `;
+            
+            // 更新详细信息
+            const tooltip = document.querySelector('.tooltip');
+            tooltip.innerHTML = `
+                <div class="tooltip-title" data-i18n="balance-details">${translations[currentLang]['balance-details']}</div>
+                <div class="tooltip-item">
+                    <span class="tooltip-label">
+                        <span class="status-indicator status-available"></span>
+                        <span data-i18n="real-amount">${translations[currentLang]['real-amount']}</span>
+                    </span>
+                    <span class="tooltip-value amount-available">${symbol}${formatNumber(data.real)}</span>
+                </div>
+                <div class="tooltip-item">
+                    <span class="tooltip-label">
+                        <span class="status-indicator status-frozen"></span>
+                        <span data-i18n="frozen-amount">${translations[currentLang]['frozen-amount']}</span>
+                    </span>
+                    <span class="tooltip-value amount-frozen">${symbol}${formatNumber(data.frozen)}</span>
+                </div>
+                <div class="tooltip-item">
+                    <span class="tooltip-label">
+                        <span class="status-indicator status-credit"></span>
+                        <span data-i18n="credit-limit">${translations[currentLang]['credit-limit']}</span>
+                    </span>
+                    <span class="tooltip-value amount-credit">${symbol}${formatNumber(data.creditLimit)}</span>
+                </div>
+                <div class="tooltip-item">
+                    <span class="tooltip-label">
+                        <span class="status-indicator status-used"></span>
+                        <span data-i18n="used-credit">${translations[currentLang]['used-credit']}</span>
+                    </span>
+                    <span class="tooltip-value amount-used">${symbol}${formatNumber(data.usedCredit)}</span>
+                </div>
+                <div class="tooltip-item">
+                    <span class="tooltip-label">
+                        <span class="status-indicator status-available"></span>
+                        <span data-i18n="total-available">${translations[currentLang]['total-available']}</span>
+                    </span>
+                    <span class="tooltip-value amount-total">${symbol}${formatNumber(data.total)}</span>
+                </div>
+            `;
+        }
+
+        // 格式化数字
+        function formatNumber(number) {
+            return new Intl.NumberFormat(currentLang === 'zh' ? 'zh-CN' : 'en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(number);
+        }
+
+        // 刷新余额
+        function refreshBalance() {
+            const mainBalance = document.getElementById('mainBalance');
+            mainBalance.classList.add('loading');
+            
+            // 模拟API调用
+            setTimeout(() => {
+                // 随机更新余额数据
+                Object.keys(balanceData).forEach(currency => {
+                    const data = balanceData[currency];
+                    data.available += (Math.random() - 0.5) * 1000;
+                    data.real += (Math.random() - 0.5) * 1200;
+                    data.frozen += (Math.random() - 0.5) * 200;
+                    data.usedCredit += (Math.random() - 0.5) * 500;
+                    data.total = data.real + data.creditLimit - data.usedCredit;
+                });
+                
+                mainBalance.classList.remove('loading');
+                updateBalance('USD');
+                
+                // 显示更新提示
+                showNotification(translations[currentLang]['updated']);
+                
+                // 添加脉冲动画
+                document.querySelector('.wallet-card').classList.add('pulse');
+                setTimeout(() => {
+                    document.querySelector('.wallet-card').classList.remove('pulse');
+                }, 2000);
+            }, 1500);
+        }
+
+        // 显示钱包详情
+        function showWalletDetails(currency) {
+            updateBalance(currency);
+            
+            // 添加点击动画
+            event.target.closest('.wallet-card-small').style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                event.target.closest('.wallet-card-small').style.transform = '';
+            }, 150);
+        }
+
+        // 显示通知
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--success-color);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: var(--shadow);
+                z-index: 10000;
+                font-size: 14px;
+                font-weight: 500;
+                animation: slideInRight 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 2000);
+        }
+
+        // 添加滑入滑出动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html> 
