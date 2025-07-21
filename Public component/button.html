@@ -530,6 +530,10 @@
                                 <option value="paypal">PayPal</option>
                             </select>
                             <span class="error-message" id="paymentPlatform-error"></span>
+                            <!-- 手续费提示区域 -->
+                            <div id="fee-tip" style="margin-top:8px;display:none;font-size:14px;">
+                                <!-- 动态内容 -->
+                            </div>
                         </div>
                         
                         <button type="submit" class="btn btn-primary btn-full" data-i18n="go-payment">去支付</button>
@@ -639,7 +643,11 @@
                 'validation-payment-platform': '请选择支付平台',
                 'validation-transfer-platform': '请选择第三方支付平台',
                 'validation-transaction-id': '请输入转账交易ID',
-                'validation-files': '请至少上传一个文件'
+                'validation-files': '请至少上传一个文件',
+                'fee-tip-stripe': 'Stripe需要收取手续费，实际支付金额约为：',
+                'fee-tip-paypal': 'PayPal需要收取手续费，实际支付金额约为：',
+                'fee-tip-empty': '请选择支付平台和输入充值金额',
+                'fee-currency': '美元'
             },
             en: {
                 'title': 'Recharge & Transfer Component',
@@ -682,7 +690,11 @@
                 'validation-payment-platform': 'Please select a payment platform',
                 'validation-transfer-platform': 'Please select a third-party payment platform',
                 'validation-transaction-id': 'Please enter transaction ID',
-                'validation-files': 'Please upload at least one file'
+                'validation-files': 'Please upload at least one file',
+                'fee-tip-stripe': 'Stripe charges a processing fee. The actual payment amount is approximately: ',
+                'fee-tip-paypal': 'PayPal charges a processing fee. The actual payment amount is approximately: ',
+                'fee-tip-empty': 'Please select a payment platform and enter the amount',
+                'fee-currency': 'USD'
             }
         };
 
@@ -725,6 +737,9 @@
 
             // 更新HTML语言属性
             document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+
+            // 更新手续费提示
+            updateFeeTip();
         }
 
         // 打开充值模态框
@@ -758,6 +773,10 @@
                 e.preventDefault();
                 handleOnlineRecharge();
             });
+
+            // 监听金额和平台变化，实时更新手续费提示
+            document.getElementById('amount').addEventListener('input', updateFeeTip);
+            document.getElementById('paymentPlatform').addEventListener('change', updateFeeTip);
 
             // 线下转账表单
             document.getElementById('offlineTransferForm').addEventListener('submit', function(e) {
@@ -1060,6 +1079,34 @@
             document.querySelector('.tab-btn').classList.add('active');
             document.getElementById('onlineForm').classList.remove('hidden');
             document.getElementById('offlineForm').classList.add('hidden');
+        }
+
+        // 手续费提示逻辑
+        function updateFeeTip() {
+            const amount = parseFloat(document.getElementById('amount').value);
+            const platform = document.getElementById('paymentPlatform').value;
+            const tipDiv = document.getElementById('fee-tip');
+            let tip = '';
+            let show = false;
+            if ((platform === 'stripe' || platform === 'paypal') && !isNaN(amount) && amount > 0) {
+                let pay = 0;
+                if (platform === 'stripe') {
+                    pay = (amount + 0.3) / (1 - 0.029);
+                } else if (platform === 'paypal') {
+                    pay = (amount + 0.3) / (1 - 0.039);
+                }
+                pay = Math.round(pay * 100) / 100;
+                tip = `${translations[currentLang][`fee-tip-${platform}`]}<span style='color:#ef4444;font-weight:bold;'>$${pay}</span> <span style='color:#ef4444;font-weight:bold;'>${translations[currentLang]['fee-currency']}</span>`;
+                show = true;
+            } else if (platform && (!amount || isNaN(amount) || amount <= 0)) {
+                tip = `<span style='color:#ef4444;'>${translations[currentLang]['fee-tip-empty']}</span>`;
+                show = true;
+            } else {
+                tip = '';
+                show = false;
+            }
+            tipDiv.innerHTML = tip;
+            tipDiv.style.display = show ? 'block' : 'none';
         }
 
         // 点击遮罩关闭模态框
