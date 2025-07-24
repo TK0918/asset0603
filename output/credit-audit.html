@@ -238,28 +238,6 @@
       z-index: 10;
     }
 
-    /* Fixed columns - customer info (first 4 columns) */
-    .credit-table th:nth-child(1),
-    .credit-table th:nth-child(2),
-    .credit-table th:nth-child(3),
-    .credit-table th:nth-child(4),
-    .credit-table td:nth-child(1),
-    .credit-table td:nth-child(2),
-    .credit-table td:nth-child(3),
-    .credit-table td:nth-child(4) {
-      position: sticky;
-      left: 0;
-      background: white;
-      z-index: 15;
-    }
-
-    .credit-table th:nth-child(2),
-    .credit-table td:nth-child(2) { left: 120px; }
-    .credit-table th:nth-child(3),
-    .credit-table td:nth-child(3) { left: 270px; }
-    .credit-table th:nth-child(4),
-    .credit-table td:nth-child(4) { left: 420px; }
-
     /* Fixed operation column (last column) */
     .credit-table th:last-child,
     .credit-table td:last-child {
@@ -490,6 +468,28 @@
         flex-direction: column;
       }
     }
+    /* 固定商户邮箱和商户名称列 */
+    .sticky-col {
+      position: sticky;
+      left: 0;
+      background: white;
+      z-index: 16;
+    }
+    .sticky-email { left: 0; }
+    .sticky-name { left: 150px; }
+    .credit-table th.sticky-col, .credit-table td.sticky-col {
+      background: white;
+      z-index: 16;
+    }
+    /* 固定操作列 */
+    .sticky-op {
+      position: sticky;
+      right: 0;
+      left: auto !important;
+      background: white;
+      z-index: 16;
+    }
+    /* 取消账户ID相关样式 */
   </style>
 </head>
 <body>
@@ -537,10 +537,6 @@
     <div class="search-section">
       <div class="search-row">
         <div class="search-group">
-          <label>账户ID</label>
-          <input type="text" class="search-input" placeholder="输入账户ID">
-        </div>
-        <div class="search-group">
           <label>商户邮箱</label>
           <input type="text" class="search-input" placeholder="输入商户邮箱">
         </div>
@@ -558,11 +554,12 @@
         </div>
         <div class="search-group">
           <label>审核状态</label>
-          <select class="search-input">
+          <select class="search-input" id="searchStatus">
             <option value="">全部状态</option>
-            <option value="pending">待审核</option>
-            <option value="approved">已通过</option>
-            <option value="rejected">已拒绝</option>
+            <option value="pre-review">待初审</option>
+            <option value="final-review">待终审</option>
+            <option value="approved">审核通过</option>
+            <option value="rejected">审核不通过</option>
           </select>
         </div>
         <div class="search-group">
@@ -579,105 +576,135 @@
     <div class="table-container">
       <div class="table-header">
         <h3 class="table-title">信用额度申请列表</h3>
+        <button class="btn btn-primary" id="openApplyModalBtn">发起信用额度调整申请</button>
       </div>
       
       <div class="table-wrapper">
         <table class="credit-table">
           <thead>
             <tr>
-              <th width="120px">账户ID</th>
-              <th width="150px">商户邮箱</th>
-              <th width="150px">商户名称</th>
+              <th width="150px" class="sticky-col sticky-email">商户邮箱</th>
+              <th width="150px" class="sticky-col sticky-name">商户名称</th>
               <th width="100px">子业务名称</th>
               <th width="100px">调整类型</th>
               <th width="120px">申请额度</th>
               <th width="100px">审核状态</th>
-              <th width="120px">申请时间</th>
-              <th width="120px">审核时间</th>
-              <th width="100px">审核人</th>
-              <th width="120px">备注</th>
-              <th width="150px">操作</th>
+              <th width="120px">资料</th>
+              <th width="120px">申请人</th>
+              <th width="140px">申请时间</th>
+              <th width="140px">申请备注</th>
+              <th width="120px">初审人</th>
+              <th width="140px">初审时间</th>
+              <th width="140px">初审备注</th>
+              <th width="120px">终审人</th>
+              <th width="140px">终审时间</th>
+              <th width="140px">终审备注</th>
+              <th width="150px" class="sticky-col sticky-op" style="right:0;left:auto;">操作</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td>US001</td>
               <td>contact@apple.com</td>
-              <td>Apple Inc.</td>
               <td><span class="business-tag">Advertising</span></td>
               <td><div class="adjustment-type type-increase">增加</div></td>
               <td class="credit-amount credit-increase">50,000</td>
-              <td><span class="status-badge status-pending">待审核</span></td>
+              <td><span class="status-badge status-pending">待初审</span></td>
+              <td><a href="#" class="btn btn-secondary btn-small" download>资料.pdf</a></td>
+              <td>李运营</td>
               <td>2024-01-15 14:30</td>
-              <td>-</td>
-              <td>-</td>
               <td class="remark-cell" data-remark="由于业务扩展需要，客户申请增加信用额度以支持更大规模的广告投放。客户近期业务增长稳定，现有额度已无法满足日常运营需求。">
                 业务扩展需要...
               </td>
-              <td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td class="sticky-col sticky-op" style="right:0;left:auto;">
                 <div class="action-buttons">
-                  <button class="btn btn-primary btn-small" onclick="openModal('audit', 'approve')">通过</button>
-                  <button class="btn btn-danger btn-small" onclick="openModal('audit', 'reject')">拒绝</button>
-                  <button class="btn btn-secondary btn-small" onclick="openModal('detail')">详情</button>
+                  <button class="btn btn-primary btn-small" onclick="openAudit(0,'approve','pre')">初审通过</button>
+                  <button class="btn btn-danger btn-small" onclick="openAudit(0,'reject','pre')">初审拒绝</button>
+                  <button class="btn btn-primary btn-small" onclick="openAudit(0,'approve','final')">终审通过</button>
+                  <button class="btn btn-danger btn-small" onclick="openAudit(0,'reject','final')">终审拒绝</button>
+                  <button class="btn btn-secondary btn-small" onclick="openDetail(0)">详情</button>
                 </div>
               </td>
             </tr>
             <tr>
               <td>US002</td>
               <td>service@microsoft.com</td>
-              <td>Microsoft Corporation</td>
               <td><span class="business-tag">Fulfillment</span></td>
               <td><div class="adjustment-type type-decrease">减少</div></td>
               <td class="credit-amount credit-decrease">8,000</td>
               <td><span class="status-badge status-pending">待审核</span></td>
+              <td><a href="#" class="btn btn-secondary btn-small" download>资料.pdf</a></td>
+              <td>张运营</td>
               <td>2024-01-16 09:15</td>
-              <td>-</td>
-              <td>-</td>
               <td class="remark-cell" data-remark="由于业务策略调整，客户主动申请减少履约业务的信用额度。当前使用率较低，减少额度有助于降低风险敞口。">
                 业务调整...
               </td>
-              <td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td class="sticky-col sticky-op" style="right:0;left:auto;">
                 <div class="action-buttons">
-                  <button class="btn btn-primary btn-small" onclick="openModal('audit', 'approve')">通过</button>
-                  <button class="btn btn-danger btn-small" onclick="openModal('audit', 'reject')">拒绝</button>
-                  <button class="btn btn-secondary btn-small" onclick="openModal('detail')">详情</button>
+                  <button class="btn btn-primary btn-small" onclick="openAudit(1,'approve','pre')">初审通过</button>
+                  <button class="btn btn-danger btn-small" onclick="openAudit(1,'reject','pre')">初审拒绝</button>
+                  <button class="btn btn-primary btn-small" onclick="openAudit(1,'approve','final')">终审通过</button>
+                  <button class="btn btn-danger btn-small" onclick="openAudit(1,'reject','final')">终审拒绝</button>
+                  <button class="btn btn-secondary btn-small" onclick="openDetail(1)">详情</button>
                 </div>
               </td>
             </tr>
             <tr>
               <td>US003</td>
               <td>contact@google.com</td>
-              <td>Google LLC</td>
               <td><span class="business-tag">Advertising</span></td>
               <td><div class="adjustment-type type-increase">增加</div></td>
               <td class="credit-amount credit-increase">35,000</td>
               <td><span class="status-badge status-approved">已通过</span></td>
+              <td><a href="#" class="btn btn-secondary btn-small" download>资料.pdf</a></td>
+              <td>王运营</td>
               <td>2024-01-14 09:20</td>
-              <td>2024-01-14 16:30</td>
-              <td>张经理</td>
               <td class="remark-cell" data-remark="客户历史还款记录良好，业务规模稳定增长，财务状况健康，无逾期记录。同意增加信用额度。">
                 客户信用良好...
               </td>
-              <td>
-                <button class="btn btn-secondary btn-small" onclick="openModal('detail')">详情</button>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td class="sticky-col sticky-op" style="right:0;left:auto;">
+                <button class="btn btn-secondary btn-small" onclick="openDetail(2)">详情</button>
               </td>
             </tr>
             <tr>
               <td>US001</td>
               <td>contact@apple.com</td>
-              <td>Apple Inc.</td>
               <td><span class="business-tag">Fulfillment</span></td>
               <td><div class="adjustment-type type-increase">增加</div></td>
               <td class="credit-amount">25,000</td>
               <td><span class="status-badge status-rejected">已拒绝</span></td>
+              <td><a href="#" class="btn btn-secondary btn-small" download>资料.pdf</a></td>
+              <td>赵运营</td>
               <td>2024-01-13 11:15</td>
-              <td>2024-01-13 17:20</td>
-              <td>李经理</td>
               <td class="remark-cell" data-remark="经财务部门评估，客户当前现金流状况不稳定，且近期投诉较多，暂不适合提高信用额度。建议3个月后重新评估。">
                 财务评估未通过...
               </td>
-              <td>
-                <button class="btn btn-secondary btn-small" onclick="openModal('detail')">详情</button>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td class="sticky-col sticky-op" style="right:0;left:auto;">
+                <button class="btn btn-secondary btn-small" onclick="openDetail(3)">详情</button>
               </td>
             </tr>
           </tbody>
@@ -694,7 +721,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h2 class="modal-title">信用额度申请详情</h2>
-        <button class="close-btn" onclick="closeModal()">&times;</button>
+        <button class="close-btn" onclick="closeModal('detailModal')">&times;</button>
       </div>
       <div class="detail-section">
         <h4>客户信息</h4>
@@ -753,7 +780,7 @@
         </div>
       </div>
       <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 30px;">
-        <button class="btn btn-secondary" onclick="closeModal()">关闭</button>
+        <button class="btn btn-secondary" onclick="closeModal('detailModal')">关闭</button>
       </div>
     </div>
   </div>
@@ -763,7 +790,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h2 class="modal-title" id="auditModalTitle">审核信用额度申请</h2>
-        <button class="close-btn" onclick="closeModal()">&times;</button>
+        <button class="close-btn" onclick="closeModal('auditModal')">&times;</button>
       </div>
       <form id="auditForm">
         <div class="form-group">
@@ -771,15 +798,66 @@
           <textarea class="form-input" name="auditComment" rows="4" placeholder="请填写备注信息" required></textarea>
         </div>
         <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 30px;">
-          <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+          <button type="button" class="btn btn-secondary" onclick="closeModal('auditModal')">取消</button>
           <button type="submit" class="btn btn-primary" id="auditSubmitBtn">确认审核</button>
         </div>
       </form>
     </div>
   </div>
 
+  <!-- 申请模态框 -->
+  <div class="modal" id="applyModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">发起信用额度调整申请</h2>
+        <button class="close-btn" onclick="closeModal('applyModal')">&times;</button>
+      </div>
+      <form id="applyForm">
+        <div class="form-group">
+          <label>选择商户 *</label>
+          <input class="form-input" id="merchantSearch" placeholder="输入ID/邮箱/名称搜索" autocomplete="off" />
+          <div id="merchantDropdown" class="dropdown-list" style="display:none;max-height:180px;overflow:auto;position:absolute;z-index:999;background:#fff;border:1px solid #e2e8f0;width:100%;"></div>
+          <input type="hidden" name="accountId" />
+          <input type="hidden" name="email" />
+          <input type="hidden" name="merchantName" />
+        </div>
+        <div class="form-group">
+          <label>子业务名称 *</label>
+          <select class="form-input" name="business" required>
+            <option value="">请选择</option>
+            <option value="Advertising">Advertising</option>
+            <option value="Fulfillment">Fulfillment</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>调整类型 *</label>
+          <select class="form-input" name="type" required>
+            <option value="increase">增加</option>
+            <option value="decrease">减少</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>申请额度 *</label>
+          <input class="form-input" name="amount" type="number" min="1" required placeholder="请输入额度" />
+        </div>
+        <div class="form-group">
+          <label>备注 *</label>
+          <textarea class="form-input" name="remark" rows="3" required placeholder="请填写备注"></textarea>
+        </div>
+        <div class="form-group">
+          <label>客户资料（PDF/Word）*</label>
+          <input class="form-input" name="file" type="file" accept=".pdf,.doc,.docx" required />
+        </div>
+        <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 30px;">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('applyModal')">取消</button>
+          <button type="submit" class="btn btn-primary">提交申请</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
-    let currentAuditAction = '';
+    // let currentAuditAction = ''; // 删除重复声明，统一在后面全局声明
 
     // Mouse-following tooltip functionality
     const tooltip = document.getElementById('mouseTooltip');
@@ -886,6 +964,285 @@
         }, index * 100);
       });
     });
+
+    // 商户数据
+    const merchants = [
+      {accountId:'US001', email:'contact@apple.com', merchantName:'Apple Inc.'},
+      {accountId:'US002', email:'service@microsoft.com', merchantName:'Microsoft Corporation'},
+      {accountId:'US003', email:'contact@google.com', merchantName:'Google LLC'},
+      {accountId:'US004', email:'service@amazon.com', merchantName:'Amazon Inc.'},
+      {accountId:'US005', email:'contact@bytedance.com', merchantName:'ByteDance Ltd.'},
+      {accountId:'US006', email:'contact@alibaba.com', merchantName:'Alibaba Group'},
+      {accountId:'US007', email:'contact@tencent.com', merchantName:'Tencent Holdings'},
+      {accountId:'US008', email:'contact@baidu.com', merchantName:'Baidu Inc.'},
+      {accountId:'US009', email:'contact@meituan.com', merchantName:'Meituan Dianping'},
+      {accountId:'US010', email:'contact@jd.com', merchantName:'JD.com'}
+    ];
+    // 生成20条申请数据，覆盖所有状态
+    let creditApplications = [];
+    for(let i=0;i<20;i++){
+      let m = merchants[i%merchants.length];
+      let statusArr = ['pre-review','final-review','approved','rejected'];
+      let status = statusArr[i%4];
+      let now = new Date(Date.now()-i*86400000);
+      let applyTime = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+      let preReviewer = status!=='pre-review'?'初审员'+(i%5+1):'';
+      let preReviewTime = status!=='pre-review'?applyTime:'';
+      let preReviewRemark = status!=='pre-review'?'初审备注'+i:'';
+      let finalReviewer = status==='approved'||status==='rejected'?'终审员'+(i%3+1):'';
+      let finalReviewTime = status==='approved'||status==='rejected'?applyTime:'';
+      let finalReviewRemark = status==='approved'||status==='rejected'?'终审备注'+i:'';
+      creditApplications.push({
+        accountId:m.accountId,
+        email:m.email,
+        merchantName:m.merchantName,
+        business:i%2===0?'Advertising':'Fulfillment',
+        type:i%2===0?'increase':'decrease',
+        amount:10000+i*1000,
+        status,
+        applyTime,
+        preReviewer,
+        preReviewTime,
+        preReviewRemark,
+        finalReviewer,
+        finalReviewTime,
+        finalReviewRemark,
+        fileName:'资料'+i+'.pdf',
+        fileUrl:'#',
+        remark:'申请备注'+i,
+        applicant:'申请人'+(i%7+1)
+      });
+    }
+
+    // 打开申请模态框
+    document.getElementById('openApplyModalBtn').onclick = function() {
+      document.getElementById('applyModal').classList.add('show');
+    };
+
+    // 关闭模态框
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('show');
+    }
+
+    // 申请表单提交
+    document.getElementById('applyForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+      const now = new Date();
+      const timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+      const file = form.file.files[0];
+      const fileName = file ? file.name : '';
+      // 模拟文件上传，实际应上传到服务器
+      creditApplications.unshift({
+        accountId: formData.get('accountId'),
+        email: formData.get('email'),
+        merchantName: formData.get('merchantName'),
+        business: formData.get('business'),
+        type: formData.get('type'),
+        amount: formData.get('amount'),
+        status: 'pre-review',
+        applyTime: timeStr,
+        preReviewer: '',
+        preReviewTime: '',
+        preReviewRemark: '',
+        finalReviewer: '',
+        finalReviewTime: '',
+        finalReviewRemark: '',
+        fileName: fileName,
+        fileUrl: '#', // 实际应为文件上传后的URL
+        remark: formData.get('remark'),
+        applicant: '当前用户' // 实际应为登录用户
+      });
+      renderTable();
+      closeModal('applyModal');
+      form.reset();
+    });
+
+    // 商户下拉模糊搜索
+    const merchantInput = document.getElementById('merchantSearch');
+    const merchantDropdown = document.getElementById('merchantDropdown');
+    merchantInput.addEventListener('input',function(){
+      const val = this.value.trim().toLowerCase();
+      let list = merchants.filter(m=>m.accountId.toLowerCase().includes(val)||m.email.toLowerCase().includes(val)||m.merchantName.toLowerCase().includes(val));
+      if(list.length===0){merchantDropdown.style.display='none';return;}
+      merchantDropdown.innerHTML = list.map(m=>`<div class='dropdown-item' style='padding:8px;cursor:pointer;' data-id='${m.accountId}' data-email='${m.email}' data-name='${m.merchantName}'>${m.accountId} | ${m.email} | ${m.merchantName}</div>`).join('');
+      merchantDropdown.style.display='block';
+    });
+    merchantDropdown.addEventListener('click',function(e){
+      if(e.target.classList.contains('dropdown-item')){
+        merchantInput.value = e.target.textContent;
+        document.querySelector('input[name="accountId"]').value = e.target.getAttribute('data-id');
+        document.querySelector('input[name="email"]').value = e.target.getAttribute('data-email');
+        document.querySelector('input[name="merchantName"]').value = e.target.getAttribute('data-name');
+        merchantDropdown.style.display='none';
+      }
+    });
+    merchantInput.addEventListener('blur',function(){setTimeout(()=>{merchantDropdown.style.display='none';},200);});
+
+    // 分页与筛选
+    let currentPage = 1, pageSize = 8;
+    document.getElementById('searchStatus').addEventListener('change',function(){currentPage=1;renderTable();});
+    function renderTable() {
+      const tbody = document.querySelector('.credit-table tbody');
+      tbody.innerHTML = '';
+      let statusFilter = document.getElementById('searchStatus').value;
+      let filtered = creditApplications.filter(item=>!statusFilter||item.status===statusFilter);
+      let total = filtered.length;
+      let pageCount = Math.ceil(total/pageSize);
+      if(currentPage>pageCount) currentPage=pageCount||1;
+      let start = (currentPage-1)*pageSize;
+      let end = start+pageSize;
+      let pageData = filtered.slice(start,end);
+      pageData.forEach((item, idx) => {
+        let statusText = '';
+        let statusClass = '';
+        if(item.status === 'pre-review') { statusText = '待初审'; statusClass = 'status-pending'; }
+        else if(item.status === 'final-review') { statusText = '待终审'; statusClass = 'status-pending'; }
+        else if(item.status === 'approved') { statusText = '审核通过'; statusClass = 'status-approved'; }
+        else if(item.status === 'rejected') { statusText = '审核不通过'; statusClass = 'status-rejected'; }
+        let typeHtml = item.type === 'increase' ? '<div class="adjustment-type type-increase">增加</div>' : '<div class="adjustment-type type-decrease">减少</div>';
+        let fileHtml = item.fileName ? `<a href="${item.fileUrl}" class="btn btn-secondary btn-small" download>${item.fileName}</a>` : '';
+        let opBtns = '';
+        if(item.status === 'pre-review') {
+          opBtns = `<button class='btn btn-primary btn-small' onclick="openAudit(${start+idx},'approve','pre')">初审通过</button><button class='btn btn-danger btn-small' onclick="openAudit(${start+idx},'reject','pre')">初审拒绝</button>`;
+        } else if(item.status === 'final-review') {
+          opBtns = `<button class='btn btn-primary btn-small' onclick="openAudit(${start+idx},'approve','final')">终审通过</button><button class='btn btn-danger btn-small' onclick="openAudit(${start+idx},'reject','final')">终审拒绝</button>`;
+        }
+        opBtns += `<button class='btn btn-secondary btn-small' onclick="openDetail(${start+idx})">详情</button>`;
+        tbody.innerHTML += `
+          <tr>
+            <td class="sticky-col sticky-email">${item.email}</td>
+            <td class="sticky-col sticky-name">${item.merchantName}</td>
+            <td><span class="business-tag">${item.business}</span></td>
+            <td>${typeHtml}</td>
+            <td class="credit-amount ${item.type==='increase'?'credit-increase':'credit-decrease'}">${item.amount}</td>
+            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+            <td>${fileHtml}</td>
+            <td>${item.applicant}</td>
+            <td>${item.applyTime}</td>
+            <td class="remark-cell" data-remark="${item.remark}">${item.remark.length>8?item.remark.slice(0,8)+'...':item.remark}</td>
+            <td>${item.preReviewer||'-'}</td>
+            <td>${item.preReviewTime||'-'}</td>
+            <td class="remark-cell" data-remark="${item.preReviewRemark||''}">${item.preReviewRemark?(item.preReviewRemark.length>8?item.preReviewRemark.slice(0,8)+'...':item.preReviewRemark):'-'}</td>
+            <td>${item.finalReviewer||'-'}</td>
+            <td>${item.finalReviewTime||'-'}</td>
+            <td class="remark-cell" data-remark="${item.finalReviewRemark||''}">${item.finalReviewRemark?(item.finalReviewRemark.length>8?item.finalReviewRemark.slice(0,8)+'...':item.finalReviewRemark):'-'}</td>
+            <td class="sticky-col sticky-op" style="right:0;left:auto;"><div class="action-buttons">${opBtns}</div></td>
+          </tr>
+        `;
+      });
+      // 重新绑定tooltip
+      document.querySelectorAll('.remark-cell').forEach(cell => {
+        cell.addEventListener('mouseenter', function(e) {
+          const remarkText = this.getAttribute('data-remark');
+          tooltip.textContent = remarkText;
+          tooltip.classList.add('show');
+          updateTooltipPosition(e);
+        });
+        cell.addEventListener('mousemove', function(e) { updateTooltipPosition(e); });
+        cell.addEventListener('mouseleave', function() { tooltip.classList.remove('show'); });
+      });
+      // 分页控件
+      let pager = document.getElementById('pager');
+      if(!pager){
+        pager = document.createElement('div');
+        pager.id = 'pager';
+        pager.style='margin:16px 0;text-align:center;';
+        document.querySelector('.table-container').appendChild(pager);
+      }
+      pager.innerHTML = '';
+      if(pageCount>1){
+        for(let i=1;i<=pageCount;i++){
+          pager.innerHTML += `<button class='btn btn-small' style='margin:0 2px;${i===currentPage?'background:#2563eb;color:#fff;':''}' onclick='gotoPage(${i})'>${i}</button>`;
+        }
+      }
+    }
+    window.gotoPage = function(p){currentPage=p;renderTable();}
+
+    // 审核弹窗逻辑
+    let currentAuditIdx = null, currentAuditStage = '', currentAuditAction = '';
+    function openAudit(idx, action, stage) {
+      currentAuditIdx = idx;
+      currentAuditStage = stage;
+      currentAuditAction = action;
+      document.getElementById('auditModal').classList.add('show');
+      const title = document.getElementById('auditModalTitle');
+      const submitBtn = document.getElementById('auditSubmitBtn');
+      if(stage==='pre') {
+        title.textContent = (action==='approve'?'初审通过':'初审拒绝')+'信用额度申请';
+      } else {
+        title.textContent = (action==='approve'?'终审通过':'终审拒绝')+'信用额度申请';
+      }
+      submitBtn.textContent = (action==='approve'?'确认通过':'确认拒绝');
+      submitBtn.className = action==='approve'?'btn btn-success':'btn btn-danger';
+    }
+    document.getElementById('auditForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const remark = this.auditComment.value;
+      const now = new Date();
+      const timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+      const user = '审核员';
+      let item = creditApplications[currentAuditIdx];
+      if(currentAuditStage==='pre') {
+        item.preReviewer = user;
+        item.preReviewTime = timeStr;
+        item.preReviewRemark = remark;
+        if(currentAuditAction==='approve') item.status = 'final-review';
+        else item.status = 'rejected';
+      } else {
+        item.finalReviewer = user;
+        item.finalReviewTime = timeStr;
+        item.finalReviewRemark = remark;
+        if(currentAuditAction==='approve') item.status = 'approved';
+        else item.status = 'rejected';
+      }
+      renderTable();
+      closeModal('auditModal');
+      this.reset();
+    });
+
+    // 详情弹窗
+    function openDetail(idx) {
+      const item = creditApplications[idx];
+      let html = '';
+      html += `<div class='detail-section'><h4>客户信息</h4><div class='detail-grid'>`;
+      html += `<div class='detail-item'><span class='detail-label'>账户ID</span><span class='detail-value'>${item.accountId}</span></div>`;
+      html += `<div class='detail-item'><span class='detail-label'>商户邮箱</span><span class='detail-value'>${item.email}</span></div>`;
+      html += `<div class='detail-item'><span class='detail-label'>商户名称</span><span class='detail-value'>${item.merchantName}</span></div>`;
+      html += `<div class='detail-item'><span class='detail-label'>子业务名称</span><span class='detail-value'>${item.business}</span></div>`;
+      html += `</div></div>`;
+      html += `<div class='detail-section'><h4>申请信息</h4><div class='detail-grid'>`;
+      html += `<div class='detail-item'><span class='detail-label'>调整类型</span><span class='detail-value'>${item.type==='increase'?'增加':'减少'}</span></div>`;
+      html += `<div class='detail-item'><span class='detail-label'>申请额度</span><span class='detail-value'>${item.amount}</span></div>`;
+      html += `<div class='detail-item'><span class='detail-label'>申请人</span><span class='detail-value'>${item.applicant}</span></div>`;
+      html += `<div class='detail-item'><span class='detail-label'>申请时间</span><span class='detail-value'>${item.applyTime}</span></div>`;
+      html += `<div class='detail-item'><span class='detail-label'>审核状态</span><span class='detail-value'>${item.status==='pre-review'?'待初审':item.status==='final-review'?'待终审':item.status==='approved'?'审核通过':'审核不通过'}</span></div>`;
+      html += `<div class='detail-item'><span class='detail-label'>资料</span><span class='detail-value'><a href='${item.fileUrl}' download>${item.fileName}</a></span></div>`;
+      html += `</div></div>`;
+      html += `<div class='detail-section'><h4>申请备注</h4><div style='background:#f8fafc;padding:15px;border-radius:8px;color:#64748b;'>${item.remark}</div></div>`;
+      html += `<div class='detail-section'><h4>审核记录</h4><div style='background:#f8fafc;padding:15px;border-radius:8px;color:#64748b;'>`;
+      if(item.preReviewer) html += `初审：${item.preReviewer} ${item.preReviewTime} 备注：${item.preReviewRemark}<br/>`;
+      if(item.finalReviewer) html += `终审：${item.finalReviewer} ${item.finalReviewTime} 备注：${item.finalReviewRemark}<br/>`;
+      html += `</div></div>`;
+      document.querySelector('#detailModal .modal-content').innerHTML = `
+        <div class="modal-header">
+          <h2 class="modal-title">信用额度申请详情</h2>
+          <button class="close-btn" onclick="closeModal('detailModal')">&times;</button>
+        </div>
+        ${html}
+        <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 30px;">
+          <button class="btn btn-secondary" onclick="closeModal('detailModal')">关闭</button>
+        </div>
+      `;
+      document.getElementById('detailModal').classList.add('show');
+    }
+
+    // 表格横向滚动
+    document.querySelector('.table-wrapper').style.overflowX = 'auto';
+    document.querySelector('.credit-table').style.minWidth = '2000px';
+    // 初始化渲染
+    renderTable();
   </script>
 </body>
 </html> 
