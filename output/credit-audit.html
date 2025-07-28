@@ -490,6 +490,48 @@
       z-index: 16;
     }
     /* 取消账户ID相关样式 */
+    
+    /* Tab样式 */
+    .tab-btn {
+      flex: 1;
+      padding: 15px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-weight: 500;
+      color: #64748b;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 10;
+    }
+    
+    .tab-btn:hover {
+      color: #2563eb;
+      background: rgba(37, 99, 235, 0.05);
+    }
+    
+    .tab-btn.active {
+      color: #2563eb;
+      border-bottom: 2px solid #2563eb;
+      background: rgba(37, 99, 235, 0.1);
+    }
+    
+    .tab-nav {
+      display: flex;
+      border-bottom: 1px solid #e2e8f0;
+      position: relative;
+      z-index: 5;
+    }
+    
+    .tab-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 25px;
+      position: relative;
+      z-index: 1;
+    }
   </style>
 </head>
 <body>
@@ -511,8 +553,8 @@
 
   <main class="container">
     <div class="page-header">
-      <h1 class="page-title">信用额度审核</h1>
-      <p class="page-description">管理账户信用额度变更审核流程，支持多级审核和风险评估</p>
+      <h1 class="page-title">信用额度管理</h1>
+      <p class="page-description">管理信用额度申请和审核流程，支持多级审核和风险评估</p>
     </div>
 
     <div class="stats-cards">
@@ -534,7 +576,106 @@
       </div>
     </div>
 
-    <div class="search-section">
+    <!-- Tab导航 -->
+    <div class="tab-container">
+      <div class="tab-nav">
+        <button class="tab-btn active" data-tab="my-applications">我发起的</button>
+        <button class="tab-btn" data-tab="pending-review">待审核</button>
+        <button class="tab-btn" data-tab="history">历史处理</button>
+        <button class="tab-btn" data-tab="all">全部</button>
+      </div>
+    </div>
+
+    <!-- 我发起的Tab搜索 -->
+    <div class="search-section" id="search-my-applications" style="display: block;">
+      <div class="search-row">
+        <div class="search-group">
+          <label>商户邮箱</label>
+          <input type="text" class="search-input" placeholder="输入商户邮箱">
+        </div>
+        <div class="search-group">
+          <label>商户名称</label>
+          <input type="text" class="search-input" placeholder="输入商户名称">
+        </div>
+        <div class="search-group">
+          <label>审核状态</label>
+          <select class="search-input" id="searchStatusMy">
+            <option value="">全部状态</option>
+            <option value="pre-review">待初审</option>
+            <option value="final-review">待终审</option>
+            <option value="approved">审核通过</option>
+            <option value="rejected">审核不通过</option>
+          </select>
+        </div>
+        <div class="search-group">
+          <label>申请时间</label>
+          <input type="date" class="search-input">
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-primary">搜索</button>
+          <button class="btn btn-secondary">重置</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 待审核Tab搜索 -->
+    <div class="search-section" id="search-pending-review" style="display: none;">
+      <div class="search-row">
+        <div class="search-group">
+          <label>商户邮箱</label>
+          <input type="text" class="search-input" placeholder="输入商户邮箱">
+        </div>
+        <div class="search-group">
+          <label>商户名称</label>
+          <input type="text" class="search-input" placeholder="输入商户名称">
+        </div>
+        <div class="search-group">
+          <label>申请人</label>
+          <input type="text" class="search-input" placeholder="输入申请人">
+        </div>
+        <div class="search-group">
+          <label>申请时间</label>
+          <input type="date" class="search-input">
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-primary">搜索</button>
+          <button class="btn btn-secondary">重置</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 历史处理Tab搜索 -->
+    <div class="search-section" id="search-history" style="display: none;">
+      <div class="search-row">
+        <div class="search-group">
+          <label>商户邮箱</label>
+          <input type="text" class="search-input" placeholder="输入商户邮箱">
+        </div>
+        <div class="search-group">
+          <label>商户名称</label>
+          <input type="text" class="search-input" placeholder="输入商户名称">
+        </div>
+        <div class="search-group">
+          <label>审核结果</label>
+          <select class="search-input" id="searchResultHistory">
+            <option value="">全部结果</option>
+            <option value="approved">审核通过</option>
+            <option value="rejected">审核不通过</option>
+          </select>
+        </div>
+        <div class="search-group">
+          <label>申请时间</label>
+          <input type="date" class="search-input">
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-primary">搜索</button>
+          <button class="btn btn-secondary">重置</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 全部Tab搜索 -->
+    <div class="search-section" id="search-all" style="display: none;">
       <div class="search-row">
         <div class="search-group">
           <label>商户邮箱</label>
@@ -554,7 +695,7 @@
         </div>
         <div class="search-group">
           <label>审核状态</label>
-          <select class="search-input" id="searchStatus">
+          <select class="search-input" id="searchStatusAll">
             <option value="">全部状态</option>
             <option value="pre-review">待初审</option>
             <option value="final-review">待终审</option>
@@ -563,7 +704,7 @@
           </select>
         </div>
         <div class="search-group">
-          <label>提交时间</label>
+          <label>申请时间</label>
           <input type="date" class="search-input">
         </div>
         <div style="display: flex; gap: 10px;">
@@ -575,22 +716,19 @@
 
     <div class="table-container">
       <div class="table-header">
-        <h3 class="table-title">信用额度申请列表</h3>
-        <button class="btn btn-primary" id="openApplyModalBtn">发起信用额度调整申请</button>
+        <h3 class="table-title" id="tableTitle">我发起的申请</h3>
+        <button class="btn btn-primary" id="openApplyModalBtn" style="display: block;">发起信用额度调整申请</button>
       </div>
       
       <div class="table-wrapper">
         <table class="credit-table">
           <thead>
-            <tr>
+            <tr id="tableHeader">
               <th width="150px" class="sticky-col sticky-email">商户邮箱</th>
               <th width="150px" class="sticky-col sticky-name">商户名称</th>
               <th width="100px">子业务名称</th>
-              <th width="100px">调整类型</th>
-              <th width="120px">申请额度</th>
               <th width="100px">审核状态</th>
-              <th width="120px">资料</th>
-              <th width="120px">申请人</th>
+              <th width="120px" class="applicant-header">申请人</th>
               <th width="140px">申请时间</th>
               <th width="140px">申请备注</th>
               <th width="120px">初审人</th>
@@ -607,10 +745,7 @@
               <td>US001</td>
               <td>contact@apple.com</td>
               <td><span class="business-tag">Advertising</span></td>
-              <td><div class="adjustment-type type-increase">增加</div></td>
-              <td class="credit-amount credit-increase">50,000</td>
               <td><span class="status-badge status-pending">待初审</span></td>
-              <td><a href="#" class="btn btn-secondary btn-small" download>资料.pdf</a></td>
               <td>李运营</td>
               <td>2024-01-15 14:30</td>
               <td class="remark-cell" data-remark="由于业务扩展需要，客户申请增加信用额度以支持更大规模的广告投放。客户近期业务增长稳定，现有额度已无法满足日常运营需求。">
@@ -636,10 +771,7 @@
               <td>US002</td>
               <td>service@microsoft.com</td>
               <td><span class="business-tag">Fulfillment</span></td>
-              <td><div class="adjustment-type type-decrease">减少</div></td>
-              <td class="credit-amount credit-decrease">8,000</td>
               <td><span class="status-badge status-pending">待审核</span></td>
-              <td><a href="#" class="btn btn-secondary btn-small" download>资料.pdf</a></td>
               <td>张运营</td>
               <td>2024-01-16 09:15</td>
               <td class="remark-cell" data-remark="由于业务策略调整，客户主动申请减少履约业务的信用额度。当前使用率较低，减少额度有助于降低风险敞口。">
@@ -665,10 +797,7 @@
               <td>US003</td>
               <td>contact@google.com</td>
               <td><span class="business-tag">Advertising</span></td>
-              <td><div class="adjustment-type type-increase">增加</div></td>
-              <td class="credit-amount credit-increase">35,000</td>
               <td><span class="status-badge status-approved">已通过</span></td>
-              <td><a href="#" class="btn btn-secondary btn-small" download>资料.pdf</a></td>
               <td>王运营</td>
               <td>2024-01-14 09:20</td>
               <td class="remark-cell" data-remark="客户历史还款记录良好，业务规模稳定增长，财务状况健康，无逾期记录。同意增加信用额度。">
@@ -688,10 +817,7 @@
               <td>US001</td>
               <td>contact@apple.com</td>
               <td><span class="business-tag">Fulfillment</span></td>
-              <td><div class="adjustment-type type-increase">增加</div></td>
-              <td class="credit-amount">25,000</td>
               <td><span class="status-badge status-rejected">已拒绝</span></td>
-              <td><a href="#" class="btn btn-secondary btn-small" download>资料.pdf</a></td>
               <td>赵运营</td>
               <td>2024-01-13 11:15</td>
               <td class="remark-cell" data-remark="经财务部门评估，客户当前现金流状况不稳定，且近期投诉较多，暂不适合提高信用额度。建议3个月后重新评估。">
@@ -745,31 +871,36 @@
         </div>
       </div>
       <div class="detail-section">
-        <h4>申请信息</h4>
+        <h4>当前额度信息</h4>
         <div class="detail-grid">
           <div class="detail-item">
-            <span class="detail-label">调整类型</span>
-            <span class="detail-value">增加</span>
+            <span class="detail-label">当前信用额度</span>
+            <span class="detail-value" style="color: #2563eb; font-weight: bold;">50,000</span>
           </div>
           <div class="detail-item">
-            <span class="detail-label">申请额度</span>
-            <span class="detail-value">USD 50,000</span>
+            <span class="detail-label">已用额度</span>
+            <span class="detail-value" style="color: #dc2626; font-weight: bold;">15,000</span>
           </div>
           <div class="detail-item">
-            <span class="detail-label">申请人</span>
-            <span class="detail-value">李运营</span>
+            <span class="detail-label">剩余额度</span>
+            <span class="detail-value" style="color: #059669; font-weight: bold;">35,000</span>
+          </div>
+        </div>
+      </div>
+      <div class="detail-section">
+        <h4>申请额度信息</h4>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">设定信用额度</span>
+            <span class="detail-value" style="color: #f59e0b; font-weight: bold;">60,000</span>
           </div>
           <div class="detail-item">
-            <span class="detail-label">申请时间</span>
-            <span class="detail-value">2024-01-15 14:30</span>
+            <span class="detail-label">单笔额度限制</span>
+            <span class="detail-value">不限</span>
           </div>
           <div class="detail-item">
-            <span class="detail-label">审核状态</span>
-            <span class="detail-value">待审核</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">审核时间</span>
-            <span class="detail-value">-</span>
+            <span class="detail-label">当日额度限制</span>
+            <span class="detail-value">不限</span>
           </div>
         </div>
       </div>
@@ -830,23 +961,109 @@
           </select>
         </div>
         <div class="form-group">
-          <label>调整类型 *</label>
-          <select class="form-input" name="type" required>
-            <option value="increase">增加</option>
-            <option value="decrease">减少</option>
+          <label>当前额度信息</label>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <div style="flex: 1;">
+              <label style="font-size: 12px; color: #666;">当前信用额度</label>
+              <input class="form-input" name="currentCredit" type="number" readonly value="50000" style="color: #2563eb; font-weight: bold;" />
+            </div>
+            <div style="flex: 1;">
+              <label style="font-size: 12px; color: #666;">已用额度</label>
+              <input class="form-input" name="usedCredit" type="number" readonly value="15000" style="color: #dc2626; font-weight: bold;" />
+            </div>
+            <div style="flex: 1;">
+              <label style="font-size: 12px; color: #666;">剩余额度</label>
+              <input class="form-input" name="remainingCredit" type="number" readonly value="35000" style="color: #059669; font-weight: bold;" />
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>设定信用额度 *</label>
+          <input class="form-input" name="newCredit" type="number" min="15000" required placeholder="请输入新的信用额度" />
+          <small style="color: #666;">不能小于当前已用额度</small>
+        </div>
+        <div class="form-group">
+          <label>额度限制设置</label>
+          <div style="display: flex; gap: 10px; align-items: end; margin-bottom: 10px;">
+            <div style="flex: 1;">
+              <label style="font-size: 12px; color: #666;">单笔额度限制</label>
+              <div style="display: flex; gap: 5px; align-items: center;">
+                <select class="form-input" name="singleLimitType" style="flex: 1;">
+                  <option value="unlimited">不限</option>
+                  <option value="limited">限制金额</option>
+                </select>
+                <input class="form-input" name="singleLimitAmount" type="number" min="1" placeholder="金额" style="flex: 1; display: none;" id="singleLimitInput" />
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <label style="font-size: 12px; color: #666;">当日额度限制</label>
+              <div style="display: flex; gap: 5px; align-items: center;">
+                <select class="form-input" name="dailyLimitType" style="flex: 1;">
+                  <option value="unlimited">不限</option>
+                  <option value="limited">限制金额</option>
+                </select>
+                <input class="form-input" name="dailyLimitAmount" type="number" min="1" placeholder="金额" style="flex: 1; display: none;" id="dailyLimitInput" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>当前账期设置</label>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <div style="flex: 1;">
+              <label style="font-size: 12px; color: #666;">当前账期</label>
+              <input class="form-input" name="currentPeriod" type="text" readonly value="自然月" />
+            </div>
+            <div style="flex: 1;">
+              <label style="font-size: 12px; color: #666;">当前宽限期</label>
+              <input class="form-input" name="currentGracePeriod" type="number" readonly value="30" />
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>账期设置 *</label>
+          <select class="form-input" name="period" required>
+            <option value="">请选择账期</option>
+            <option value="natural_week">自然周（周一至周日）</option>
+            <option value="natural_month">自然月</option>
           </select>
         </div>
         <div class="form-group">
-          <label>申请额度 *</label>
-          <input class="form-input" name="amount" type="number" min="1" required placeholder="请输入额度" />
+          <label>宽限期（天）*</label>
+          <input class="form-input" name="gracePeriod" type="number" min="1" max="365" required placeholder="请输入宽限期天数（1-365）" />
+        </div>
+        <div class="form-group">
+          <label>是否有推荐人</label>
+          <label style="margin-right:10px;"><input type="radio" name="hasReferrer" value="no" checked> 无</label>
+          <label><input type="radio" name="hasReferrer" value="yes"> 有</label>
+        </div>
+        <div class="form-group" id="referrerGroup" style="display:none;">
+          <label>推荐人</label>
+          <input class="form-input" name="referrer" placeholder="请输入推荐人" />
+        </div>
+        <div class="form-group">
+          <label>客户网站</label>
+          <input class="form-input" name="website" placeholder="请输入客户网站" />
+        </div>
+        <div class="form-group">
+          <label>客户每月营收</label>
+          <input class="form-input" name="monthlyRevenue" placeholder="请输入客户每月营收" />
+        </div>
+        <div class="form-group">
+          <label>客户每月销售额</label>
+          <input class="form-input" name="monthlySales" placeholder="请输入客户每月销售额" />
+        </div>
+        <div class="form-group">
+          <label>客户历史总利润</label>
+          <input class="form-input" name="totalProfit" placeholder="请输入客户历史总利润" />
         </div>
         <div class="form-group">
           <label>备注 *</label>
           <textarea class="form-input" name="remark" rows="3" required placeholder="请填写备注"></textarea>
         </div>
         <div class="form-group">
-          <label>客户资料（PDF/Word）*</label>
-          <input class="form-input" name="file" type="file" accept=".pdf,.doc,.docx" required />
+          <label>客户资料（PDF/Word，最多10个）*</label>
+          <input class="form-input" name="file" type="file" accept=".pdf,.doc,.docx" multiple required />
         </div>
         <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 30px;">
           <button type="button" class="btn btn-secondary" onclick="closeModal('applyModal')">取消</button>
@@ -986,19 +1203,19 @@
       let status = statusArr[i%4];
       let now = new Date(Date.now()-i*86400000);
       let applyTime = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
-      let preReviewer = status!=='pre-review'?'初审员'+(i%5+1):'';
+      let preReviewer = status!=='pre-review'?'审核员':('');
       let preReviewTime = status!=='pre-review'?applyTime:'';
       let preReviewRemark = status!=='pre-review'?'初审备注'+i:'';
-      let finalReviewer = status==='approved'||status==='rejected'?'终审员'+(i%3+1):'';
+      let finalReviewer = status==='approved'||status==='rejected'?'审核员':'';
       let finalReviewTime = status==='approved'||status==='rejected'?applyTime:'';
       let finalReviewRemark = status==='approved'||status==='rejected'?'终审备注'+i:'';
+      // 确保有一些申请是"当前用户"发起的
+      let applicant = i < 5 ? '当前用户' : '申请人'+(i%7+1);
       creditApplications.push({
         accountId:m.accountId,
         email:m.email,
         merchantName:m.merchantName,
         business:i%2===0?'Advertising':'Fulfillment',
-        type:i%2===0?'increase':'decrease',
-        amount:10000+i*1000,
         status,
         applyTime,
         preReviewer,
@@ -1007,10 +1224,27 @@
         finalReviewer,
         finalReviewTime,
         finalReviewRemark,
-        fileName:'资料'+i+'.pdf',
-        fileUrl:'#',
+        files: [], // 新增文件数组
         remark:'申请备注'+i,
-        applicant:'申请人'+(i%7+1)
+        applicant: applicant,
+        hasReferrer: i%3===0?'yes':'no',
+        referrer: i%3===0?'推荐人'+i:'',
+        website: 'https://site'+i+'.com',
+        monthlyRevenue: i%2===0?('￥'+(100000+i*1000)):'',
+        monthlySales: i%2===1?('￥'+(50000+i*500)):'',
+        totalProfit: i%4===0?('￥'+(1000000+i*10000)):'',
+        currentCredit: 50000,
+        usedCredit: 15000,
+        remainingCredit: 35000,
+        newCredit: 60000 + i*1000,
+        singleLimitType: i%2===0?'unlimited':'limited',
+        singleLimitAmount: i%2===0?0:10000,
+        dailyLimitType: i%3===0?'unlimited':'limited',
+        dailyLimitAmount: i%3===0?0:50000,
+        currentPeriod: '自然月',
+        currentGracePeriod: 30,
+        period: i%2===0?'natural_week':'natural_month',
+        gracePeriod: 15 + i*5,
       });
     }
 
@@ -1031,16 +1265,13 @@
       const formData = new FormData(form);
       const now = new Date();
       const timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-      const file = form.file.files[0];
-      const fileName = file ? file.name : '';
-      // 模拟文件上传，实际应上传到服务器
+      const files = Array.from(form.file.files).slice(0,10);
+      const fileArr = files.map(f=>({name:f.name,url:'#'})); // 实际应上传后获得url
       creditApplications.unshift({
         accountId: formData.get('accountId'),
         email: formData.get('email'),
         merchantName: formData.get('merchantName'),
         business: formData.get('business'),
-        type: formData.get('type'),
-        amount: formData.get('amount'),
         status: 'pre-review',
         applyTime: timeStr,
         preReviewer: '',
@@ -1049,10 +1280,27 @@
         finalReviewer: '',
         finalReviewTime: '',
         finalReviewRemark: '',
-        fileName: fileName,
-        fileUrl: '#', // 实际应为文件上传后的URL
+        files: fileArr,
         remark: formData.get('remark'),
-        applicant: '当前用户' // 实际应为登录用户
+        applicant: '当前用户',
+        hasReferrer: formData.get('hasReferrer'),
+        referrer: formData.get('referrer'),
+        website: formData.get('website'),
+        monthlyRevenue: formData.get('monthlyRevenue'),
+        monthlySales: formData.get('monthlySales'),
+        totalProfit: formData.get('totalProfit'),
+        currentCredit: parseInt(formData.get('currentCredit')),
+        usedCredit: parseInt(formData.get('usedCredit')),
+        remainingCredit: parseInt(formData.get('remainingCredit')),
+        newCredit: parseInt(formData.get('newCredit')),
+        singleLimitType: formData.get('singleLimitType'),
+        singleLimitAmount: formData.get('singleLimitAmount') ? parseInt(formData.get('singleLimitAmount')) : 0,
+        dailyLimitType: formData.get('dailyLimitType'),
+        dailyLimitAmount: formData.get('dailyLimitAmount') ? parseInt(formData.get('dailyLimitAmount')) : 0,
+        currentPeriod: formData.get('currentPeriod'),
+        currentGracePeriod: parseInt(formData.get('currentGracePeriod')),
+        period: formData.get('period'),
+        gracePeriod: parseInt(formData.get('gracePeriod')),
       });
       renderTable();
       closeModal('applyModal');
@@ -1080,14 +1328,204 @@
     });
     merchantInput.addEventListener('blur',function(){setTimeout(()=>{merchantDropdown.style.display='none';},200);});
 
+    // 申请弹窗推荐人显示逻辑
+    document.querySelectorAll('input[name="hasReferrer"]').forEach(radio=>{
+      radio.addEventListener('change',function(){
+        document.getElementById('referrerGroup').style.display = this.value==='yes'?'block':'none';
+      });
+    });
+
+    // 额度限制显示逻辑
+    document.querySelectorAll('select[name="singleLimitType"], select[name="dailyLimitType"]').forEach(select => {
+      select.addEventListener('change', function() {
+        const inputId = this.name === 'singleLimitType' ? 'singleLimitInput' : 'dailyLimitInput';
+        const input = document.getElementById(inputId);
+        input.style.display = this.value === 'limited' ? 'block' : 'none';
+      });
+    });
+
     // 分页与筛选
     let currentPage = 1, pageSize = 8;
-    document.getElementById('searchStatus').addEventListener('change',function(){currentPage=1;renderTable();});
+    // 为不同的搜索状态选择器添加事件监听
+    document.getElementById('searchStatusMy')?.addEventListener('change',function(){currentPage=1;renderTable();});
+    document.getElementById('searchStatusAll')?.addEventListener('change',function(){currentPage=1;renderTable();});
+    document.getElementById('searchResultHistory')?.addEventListener('change',function(){currentPage=1;renderTable();});
+    
+    // Tab切换逻辑
+    let currentTab = 'my-applications';
+    
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const tabId = this.getAttribute('data-tab');
+        console.log('Tab clicked:', tabId); // 添加调试信息
+        switchTab(tabId);
+      });
+    });
+    
+    function switchTab(tabId) {
+      console.log('Switching to tab:', tabId); // 添加调试信息
+      // 更新Tab按钮状态
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+      
+      // 切换搜索区域
+      document.querySelectorAll('.search-section').forEach(section => {
+        section.style.display = 'none';
+      });
+      document.getElementById(`search-${tabId}`).style.display = 'block';
+      
+      // 更新表格标题和按钮
+      const titles = {
+        'my-applications': '我发起的申请',
+        'pending-review': '待审核申请',
+        'history': '历史处理记录',
+        'all': '全部申请'
+      };
+      document.getElementById('tableTitle').textContent = titles[tabId];
+      
+      // 控制发起申请按钮显示
+      document.getElementById('openApplyModalBtn').style.display = tabId === 'my-applications' ? 'block' : 'none';
+      
+      // 更新表格头部
+      updateTableHeader(tabId);
+      
+      currentTab = tabId;
+      currentPage = 1; // 切换Tab时重置到第一页
+      renderTable();
+    }
+    
+    // 更新表格头部
+    function updateTableHeader(tabId) {
+      const applicantHeader = document.querySelector('.applicant-header');
+      if(tabId === 'my-applications') {
+        // 我发起的Tab隐藏申请人列
+        applicantHeader.style.display = 'none';
+      } else {
+        // 其他Tab显示申请人列
+        applicantHeader.style.display = 'table-cell';
+      }
+    }
+
+    // 页面加载时初始化默认Tab
+    document.addEventListener('DOMContentLoaded', function() {
+      // Tab按钮事件绑定
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const tabId = this.getAttribute('data-tab');
+          switchTab(tabId);
+        });
+      });
+      // 默认显示"我发起的"Tab
+      switchTab('my-applications');
+      
+      // 为搜索输入框添加事件监听器
+      addSearchEventListeners();
+    });
+    
+    // 添加搜索事件监听器
+    function addSearchEventListeners() {
+      // 我发起的Tab搜索
+      const myApplicationsInputs = document.querySelectorAll('#search-my-applications input[type="text"]');
+      myApplicationsInputs.forEach(input => {
+        input.addEventListener('input', function() {
+          currentPage = 1;
+          renderTable();
+        });
+      });
+      
+      // 待审核Tab搜索
+      const pendingReviewInputs = document.querySelectorAll('#search-pending-review input[type="text"]');
+      pendingReviewInputs.forEach(input => {
+        input.addEventListener('input', function() {
+          currentPage = 1;
+          renderTable();
+        });
+      });
+      
+      // 历史处理Tab搜索
+      const historyInputs = document.querySelectorAll('#search-history input[type="text"]');
+      historyInputs.forEach(input => {
+        input.addEventListener('input', function() {
+          currentPage = 1;
+          renderTable();
+        });
+      });
+    }
+
     function renderTable() {
       const tbody = document.querySelector('.credit-table tbody');
       tbody.innerHTML = '';
-      let statusFilter = document.getElementById('searchStatus').value;
-      let filtered = creditApplications.filter(item=>!statusFilter||item.status===statusFilter);
+      
+      let filtered = [];
+      
+      switch(currentTab) {
+        case 'my-applications':
+          // 我发起的：申请人为当前用户
+          filtered = creditApplications.filter(item => item.applicant === '当前用户');
+          // 商户邮箱和商户名称模糊搜索
+          let emailFilterMy = document.querySelector('#search-my-applications input[placeholder="输入商户邮箱"]').value.trim();
+          let nameFilterMy = document.querySelector('#search-my-applications input[placeholder="输入商户名称"]').value.trim();
+          if(emailFilterMy) {
+            filtered = filtered.filter(item => item.email.toLowerCase().includes(emailFilterMy.toLowerCase()));
+          }
+          if(nameFilterMy) {
+            filtered = filtered.filter(item => item.merchantName.toLowerCase().includes(nameFilterMy.toLowerCase()));
+          }
+          let statusFilterMy = document.getElementById('searchStatusMy').value;
+          if(statusFilterMy) {
+            filtered = filtered.filter(item => item.status === statusFilterMy);
+          }
+          break;
+          
+        case 'pending-review':
+          // 待审核：等待当前用户审核的申请
+          filtered = creditApplications.filter(item => 
+            (item.status === 'pre-review' || item.status === 'final-review') && 
+            item.applicant !== '当前用户'
+          );
+          // 商户邮箱和商户名称模糊搜索
+          let emailFilterPending = document.querySelector('#search-pending-review input[placeholder="输入商户邮箱"]').value.trim();
+          let nameFilterPending = document.querySelector('#search-pending-review input[placeholder="输入商户名称"]').value.trim();
+          if(emailFilterPending) {
+            filtered = filtered.filter(item => item.email.toLowerCase().includes(emailFilterPending.toLowerCase()));
+          }
+          if(nameFilterPending) {
+            filtered = filtered.filter(item => item.merchantName.toLowerCase().includes(nameFilterPending.toLowerCase()));
+          }
+          break;
+          
+        case 'history':
+          // 历史处理：当前用户已审核的申请
+          filtered = creditApplications.filter(item => 
+            (item.preReviewer === '审核员' || item.finalReviewer === '审核员')
+          );
+          // 商户邮箱和商户名称模糊搜索
+          let emailFilterHistory = document.querySelector('#search-history input[placeholder="输入商户邮箱"]').value.trim();
+          let nameFilterHistory = document.querySelector('#search-history input[placeholder="输入商户名称"]').value.trim();
+          if(emailFilterHistory) {
+            filtered = filtered.filter(item => item.email.toLowerCase().includes(emailFilterHistory.toLowerCase()));
+          }
+          if(nameFilterHistory) {
+            filtered = filtered.filter(item => item.merchantName.toLowerCase().includes(nameFilterHistory.toLowerCase()));
+          }
+          let resultFilter = document.getElementById('searchResultHistory').value;
+          if(resultFilter) {
+            filtered = filtered.filter(item => item.status === resultFilter);
+          }
+          break;
+          
+        case 'all':
+          // 全部：所有申请
+          filtered = [...creditApplications];
+          let statusFilterAll = document.getElementById('searchStatusAll').value;
+          if(statusFilterAll) {
+            filtered = filtered.filter(item => item.status === statusFilterAll);
+          }
+          break;
+      }
+      
       let total = filtered.length;
       let pageCount = Math.ceil(total/pageSize);
       if(currentPage>pageCount) currentPage=pageCount||1;
@@ -1101,25 +1539,44 @@
         else if(item.status === 'final-review') { statusText = '待终审'; statusClass = 'status-pending'; }
         else if(item.status === 'approved') { statusText = '审核通过'; statusClass = 'status-approved'; }
         else if(item.status === 'rejected') { statusText = '审核不通过'; statusClass = 'status-rejected'; }
-        let typeHtml = item.type === 'increase' ? '<div class="adjustment-type type-increase">增加</div>' : '<div class="adjustment-type type-decrease">减少</div>';
-        let fileHtml = item.fileName ? `<a href="${item.fileUrl}" class="btn btn-secondary btn-small" download>${item.fileName}</a>` : '';
         let opBtns = '';
-        if(item.status === 'pre-review') {
-          opBtns = `<button class='btn btn-primary btn-small' onclick="openAudit(${start+idx},'approve','pre')">初审通过</button><button class='btn btn-danger btn-small' onclick="openAudit(${start+idx},'reject','pre')">初审拒绝</button>`;
-        } else if(item.status === 'final-review') {
-          opBtns = `<button class='btn btn-primary btn-small' onclick="openAudit(${start+idx},'approve','final')">终审通过</button><button class='btn btn-danger btn-small' onclick="openAudit(${start+idx},'reject','final')">终审拒绝</button>`;
+        
+        // 根据不同Tab显示不同操作
+        switch(currentTab) {
+          case 'my-applications':
+            // 我发起的：只能查看详情
+            opBtns = `<button class='btn btn-secondary btn-small' onclick="openDetail(${start+idx})">详情</button>`;
+            break;
+            
+          case 'pending-review':
+            // 待审核：可以审核和查看详情
+            if(item.status === 'pre-review') {
+              opBtns = `<button class='btn btn-primary btn-small' onclick="openAuditModal(${start+idx},'pre')">初审</button>`;
+            } else if(item.status === 'final-review') {
+              opBtns = `<button class='btn btn-primary btn-small' onclick="openAuditModal(${start+idx},'final')">终审</button>`;
+            }
+            opBtns += `<button class='btn btn-secondary btn-small' onclick="openDetail(${start+idx})">详情</button>`;
+            break;
+            
+          case 'history':
+            // 历史处理：只能查看详情
+            opBtns = `<button class='btn btn-secondary btn-small' onclick="openDetail(${start+idx})">详情</button>`;
+            break;
+            
+          case 'all':
+            // 全部：只能查看详情
+            opBtns = `<button class='btn btn-secondary btn-small' onclick="openDetail(${start+idx})">详情</button>`;
+            break;
         }
-        opBtns += `<button class='btn btn-secondary btn-small' onclick="openDetail(${start+idx})">详情</button>`;
+        // 根据Tab决定是否显示申请人字段
+        let applicantCell = currentTab === 'my-applications' ? '' : `<td>${item.applicant}</td>`;
         tbody.innerHTML += `
           <tr>
             <td class="sticky-col sticky-email">${item.email}</td>
             <td class="sticky-col sticky-name">${item.merchantName}</td>
             <td><span class="business-tag">${item.business}</span></td>
-            <td>${typeHtml}</td>
-            <td class="credit-amount ${item.type==='increase'?'credit-increase':'credit-decrease'}">${item.amount}</td>
             <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-            <td>${fileHtml}</td>
-            <td>${item.applicant}</td>
+            ${applicantCell}
             <td>${item.applyTime}</td>
             <td class="remark-cell" data-remark="${item.remark}">${item.remark.length>8?item.remark.slice(0,8)+'...':item.remark}</td>
             <td>${item.preReviewer||'-'}</td>
@@ -1206,25 +1663,46 @@
     function openDetail(idx) {
       const item = creditApplications[idx];
       let html = '';
-      html += `<div class='detail-section'><h4>客户信息</h4><div class='detail-grid'>`;
-      html += `<div class='detail-item'><span class='detail-label'>账户ID</span><span class='detail-value'>${item.accountId}</span></div>`;
-      html += `<div class='detail-item'><span class='detail-label'>商户邮箱</span><span class='detail-value'>${item.email}</span></div>`;
-      html += `<div class='detail-item'><span class='detail-label'>商户名称</span><span class='detail-value'>${item.merchantName}</span></div>`;
-      html += `<div class='detail-item'><span class='detail-label'>子业务名称</span><span class='detail-value'>${item.business}</span></div>`;
-      html += `</div></div>`;
-      html += `<div class='detail-section'><h4>申请信息</h4><div class='detail-grid'>`;
-      html += `<div class='detail-item'><span class='detail-label'>调整类型</span><span class='detail-value'>${item.type==='increase'?'增加':'减少'}</span></div>`;
-      html += `<div class='detail-item'><span class='detail-label'>申请额度</span><span class='detail-value'>${item.amount}</span></div>`;
-      html += `<div class='detail-item'><span class='detail-label'>申请人</span><span class='detail-value'>${item.applicant}</span></div>`;
-      html += `<div class='detail-item'><span class='detail-label'>申请时间</span><span class='detail-value'>${item.applyTime}</span></div>`;
-      html += `<div class='detail-item'><span class='detail-label'>审核状态</span><span class='detail-value'>${item.status==='pre-review'?'待初审':item.status==='final-review'?'待终审':item.status==='approved'?'审核通过':'审核不通过'}</span></div>`;
-      html += `<div class='detail-item'><span class='detail-label'>资料</span><span class='detail-value'><a href='${item.fileUrl}' download>${item.fileName}</a></span></div>`;
-      html += `</div></div>`;
-      html += `<div class='detail-section'><h4>申请备注</h4><div style='background:#f8fafc;padding:15px;border-radius:8px;color:#64748b;'>${item.remark}</div></div>`;
-      html += `<div class='detail-section'><h4>审核记录</h4><div style='background:#f8fafc;padding:15px;border-radius:8px;color:#64748b;'>`;
-      if(item.preReviewer) html += `初审：${item.preReviewer} ${item.preReviewTime} 备注：${item.preReviewRemark}<br/>`;
-      if(item.finalReviewer) html += `终审：${item.finalReviewer} ${item.finalReviewTime} 备注：${item.finalReviewRemark}<br/>`;
-      html += `</div></div>`;
+      html += `<div style='padding:10px 0;'>`;
+      html += `<b>商户邮箱：</b>${item.email}<br/>`;
+      html += `<b>商户名称：</b>${item.merchantName}<br/>`;
+      html += `<b>子业务名称：</b>${item.business}<br/>`;
+      html += `<div style='background: #f8fafc; padding: 10px; border-radius: 6px; margin: 10px 0;'>`;
+      html += `<b style='color: #374151;'>当前额度信息：</b><br/>`;
+      html += `<span style='color: #2563eb; font-weight: bold;'>当前信用额度：${item.currentCredit}</span><br/>`;
+      html += `<span style='color: #dc2626; font-weight: bold;'>已用额度：${item.usedCredit}</span><br/>`;
+      html += `<span style='color: #059669; font-weight: bold;'>剩余额度：${item.remainingCredit}</span><br/>`;
+      html += `</div>`;
+      html += `<div style='background: #fef3c7; padding: 10px; border-radius: 6px; margin: 10px 0;'>`;
+      html += `<b style='color: #374151;'>申请额度信息：</b><br/>`;
+      html += `<span style='color: #f59e0b; font-weight: bold;'>设定信用额度：${item.newCredit}</span><br/>`;
+      html += `<span>单笔额度限制：${item.singleLimitType==='unlimited'?'不限':item.singleLimitAmount}</span><br/>`;
+      html += `<span>当日额度限制：${item.dailyLimitType==='unlimited'?'不限':item.dailyLimitAmount}</span><br/>`;
+      html += `</div>`;
+      html += `<b>申请备注：</b>${item.remark||'-'}<br/>`;
+      if(item.files && item.files.length) {
+        html += `<b>资料：</b><br/>`;
+        html += item.files.map(f=>`<a href='${f.url}' download>${f.name}</a>`).join('<br/>');
+        html += `<br/>`;
+      }
+      html += `<b>当前账期：</b>${item.currentPeriod}<br/>`;
+      html += `<b>当前宽限期：</b>${item.currentGracePeriod}天<br/>`;
+      html += `<b>申请账期：</b>${item.period==='natural_week'?'自然周（周一至周日）':'自然月'}<br/>`;
+      html += `<b>申请宽限期：</b>${item.gracePeriod}天<br/>`;
+      html += `<b>申请人：</b>${item.applicant}<br/>`;
+      html += `<b>申请时间：</b>${item.applyTime}<br/>`;
+      html += `<b>审核状态：</b>${item.status==='pre-review'?'待初审':item.status==='final-review'?'待终审':item.status==='approved'?'审核通过':'审核不通过'}<br/>`;
+      if(item.preReviewer) {
+        html += `<b>初审人：</b>${item.preReviewer}<br/>`;
+        html += `<b>初审时间：</b>${item.preReviewTime}<br/>`;
+        html += `<b>初审备注：</b>${item.preReviewRemark}<br/>`;
+      }
+      if(item.finalReviewer) {
+        html += `<b>终审人：</b>${item.finalReviewer}<br/>`;
+        html += `<b>终审时间：</b>${item.finalReviewTime}<br/>`;
+        html += `<b>终审备注：</b>${item.finalReviewRemark}<br/>`;
+      }
+      html += `</div>`;
       document.querySelector('#detailModal .modal-content').innerHTML = `
         <div class="modal-header">
           <h2 class="modal-title">信用额度申请详情</h2>
@@ -1243,6 +1721,97 @@
     document.querySelector('.credit-table').style.minWidth = '2000px';
     // 初始化渲染
     renderTable();
+
+    // 新审核弹窗结构
+    function renderAuditModal(idx, stage) {
+      const item = creditApplications[idx];
+      let html = '';
+      html += `<div style='padding:10px 0;'>`;
+      html += `<b>商户邮箱：</b>${item.email}<br/>`;
+      html += `<b>商户名称：</b>${item.merchantName}<br/>`;
+      html += `<b>子业务名称：</b>${item.business}<br/>`;
+      html += `<div style='background: #f8fafc; padding: 10px; border-radius: 6px; margin: 10px 0;'>`;
+      html += `<b style='color: #374151;'>当前额度信息：</b><br/>`;
+      html += `<span style='color: #2563eb; font-weight: bold;'>当前信用额度：${item.currentCredit}</span><br/>`;
+      html += `<span style='color: #dc2626; font-weight: bold;'>已用额度：${item.usedCredit}</span><br/>`;
+      html += `<span style='color: #059669; font-weight: bold;'>剩余额度：${item.remainingCredit}</span><br/>`;
+      html += `</div>`;
+      html += `<div style='background: #fef3c7; padding: 10px; border-radius: 6px; margin: 10px 0;'>`;
+      html += `<b style='color: #374151;'>申请额度信息：</b><br/>`;
+      html += `<span style='color: #f59e0b; font-weight: bold;'>设定信用额度：${item.newCredit}</span><br/>`;
+      html += `<span>单笔额度限制：${item.singleLimitType==='unlimited'?'不限':item.singleLimitAmount}</span><br/>`;
+      html += `<span>当日额度限制：${item.dailyLimitType==='unlimited'?'不限':item.dailyLimitAmount}</span><br/>`;
+      html += `</div>`;
+      html += `<b>申请备注：</b>${item.remark||'-'}<br/>`;
+      if(item.files && item.files.length) {
+        html += `<b>资料：</b><br/>`;
+        html += item.files.map(f=>`<a href='${f.url}' download>${f.name}</a>`).join('<br/>');
+        html += `<br/>`;
+      }
+      html += `<b>当前账期：</b>${item.currentPeriod}<br/>`;
+      html += `<b>当前宽限期：</b>${item.currentGracePeriod}天<br/>`;
+      html += `<b>申请账期：</b>${item.period==='natural_week'?'自然周（周一至周日）':'自然月'}<br/>`;
+      html += `<b>申请宽限期：</b>${item.gracePeriod}天<br/>`;
+      if(stage==='final') {
+        html += `<b>初审人：</b>${item.preReviewResult==='approve'?'通过':item.preReviewResult==='reject'?'不通过':'-'}<br/>`;
+        html += `<b>初审备注：</b>${item.preReviewRemark||'-'}<br/>`;
+      }
+      html += `</div>`;
+      html += `<form id='auditForm' style='margin-top:10px;'>`;
+      html += `<div class='form-group'><label>审核结果 *</label><br/>
+        <label style='margin-right:20px;'><input type='radio' name='auditResult' value='approve'> 通过</label>
+        <label><input type='radio' name='auditResult' value='reject'> 不通过</label>
+      </div>`;
+      html += `<div class='form-group'><label>审核备注 *</label><textarea class='form-input' name='auditRemark' rows='3' required placeholder='请填写审核备注'></textarea></div>`;
+      html += `<div style='display:flex;gap:15px;justify-content:flex-end;margin-top:20px;'>
+        <button type='button' class='btn btn-secondary' onclick='closeAuditModal()'>取消</button>
+        <button type='submit' class='btn btn-primary'>提交</button>
+      </div>`;
+      html += `</form>`;
+      return html;
+    }
+
+    // 打开审核弹窗
+    window.openAuditModal = function(idx, stage) {
+      const modal = document.createElement('div');
+      modal.className = 'modal show';
+      modal.id = 'customAuditModal';
+      modal.innerHTML = `<div class='modal-content' style='max-width:600px;'>
+        <div class='modal-header'><h2 class='modal-title'>${stage==='pre'?'初审':'终审'}</h2><button class='close-btn' onclick='closeAuditModal()'>&times;</button></div>
+        ${renderAuditModal(idx, stage)}
+      </div>`;
+      document.body.appendChild(modal);
+      // 表单校验
+      modal.querySelector('#auditForm').onsubmit = function(e) {
+        e.preventDefault();
+        const result = modal.querySelector('input[name="auditResult"]:checked');
+        const remark = modal.querySelector('textarea[name="auditRemark"]').value.trim();
+        if(!result) { alert('请选择审核结果'); return; }
+        if(!remark) { alert('请填写审核备注'); return; }
+        // 保存审核结果
+        if(stage==='pre') {
+          creditApplications[idx].preReviewResult = result.value;
+          creditApplications[idx].preReviewRemark = remark;
+          creditApplications[idx].preReviewer = '审核员';
+          creditApplications[idx].preReviewTime = new Date().toLocaleString();
+          creditApplications[idx].status = result.value==='approve'?'final-review':'rejected';
+        } else {
+          creditApplications[idx].finalReviewResult = result.value;
+          creditApplications[idx].finalReviewRemark = remark;
+          creditApplications[idx].finalReviewer = '审核员';
+          creditApplications[idx].finalReviewTime = new Date().toLocaleString();
+          creditApplications[idx].status = result.value==='approve'?'approved':'rejected';
+        }
+        renderTable();
+        closeAuditModal();
+      };
+      // 关闭弹窗点击遮罩
+      modal.onclick = function(e){ if(e.target===modal) closeAuditModal(); };
+    }
+    window.closeAuditModal = function() {
+      const m = document.getElementById('customAuditModal');
+      if(m) m.remove();
+    }
   </script>
 </body>
 </html> 
