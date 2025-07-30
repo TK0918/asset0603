@@ -1008,10 +1008,10 @@
           </div>
         </div>
         <div class="form-group">
-          <label>当前账期设置</label>
+          <label>当前结算周期设置</label>
           <div style="display: flex; gap: 10px; align-items: center;">
             <div style="flex: 1;">
-              <label style="font-size: 12px; color: #666;">当前账期</label>
+              <label style="font-size: 12px; color: #666;">当前结算周期</label>
               <input class="form-input" name="currentPeriod" type="text" readonly value="自然月" />
             </div>
             <div style="flex: 1;">
@@ -1021,15 +1021,21 @@
           </div>
         </div>
         <div class="form-group">
-          <label>账期设置 *</label>
+          <label>结算周期 *</label>
           <select class="form-input" name="period" required>
-            <option value="">请选择账期</option>
+            <option value="">请选择结算周期</option>
             <option value="natural_week">自然周（周一至周日）</option>
+            <option value="biweekly">双周</option>
+            <option value="half_month">半月（1~15，16~月末）</option>
             <option value="natural_month">自然月</option>
           </select>
         </div>
         <div class="form-group">
-          <label>宽限期（天）*</label>
+          <label>账期天数 *</label>
+          <input class="form-input" name="periodDays" type="number" min="1" max="365" required placeholder="请输入账期天数（1-365）" />
+        </div>
+        <div class="form-group">
+          <label>宽限期天数 *</label>
           <input class="form-input" name="gracePeriod" type="number" min="1" max="365" required placeholder="请输入宽限期天数（1-365）" />
         </div>
         <div class="form-group">
@@ -1243,7 +1249,8 @@
         dailyLimitAmount: i%3===0?0:50000,
         currentPeriod: '自然月',
         currentGracePeriod: 30,
-        period: i%2===0?'natural_week':'natural_month',
+        period: i%2===0?'natural_week':i%3===0?'biweekly':i%4===0?'half_month':'natural_month',
+        periodDays: 30 + i*5,
         gracePeriod: 15 + i*5,
       });
     }
@@ -1300,6 +1307,7 @@
         currentPeriod: formData.get('currentPeriod'),
         currentGracePeriod: parseInt(formData.get('currentGracePeriod')),
         period: formData.get('period'),
+        periodDays: parseInt(formData.get('periodDays')),
         gracePeriod: parseInt(formData.get('gracePeriod')),
       });
       renderTable();
@@ -1685,9 +1693,10 @@
         html += item.files.map(f=>`<a href='${f.url}' download>${f.name}</a>`).join('<br/>');
         html += `<br/>`;
       }
-      html += `<b>当前账期：</b>${item.currentPeriod}<br/>`;
+      html += `<b>当前结算周期：</b>${item.currentPeriod}<br/>`;
       html += `<b>当前宽限期：</b>${item.currentGracePeriod}天<br/>`;
-      html += `<b>申请账期：</b>${item.period==='natural_week'?'自然周（周一至周日）':'自然月'}<br/>`;
+      html += `<b>申请结算周期：</b>${item.period==='natural_week'?'自然周（周一至周日）':item.period==='biweekly'?'双周':item.period==='half_month'?'半月（1~15，16~月末）':'自然月'}<br/>`;
+      html += `<b>申请账期天数：</b>${item.periodDays}天<br/>`;
       html += `<b>申请宽限期：</b>${item.gracePeriod}天<br/>`;
       html += `<b>申请人：</b>${item.applicant}<br/>`;
       html += `<b>申请时间：</b>${item.applyTime}<br/>`;
@@ -1748,9 +1757,10 @@
         html += item.files.map(f=>`<a href='${f.url}' download>${f.name}</a>`).join('<br/>');
         html += `<br/>`;
       }
-      html += `<b>当前账期：</b>${item.currentPeriod}<br/>`;
+      html += `<b>当前结算周期：</b>${item.currentPeriod}<br/>`;
       html += `<b>当前宽限期：</b>${item.currentGracePeriod}天<br/>`;
-      html += `<b>申请账期：</b>${item.period==='natural_week'?'自然周（周一至周日）':'自然月'}<br/>`;
+      html += `<b>申请结算周期：</b>${item.period==='natural_week'?'自然周（周一至周日）':item.period==='biweekly'?'双周':item.period==='half_month'?'半月（1~15，16~月末）':'自然月'}<br/>`;
+      html += `<b>申请账期天数：</b>${item.periodDays}天<br/>`;
       html += `<b>申请宽限期：</b>${item.gracePeriod}天<br/>`;
       if(stage==='final') {
         html += `<b>初审人：</b>${item.preReviewResult==='approve'?'通过':item.preReviewResult==='reject'?'不通过':'-'}<br/>`;
