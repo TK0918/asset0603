@@ -954,123 +954,186 @@
         </div>
         <div class="form-group">
           <label>子业务名称 *</label>
-          <select class="form-input" name="business" required>
+          <select class="form-input" name="business" required id="businessSelect">
             <option value="">请选择</option>
             <option value="Advertising">Advertising</option>
             <option value="Fulfillment">Fulfillment</option>
           </select>
         </div>
-        <div class="form-group">
-          <label>当前额度信息</label>
-          <div style="display: flex; gap: 10px; align-items: center;">
-            <div style="flex: 1;">
-              <label style="font-size: 12px; color: #666;">当前信用额度</label>
-              <input class="form-input" name="currentCredit" type="number" readonly value="50000" style="color: #2563eb; font-weight: bold;" />
-            </div>
-            <div style="flex: 1;">
-              <label style="font-size: 12px; color: #666;">已用额度</label>
-              <input class="form-input" name="usedCredit" type="number" readonly value="15000" style="color: #dc2626; font-weight: bold;" />
-            </div>
-            <div style="flex: 1;">
-              <label style="font-size: 12px; color: #666;">剩余额度</label>
-              <input class="form-input" name="remainingCredit" type="number" readonly value="35000" style="color: #059669; font-weight: bold;" />
+        
+        <!-- 广告业务表单内容 -->
+        <div id="advertisingForm" style="display: none;">
+          <div class="form-group">
+            <label>设定信用额度 *</label>
+            <input class="form-input" name="newCredit" type="number" min="15000" placeholder="请输入新的信用额度" />
+            <small style="color: #666;">不能小于当前已用额度</small>
+          </div>
+          <div class="form-group">
+            <label>设定单笔额度限制</label>
+            <div style="display: flex; gap: 5px; align-items: center;">
+              <select class="form-input" name="singleLimitType" style="flex: 1;">
+                <option value="unlimited">不限</option>
+                <option value="limited">限制金额</option>
+              </select>
+              <input class="form-input" name="singleLimitAmount" type="number" min="1" placeholder="金额" style="flex: 1; display: none;" id="singleLimitInput" />
             </div>
           </div>
+          <div class="form-group">
+            <label>设定当日额度限制</label>
+            <div style="display: flex; gap: 5px; align-items: center;">
+              <select class="form-input" name="dailyLimitType" style="flex: 1;">
+                <option value="unlimited">不限</option>
+                <option value="limited">限制金额</option>
+              </select>
+              <input class="form-input" name="dailyLimitAmount" type="number" min="1" placeholder="金额" style="flex: 1; display: none;" id="dailyLimitInput" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>设定结算周期 *</label>
+            <select class="form-input" name="period" required>
+              <option value="">请选择结算周期</option>
+              <option value="natural_week">自然周（周一至周日）</option>
+              <option value="biweekly">双周</option>
+              <option value="half_month">半月（1~15，16~月末）</option>
+              <option value="natural_month">自然月</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>账期天数 *</label>
+            <input class="form-input" name="periodDays" type="number" min="1" max="365" required placeholder="请输入账期天数（1-365）" />
+          </div>
+          <div class="form-group">
+            <label>宽限期天数 *</label>
+            <input class="form-input" name="gracePeriod" type="number" min="1" max="365" required placeholder="请输入宽限期天数（1-365）" />
+          </div>
+          <div class="form-group">
+            <label>是否有推荐人</label>
+            <label style="margin-right:10px;"><input type="radio" name="hasReferrer" value="no" checked> 无</label>
+            <label><input type="radio" name="hasReferrer" value="yes"> 有</label>
+          </div>
+          <div class="form-group" id="referrerGroup" style="display:none;">
+            <label>推荐人</label>
+            <input class="form-input" name="referrer" placeholder="请输入推荐人" />
+          </div>
+          <div class="form-group">
+            <label>客户网站</label>
+            <input class="form-input" name="website" placeholder="请输入客户网站" />
+          </div>
+          <div class="form-group">
+            <label>客户每月营收</label>
+            <input class="form-input" name="monthlyRevenue" placeholder="请输入客户每月营收" />
+          </div>
+          <div class="form-group">
+            <label>客户每月销售额</label>
+            <input class="form-input" name="monthlySales" placeholder="请输入客户每月销售额" />
+          </div>
+          <div class="form-group">
+            <label>客户历史总利润</label>
+            <input class="form-input" name="totalProfit" placeholder="请输入客户历史总利润" />
+          </div>
+          <div class="form-group">
+            <label>备注 *</label>
+            <textarea class="form-input" name="remark" rows="3" required placeholder="请填写备注"></textarea>
+          </div>
+          <div class="form-group">
+            <label>附件（支持上传jpg/png/pdf格式文件，最多10个，单个文件20M内）*</label>
+            <input class="form-input" name="file" type="file" accept=".jpg,.jpeg,.png,.pdf" multiple required />
+            <small style="color: #666;">支持格式：JPG、PNG、PDF，单个文件最大20MB</small>
+          </div>
         </div>
-        <div class="form-group">
-          <label>设定信用额度 *</label>
-          <input class="form-input" name="newCredit" type="number" min="15000" required placeholder="请输入新的信用额度" />
-          <small style="color: #666;">不能小于当前已用额度</small>
-        </div>
-        <div class="form-group">
-          <label>额度限制设置</label>
-          <div style="display: flex; gap: 10px; align-items: end; margin-bottom: 10px;">
-            <div style="flex: 1;">
-              <label style="font-size: 12px; color: #666;">单笔额度限制</label>
-              <div style="display: flex; gap: 5px; align-items: center;">
-                <select class="form-input" name="singleLimitType" style="flex: 1;">
-                  <option value="unlimited">不限</option>
-                  <option value="limited">限制金额</option>
-                </select>
-                <input class="form-input" name="singleLimitAmount" type="number" min="1" placeholder="金额" style="flex: 1; display: none;" id="singleLimitInput" />
+        
+        <!-- 履约业务表单内容 -->
+        <div id="fulfillmentForm" style="display: none;">
+          <div class="form-group">
+            <label>当前额度信息</label>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <div style="flex: 1;">
+                <label style="font-size: 12px; color: #666;">当前信用额度</label>
+                <input class="form-input" name="currentCredit" type="number" readonly value="50000" style="color: #2563eb; font-weight: bold;" />
+              </div>
+              <div style="flex: 1;">
+                <label style="font-size: 12px; color: #666;">已用额度</label>
+                <input class="form-input" name="usedCredit" type="number" readonly value="15000" style="color: #dc2626; font-weight: bold;" />
+              </div>
+              <div style="flex: 1;">
+                <label style="font-size: 12px; color: #666;">剩余额度</label>
+                <input class="form-input" name="remainingCredit" type="number" readonly value="35000" style="color: #059669; font-weight: bold;" />
               </div>
             </div>
-            <div style="flex: 1;">
-              <label style="font-size: 12px; color: #666;">当日额度限制</label>
-              <div style="display: flex; gap: 5px; align-items: center;">
-                <select class="form-input" name="dailyLimitType" style="flex: 1;">
-                  <option value="unlimited">不限</option>
-                  <option value="limited">限制金额</option>
-                </select>
-                <input class="form-input" name="dailyLimitAmount" type="number" min="1" placeholder="金额" style="flex: 1; display: none;" id="dailyLimitInput" />
-              </div>
+          </div>
+          <div class="form-group">
+            <label>设定信用额度 *</label>
+            <input class="form-input" name="newCredit" type="number" min="15000" placeholder="请输入新的信用额度" />
+            <small style="color: #666;">不能小于当前已用额度</small>
+          </div>
+          <div class="form-group">
+            <label>设定单笔额度限制</label>
+            <div style="display: flex; gap: 5px; align-items: center;">
+              <select class="form-input" name="singleLimitType" style="flex: 1;">
+                <option value="unlimited">不限</option>
+                <option value="limited">限制金额</option>
+              </select>
+              <input class="form-input" name="singleLimitAmount" type="number" min="1" placeholder="金额" style="flex: 1; display: none;" id="singleLimitInputFulfillment" />
             </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label>当前结算周期设置</label>
-          <div style="display: flex; gap: 10px; align-items: center;">
-            <div style="flex: 1;">
-              <label style="font-size: 12px; color: #666;">当前结算周期</label>
-              <input class="form-input" name="currentPeriod" type="text" readonly value="自然月" />
-            </div>
-            <div style="flex: 1;">
-              <label style="font-size: 12px; color: #666;">当前宽限期</label>
-              <input class="form-input" name="currentGracePeriod" type="number" readonly value="30" />
+          <div class="form-group">
+            <label>设定当日额度限制</label>
+            <div style="display: flex; gap: 5px; align-items: center;">
+              <select class="form-input" name="dailyLimitType" style="flex: 1;">
+                <option value="unlimited">不限</option>
+                <option value="limited">限制金额</option>
+              </select>
+              <input class="form-input" name="dailyLimitAmount" type="number" min="1" placeholder="金额" style="flex: 1; display: none;" id="dailyLimitInputFulfillment" />
             </div>
           </div>
+          <div class="form-group">
+            <label>结算周期（只读）</label>
+            <input class="form-input" name="period" type="text" readonly value="自然月" />
+          </div>
+          <div class="form-group">
+            <label>账期天数（只读）</label>
+            <input class="form-input" name="periodDays" type="number" readonly value="30" />
+          </div>
+          <div class="form-group">
+            <label>宽限期天数（只读）</label>
+            <input class="form-input" name="gracePeriod" type="number" readonly value="15" />
+          </div>
+          <div class="form-group">
+            <label>是否有推荐人</label>
+            <label style="margin-right:10px;"><input type="radio" name="hasReferrer" value="no" checked> 无</label>
+            <label><input type="radio" name="hasReferrer" value="yes"> 有</label>
+          </div>
+          <div class="form-group" id="referrerGroupFulfillment" style="display:none;">
+            <label>推荐人</label>
+            <input class="form-input" name="referrer" placeholder="请输入推荐人" />
+          </div>
+          <div class="form-group">
+            <label>客户网站</label>
+            <input class="form-input" name="website" placeholder="请输入客户网站" />
+          </div>
+          <div class="form-group">
+            <label>客户每月营收</label>
+            <input class="form-input" name="monthlyRevenue" placeholder="请输入客户每月营收" />
+          </div>
+          <div class="form-group">
+            <label>客户每月销售额</label>
+            <input class="form-input" name="monthlySales" placeholder="请输入客户每月销售额" />
+          </div>
+          <div class="form-group">
+            <label>客户历史总利润</label>
+            <input class="form-input" name="totalProfit" placeholder="请输入客户历史总利润" />
+          </div>
+          <div class="form-group">
+            <label>备注 *</label>
+            <textarea class="form-input" name="remark" rows="3" required placeholder="请填写备注"></textarea>
+          </div>
+          <div class="form-group">
+            <label>附件（支持上传jpg/png/pdf格式文件，最多10个，单个文件20M内）*</label>
+            <input class="form-input" name="file" type="file" accept=".jpg,.jpeg,.png,.pdf" multiple required />
+            <small style="color: #666;">支持格式：JPG、PNG、PDF，单个文件最大20MB</small>
+          </div>
         </div>
-        <div class="form-group">
-          <label>结算周期 *</label>
-          <select class="form-input" name="period" required>
-            <option value="">请选择结算周期</option>
-            <option value="natural_week">自然周（周一至周日）</option>
-            <option value="biweekly">双周</option>
-            <option value="half_month">半月（1~15，16~月末）</option>
-            <option value="natural_month">自然月</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>账期天数 *</label>
-          <input class="form-input" name="periodDays" type="number" min="1" max="365" required placeholder="请输入账期天数（1-365）" />
-        </div>
-        <div class="form-group">
-          <label>宽限期天数 *</label>
-          <input class="form-input" name="gracePeriod" type="number" min="1" max="365" required placeholder="请输入宽限期天数（1-365）" />
-        </div>
-        <div class="form-group">
-          <label>是否有推荐人</label>
-          <label style="margin-right:10px;"><input type="radio" name="hasReferrer" value="no" checked> 无</label>
-          <label><input type="radio" name="hasReferrer" value="yes"> 有</label>
-        </div>
-        <div class="form-group" id="referrerGroup" style="display:none;">
-          <label>推荐人</label>
-          <input class="form-input" name="referrer" placeholder="请输入推荐人" />
-        </div>
-        <div class="form-group">
-          <label>客户网站</label>
-          <input class="form-input" name="website" placeholder="请输入客户网站" />
-        </div>
-        <div class="form-group">
-          <label>客户每月营收</label>
-          <input class="form-input" name="monthlyRevenue" placeholder="请输入客户每月营收" />
-        </div>
-        <div class="form-group">
-          <label>客户每月销售额</label>
-          <input class="form-input" name="monthlySales" placeholder="请输入客户每月销售额" />
-        </div>
-        <div class="form-group">
-          <label>客户历史总利润</label>
-          <input class="form-input" name="totalProfit" placeholder="请输入客户历史总利润" />
-        </div>
-        <div class="form-group">
-          <label>备注 *</label>
-          <textarea class="form-input" name="remark" rows="3" required placeholder="请填写备注"></textarea>
-        </div>
-        <div class="form-group">
-          <label>客户资料（PDF/Word，最多10个）*</label>
-          <input class="form-input" name="file" type="file" accept=".pdf,.doc,.docx" multiple required />
-        </div>
+        
         <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 30px;">
           <button type="button" class="btn btn-secondary" onclick="closeModal('applyModal')">取消</button>
           <button type="submit" class="btn btn-primary">提交申请</button>
@@ -1270,15 +1333,29 @@
       e.preventDefault();
       const form = e.target;
       const formData = new FormData(form);
+      const business = formData.get('business');
       const now = new Date();
       const timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
       const files = Array.from(form.file.files).slice(0,10);
       const fileArr = files.map(f=>({name:f.name,url:'#'})); // 实际应上传后获得url
+      
+      // 根据业务类型处理不同的表单数据
+      let periodValue, periodDaysValue, gracePeriodValue;
+      if (business === 'Advertising') {
+        periodValue = formData.get('period');
+        periodDaysValue = parseInt(formData.get('periodDays'));
+        gracePeriodValue = parseInt(formData.get('gracePeriod'));
+      } else if (business === 'Fulfillment') {
+        periodValue = 'natural_month'; // 履约业务固定为自然月
+        periodDaysValue = 30; // 履约业务固定为30天
+        gracePeriodValue = 15; // 履约业务固定为15天
+      }
+      
       creditApplications.unshift({
         accountId: formData.get('accountId'),
         email: formData.get('email'),
         merchantName: formData.get('merchantName'),
-        business: formData.get('business'),
+        business: business,
         status: 'pre-review',
         applyTime: timeStr,
         preReviewer: '',
@@ -1296,23 +1373,26 @@
         monthlyRevenue: formData.get('monthlyRevenue'),
         monthlySales: formData.get('monthlySales'),
         totalProfit: formData.get('totalProfit'),
-        currentCredit: parseInt(formData.get('currentCredit')),
-        usedCredit: parseInt(formData.get('usedCredit')),
-        remainingCredit: parseInt(formData.get('remainingCredit')),
+        currentCredit: parseInt(formData.get('currentCredit')) || 50000,
+        usedCredit: parseInt(formData.get('usedCredit')) || 15000,
+        remainingCredit: parseInt(formData.get('remainingCredit')) || 35000,
         newCredit: parseInt(formData.get('newCredit')),
         singleLimitType: formData.get('singleLimitType'),
         singleLimitAmount: formData.get('singleLimitAmount') ? parseInt(formData.get('singleLimitAmount')) : 0,
         dailyLimitType: formData.get('dailyLimitType'),
         dailyLimitAmount: formData.get('dailyLimitAmount') ? parseInt(formData.get('dailyLimitAmount')) : 0,
-        currentPeriod: formData.get('currentPeriod'),
-        currentGracePeriod: parseInt(formData.get('currentGracePeriod')),
-        period: formData.get('period'),
-        periodDays: parseInt(formData.get('periodDays')),
-        gracePeriod: parseInt(formData.get('gracePeriod')),
+        currentPeriod: business === 'Fulfillment' ? '自然月' : formData.get('currentPeriod'),
+        currentGracePeriod: business === 'Fulfillment' ? 30 : parseInt(formData.get('currentGracePeriod')),
+        period: periodValue,
+        periodDays: periodDaysValue,
+        gracePeriod: gracePeriodValue,
       });
       renderTable();
       closeModal('applyModal');
       form.reset();
+      // 重置表单显示
+      document.getElementById('advertisingForm').style.display = 'none';
+      document.getElementById('fulfillmentForm').style.display = 'none';
     });
 
     // 商户下拉模糊搜索
@@ -1336,17 +1416,51 @@
     });
     merchantInput.addEventListener('blur',function(){setTimeout(()=>{merchantDropdown.style.display='none';},200);});
 
-    // 申请弹窗推荐人显示逻辑
-    document.querySelectorAll('input[name="hasReferrer"]').forEach(radio=>{
+    // 申请弹窗推荐人显示逻辑 - 广告业务
+    document.querySelectorAll('#advertisingForm input[name="hasReferrer"]').forEach(radio=>{
       radio.addEventListener('change',function(){
         document.getElementById('referrerGroup').style.display = this.value==='yes'?'block':'none';
       });
     });
 
-    // 额度限制显示逻辑
-    document.querySelectorAll('select[name="singleLimitType"], select[name="dailyLimitType"]').forEach(select => {
+    // 申请弹窗推荐人显示逻辑 - 履约业务
+    document.querySelectorAll('#fulfillmentForm input[name="hasReferrer"]').forEach(radio=>{
+      radio.addEventListener('change',function(){
+        document.getElementById('referrerGroupFulfillment').style.display = this.value==='yes'?'block':'none';
+      });
+    });
+
+    // 子业务选择逻辑
+    document.getElementById('businessSelect').addEventListener('change', function() {
+      const business = this.value;
+      const advertisingForm = document.getElementById('advertisingForm');
+      const fulfillmentForm = document.getElementById('fulfillmentForm');
+      
+      // 隐藏所有表单
+      advertisingForm.style.display = 'none';
+      fulfillmentForm.style.display = 'none';
+      
+      // 根据选择显示对应表单
+      if (business === 'Advertising') {
+        advertisingForm.style.display = 'block';
+      } else if (business === 'Fulfillment') {
+        fulfillmentForm.style.display = 'block';
+      }
+    });
+
+    // 额度限制显示逻辑 - 广告业务
+    document.querySelectorAll('#advertisingForm select[name="singleLimitType"], #advertisingForm select[name="dailyLimitType"]').forEach(select => {
       select.addEventListener('change', function() {
         const inputId = this.name === 'singleLimitType' ? 'singleLimitInput' : 'dailyLimitInput';
+        const input = document.getElementById(inputId);
+        input.style.display = this.value === 'limited' ? 'block' : 'none';
+      });
+    });
+
+    // 额度限制显示逻辑 - 履约业务
+    document.querySelectorAll('#fulfillmentForm select[name="singleLimitType"], #fulfillmentForm select[name="dailyLimitType"]').forEach(select => {
+      select.addEventListener('change', function() {
+        const inputId = this.name === 'singleLimitType' ? 'singleLimitInputFulfillment' : 'dailyLimitInputFulfillment';
         const input = document.getElementById(inputId);
         input.style.display = this.value === 'limited' ? 'block' : 'none';
       });
