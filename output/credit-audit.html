@@ -940,215 +940,159 @@
   <div class="modal" id="applyModal">
     <div class="modal-content">
       <div class="modal-header">
-        <h2 class="modal-title">发起信用额度调整申请</h2>
+        <h2 class="modal-title">发起信用额度申请</h2>
         <button class="close-btn" onclick="closeModal('applyModal')">&times;</button>
       </div>
       <form id="applyForm">
+        <!-- 基础选择：商户 + 资金账户 -->
         <div class="form-group">
-          <label>选择商户 *</label>
-          <input class="form-input" id="merchantSearch" placeholder="输入ID/邮箱/名称搜索" autocomplete="off" />
-          <div id="merchantDropdown" class="dropdown-list" style="display:none;max-height:180px;overflow:auto;position:absolute;z-index:999;background:#fff;border:1px solid #e2e8f0;width:100%;"></div>
+          <label>商户名称 *</label>
+          <select class="form-input" id="merchantSelect" required>
+            <option value="">请选择商户</option>
+          </select>
           <input type="hidden" name="accountId" />
           <input type="hidden" name="email" />
           <input type="hidden" name="merchantName" />
         </div>
         <div class="form-group">
-          <label>子业务名称 *</label>
-          <select class="form-input" name="business" required id="businessSelect">
+          <label>资金账户 *</label>
+          <select class="form-input" id="fundAccountSelect" required>
             <option value="">请选择</option>
-            <option value="Advertising">Advertising</option>
-            <option value="Fulfillment">Fulfillment</option>
+            <option value="ADS">ADS</option>
+            <option value="BPS">BPS</option>
           </select>
         </div>
-        
-        <!-- 广告业务表单内容 -->
-        <div id="advertisingForm" style="display: none;">
-          <div class="form-group">
-            <label>设定信用额度 *</label>
-            <input class="form-input" name="newCredit" type="number" min="15000" placeholder="请输入新的信用额度" />
-            <small style="color: #666;">不能小于当前已用额度</small>
-          </div>
-          <div class="form-group">
-            <label>设定单笔额度限制</label>
-            <div style="display: flex; gap: 5px; align-items: center;">
-              <select class="form-input" name="singleLimitType" style="flex: 1;">
-                <option value="unlimited">不限</option>
-                <option value="limited">限制金额</option>
-              </select>
-              <input class="form-input" name="singleLimitAmount" type="number" min="1" placeholder="金额" style="flex: 1; display: none;" id="singleLimitInput" />
+
+        <!-- ADS：新增信用额度 -->
+        <div id="adsForm" style="display:none;">
+          <div class="detail-section">
+            <h4>商户信息</h4>
+            <div class="detail-grid">
+              <div class="detail-item"><span class="detail-label">商户名称</span><span class="detail-value" id="adsMerchantName">-</span></div>
+              <div class="detail-item"><span class="detail-label">资金账户</span><span class="detail-value" id="adsFundAccount">ADS</span></div>
             </div>
           </div>
-          <div class="form-group">
-            <label>设定当日额度限制</label>
-            <div style="display: flex; gap: 5px; align-items: center;">
-              <select class="form-input" name="dailyLimitType" style="flex: 1;">
-                <option value="unlimited">不限</option>
-                <option value="limited">限制金额</option>
-              </select>
-              <input class="form-input" name="dailyLimitAmount" type="number" min="1" placeholder="金额" style="flex: 1; display: none;" id="dailyLimitInput" />
+          <div class="detail-section">
+            <h4>额度设置</h4>
+            <div class="form-group">
+              <label>设定信用额度 *</label>
+              <input class="form-input" name="adsCreditLimit" id="adsCreditLimit" type="number" min="1" required placeholder="请输入信用额度" />
+            </div>
+            <div class="form-group">
+              <label>设定单日额度 *</label>
+              <input class="form-input" name="adsDailyLimit" id="adsDailyLimit" type="number" min="1" required placeholder="请输入单日额度" />
+            </div>
+            <div class="form-group">
+              <label>设定单笔额度 *</label>
+              <input class="form-input" name="adsSingleLimit" id="adsSingleLimit" type="number" min="1" required placeholder="请输入单笔额度" />
             </div>
           </div>
-          <div class="form-group">
-            <label>设定结算周期 *</label>
-            <select class="form-input" name="period" required id="periodSelect">
-              <option value="">请选择结算周期</option>
-              <option value="natural_week">自然周（周一至周日）</option>
-              <option value="biweekly">双周</option>
-              <option value="half_month">半月（1~15，16~月末）</option>
-              <option value="natural_month">自然月</option>
-              <option value="custom">不固定周期</option>
-            </select>
-          </div>
-          <div class="form-group" id="customPeriodGroup" style="display: none;">
-            <label>自定义结算周期设置</label>
-            <div style="display: flex; gap: 10px; align-items: center;">
-              <div style="flex: 1;">
-                <label style="font-size: 12px; color: #666;">开始日期 *</label>
-                <input class="form-input" name="startDate" type="date" />
-              </div>
-              <div style="flex: 1;">
-                <label style="font-size: 12px; color: #666;">结算周期天数 *</label>
-                <input class="form-input" name="customPeriodDays" type="number" min="1" max="365" placeholder="请输入结算周期天数" />
+          <div class="detail-section">
+            <h4>周期与日期设置</h4>
+            <div class="form-group">
+              <label>结算周期类型 *</label>
+              <select class="form-input" id="cycleTypeSelect" required>
+                <option value="">请选择结算周期类型</option>
+                <option value="custom">自定义</option>
+                <option value="natural_week">自然周</option>
+                <option value="natural_month">自然月</option>
+              </select>
+            </div>
+            <div class="form-group" id="customCycleGroup" style="display:none;">
+              <label>自定义结算设置</label>
+              <div style="display:flex;gap:10px;">
+                <div style="flex:1;">
+                  <label style="font-size:12px;color:#666;">开始结算日期 *</label>
+                  <input class="form-input" type="date" id="settlementStartDate" />
+                </div>
+                <div style="flex:1;">
+                  <label style="font-size:12px;color:#666;">结算周期天数 *</label>
+                  <input class="form-input" type="number" min="1" max="365" id="settlementPeriodDays" placeholder="请输入天数" />
+                </div>
               </div>
             </div>
+            <div class="form-group">
+              <label>账期（天） *</label>
+              <input class="form-input" type="number" min="1" max="365" id="accountPeriodDays" required placeholder="请输入账期（1-365）" />
+            </div>
+            <div class="form-group">
+              <label>宽限期（天） *</label>
+              <input class="form-input" type="number" min="1" max="365" id="gracePeriodDays" required placeholder="请输入宽限期（1-365）" />
+            </div>
+            <div class="form-group">
+              <label>周期说明</label>
+              <div id="cycleProgress" style="background:#e5e7eb;border-radius:8px;overflow:hidden;padding:10px;">
+                <div id="progressBar" style="display:flex;height:14px;border-radius:6px;overflow:hidden;">
+                  <div id="segmentCycle" style="background:#93c5fd;width:40%"></div>
+                  <div id="segmentAccount" style="background:#86efac;width:40%"></div>
+                  <div id="segmentGrace" style="background:#fca5a5;width:20%"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;color:#64748b;margin-top:6px;">
+                  <span>结算周期</span><span>账期</span><span>宽限期</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label>账期天数 *</label>
-            <input class="form-input" name="periodDays" type="number" min="1" max="365" required placeholder="请输入账期天数（1-365）" />
-          </div>
-          <div class="form-group">
-            <label>宽限期天数 *</label>
-            <input class="form-input" name="gracePeriod" type="number" min="1" max="365" required placeholder="请输入宽限期天数（1-365）" />
-          </div>
-          <div class="form-group">
-            <label>是否有推荐人</label>
-            <label style="margin-right:10px;"><input type="radio" name="hasReferrer" value="no" checked> 无</label>
-            <label><input type="radio" name="hasReferrer" value="yes"> 有</label>
-          </div>
-          <div class="form-group" id="referrerGroup" style="display:none;">
-            <label>推荐人</label>
-            <input class="form-input" name="referrer" placeholder="请输入推荐人" />
-          </div>
-          <div class="form-group">
-            <label>客户网站</label>
-            <input class="form-input" name="website" placeholder="请输入客户网站" />
-          </div>
-          <div class="form-group">
-            <label>客户每月营收</label>
-            <input class="form-input" name="monthlyRevenue" placeholder="请输入客户每月营收" />
-          </div>
-          <div class="form-group">
-            <label>客户每月销售额</label>
-            <input class="form-input" name="monthlySales" placeholder="请输入客户每月销售额" />
-          </div>
-          <div class="form-group">
-            <label>客户历史总利润</label>
-            <input class="form-input" name="totalProfit" placeholder="请输入客户历史总利润" />
-          </div>
-          <div class="form-group">
-            <label>备注 *</label>
-            <textarea class="form-input" name="remark" rows="3" required placeholder="请填写备注"></textarea>
-          </div>
-          <div class="form-group">
-            <label>附件（支持上传jpg/png/pdf格式文件，最多10个，单个文件20M内）*</label>
-            <input class="form-input" name="file" type="file" accept=".jpg,.jpeg,.png,.pdf" multiple required />
-            <small style="color: #666;">支持格式：JPG、PNG、PDF，单个文件最大20MB</small>
+          <div class="detail-section">
+            <h4>更多信息</h4>
+            <div class="form-group">
+              <label>是否有推荐人</label>
+              <label style="margin-right:10px;"><input type="radio" name="adsHasReferrer" value="no" checked> 无</label>
+              <label><input type="radio" name="adsHasReferrer" value="yes"> 有</label>
+            </div>
+            <div class="form-group" id="adsReferrerGroup" style="display:none;">
+              <label>推荐人名称</label>
+              <input class="form-input" id="adsReferrerName" placeholder="请输入推荐人名称" />
+            </div>
+            <div class="form-group"><label>客户网站</label><input class="form-input" id="adsWebsite" placeholder="请输入客户网站" /></div>
+            <div class="form-group"><label>客户每月营收</label><input class="form-input" id="adsMonthlyRevenue" placeholder="请输入客户每月营收" /></div>
+            <div class="form-group"><label>客户每月销售额</label><input class="form-input" id="adsMonthlySales" placeholder="请输入客户每月销售额" /></div>
+            <div class="form-group"><label>客户历史总利润</label><input class="form-input" id="adsTotalProfit" placeholder="请输入客户历史总利润" /></div>
+            <div class="form-group"><label>备注 *</label><textarea class="form-input" id="adsRemark" rows="3" required placeholder="请填写备注"></textarea></div>
+            <div class="form-group">
+              <label>附件（支持上传jpg/png/pdf格式文件，最多10个，单个文件20M内）*</label>
+              <input class="form-input" id="adsFiles" type="file" accept=".jpg,.jpeg,.png,.pdf" multiple required />
+              <small style="color:#666;">支持格式：JPG、PNG、PDF，单个文件最大20MB</small>
+            </div>
           </div>
         </div>
-        
-        <!-- 履约业务表单内容 -->
-        <div id="fulfillmentForm" style="display: none;">
-          <div class="form-group">
-            <label>当前额度信息</label>
-            <div style="display: flex; gap: 10px; align-items: center;">
-              <div style="flex: 1;">
-                <label style="font-size: 12px; color: #666;">当前信用额度</label>
-                <input class="form-input" name="currentCredit" type="number" readonly value="50000" style="color: #2563eb; font-weight: bold;" />
-              </div>
-              <div style="flex: 1;">
-                <label style="font-size: 12px; color: #666;">已用额度</label>
-                <input class="form-input" name="usedCredit" type="number" readonly value="15000" style="color: #dc2626; font-weight: bold;" />
-              </div>
-              <div style="flex: 1;">
-                <label style="font-size: 12px; color: #666;">剩余额度</label>
-                <input class="form-input" name="remainingCredit" type="number" readonly value="35000" style="color: #059669; font-weight: bold;" />
-              </div>
+
+        <!-- BPS：调整信用额度 -->
+        <div id="bpsForm" style="display:none;">
+          <div class="detail-section">
+            <h4>商户信息</h4>
+            <div class="detail-grid">
+              <div class="detail-item"><span class="detail-label">商户名称</span><span class="detail-value" id="bpsMerchantName">-</span></div>
+              <div class="detail-item"><span class="detail-label">资金账户</span><span class="detail-value" id="bpsFundAccount">BPS</span></div>
             </div>
           </div>
-          <div class="form-group">
-            <label>设定信用额度 *</label>
-            <input class="form-input" name="newCredit" type="number" min="15000" placeholder="请输入新的信用额度" />
-            <small style="color: #666;">不能小于当前已用额度</small>
+          <div class="detail-section">
+            <h4>信用额度</h4>
+            <div class="form-group"><label>当前信用额度</label><input class="form-input" id="bpsCurrentCredit" type="number" readonly value="50000" /></div>
+            <div class="form-group"><label>新的信用额度 *</label><input class="form-input" id="bpsNewCredit" type="number" min="1" required placeholder="请输入新的信用额度" /></div>
           </div>
-          <div class="form-group">
-            <label>设定单笔额度限制</label>
-            <div style="display: flex; gap: 5px; align-items: center;">
-              <select class="form-input" name="singleLimitType" style="flex: 1;">
-                <option value="unlimited">不限</option>
-                <option value="limited">限制金额</option>
-              </select>
-              <input class="form-input" name="singleLimitAmount" type="number" min="1" placeholder="金额" style="flex: 1; display: none;" id="singleLimitInputFulfillment" />
+          <div class="detail-section">
+            <h4>每日额度</h4>
+            <div class="form-group"><label>当前每日额度</label><input class="form-input" id="bpsCurrentDaily" type="number" readonly value="80000" /></div>
+            <div class="form-group"><label>新的每日额度 *</label><input class="form-input" id="bpsNewDaily" type="number" min="1" required placeholder="请输入新的每日额度" /></div>
+          </div>
+          <div class="detail-section">
+            <h4>单笔额度</h4>
+            <div class="form-group"><label>当前单笔额度</label><input class="form-input" id="bpsCurrentSingle" type="number" readonly value="20000" /></div>
+            <div class="form-group"><label>新的单笔额度 *</label><input class="form-input" id="bpsNewSingle" type="number" min="1" required placeholder="请输入新的单笔额度" /></div>
+          </div>
+          <div class="detail-section">
+            <h4>备注与附件</h4>
+            <div class="form-group"><label>备注 *</label><textarea class="form-input" id="bpsRemark" rows="3" required placeholder="请填写备注"></textarea></div>
+            <div class="form-group">
+              <label>附件（支持上传jpg/png/pdf格式文件，最多10个，单个文件20M内）*</label>
+              <input class="form-input" id="bpsFiles" type="file" accept=".jpg,.jpeg,.png,.pdf" multiple required />
+              <small style="color:#666;">支持格式：JPG、PNG、PDF，单个文件最大20MB</small>
             </div>
-          </div>
-          <div class="form-group">
-            <label>设定当日额度限制</label>
-            <div style="display: flex; gap: 5px; align-items: center;">
-              <select class="form-input" name="dailyLimitType" style="flex: 1;">
-                <option value="unlimited">不限</option>
-                <option value="limited">限制金额</option>
-              </select>
-              <input class="form-input" name="dailyLimitAmount" type="number" min="1" placeholder="金额" style="flex: 1; display: none;" id="dailyLimitInputFulfillment" />
-            </div>
-          </div>
-          <div class="form-group">
-            <label>结算周期（只读）</label>
-            <input class="form-input" name="period" type="text" readonly value="自然月" />
-          </div>
-          <div class="form-group">
-            <label>账期天数（只读）</label>
-            <input class="form-input" name="periodDays" type="number" readonly value="30" />
-          </div>
-          <div class="form-group">
-            <label>宽限期天数（只读）</label>
-            <input class="form-input" name="gracePeriod" type="number" readonly value="15" />
-          </div>
-          <div class="form-group">
-            <label>是否有推荐人</label>
-            <label style="margin-right:10px;"><input type="radio" name="hasReferrer" value="no" checked> 无</label>
-            <label><input type="radio" name="hasReferrer" value="yes"> 有</label>
-          </div>
-          <div class="form-group" id="referrerGroupFulfillment" style="display:none;">
-            <label>推荐人</label>
-            <input class="form-input" name="referrer" placeholder="请输入推荐人" />
-          </div>
-          <div class="form-group">
-            <label>客户网站</label>
-            <input class="form-input" name="website" placeholder="请输入客户网站" />
-          </div>
-          <div class="form-group">
-            <label>客户每月营收</label>
-            <input class="form-input" name="monthlyRevenue" placeholder="请输入客户每月营收" />
-          </div>
-          <div class="form-group">
-            <label>客户每月销售额</label>
-            <input class="form-input" name="monthlySales" placeholder="请输入客户每月销售额" />
-          </div>
-          <div class="form-group">
-            <label>客户历史总利润</label>
-            <input class="form-input" name="totalProfit" placeholder="请输入客户历史总利润" />
-          </div>
-          <div class="form-group">
-            <label>备注 *</label>
-            <textarea class="form-input" name="remark" rows="3" required placeholder="请填写备注"></textarea>
-          </div>
-          <div class="form-group">
-            <label>附件（支持上传jpg/png/pdf格式文件，最多10个，单个文件20M内）*</label>
-            <input class="form-input" name="file" type="file" accept=".jpg,.jpeg,.png,.pdf" multiple required />
-            <small style="color: #666;">支持格式：JPG、PNG、PDF，单个文件最大20MB</small>
           </div>
         </div>
-        
-        <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 30px;">
+
+        <div style="display:flex;gap:15px;justify-content:flex-end;margin-top:30px;">
           <button type="button" class="btn btn-secondary" onclick="closeModal('applyModal')">取消</button>
           <button type="submit" class="btn btn-primary">提交申请</button>
         </div>
@@ -1339,165 +1283,32 @@
       document.getElementById('applyModal').classList.add('show');
     };
 
-    // 关闭模态框
+    // 关闭模态框（兼容无参/有参）
     function closeModal(id) {
-      document.getElementById(id).classList.remove('show');
+      if(id){
+        document.getElementById(id)?.classList.remove('show');
+        return;
+      }
+      document.getElementById('detailModal')?.classList.remove('show');
+      document.getElementById('auditModal')?.classList.remove('show');
+      document.getElementById('applyModal')?.classList.remove('show');
     }
 
-    // 申请表单提交
-    document.getElementById('applyForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const form = e.target;
-      const formData = new FormData(form);
-      const business = formData.get('business');
-      const now = new Date();
-      const timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-      const files = Array.from(form.file.files).slice(0,10);
-      const fileArr = files.map(f=>({name:f.name,url:'#'})); // 实际应上传后获得url
-      
-      // 根据业务类型处理不同的表单数据
-      let periodValue, periodDaysValue, gracePeriodValue, startDateValue, customPeriodDaysValue;
-      if (business === 'Advertising') {
-        periodValue = formData.get('period');
-        periodDaysValue = parseInt(formData.get('periodDays'));
-        gracePeriodValue = parseInt(formData.get('gracePeriod'));
-        startDateValue = formData.get('startDate');
-        customPeriodDaysValue = formData.get('customPeriodDays') ? parseInt(formData.get('customPeriodDays')) : null;
-      } else if (business === 'Fulfillment') {
-        periodValue = 'natural_month'; // 履约业务固定为自然月
-        periodDaysValue = 30; // 履约业务固定为30天
-        gracePeriodValue = 15; // 履约业务固定为15天
-        startDateValue = null;
-        customPeriodDaysValue = null;
-      }
-      
-      creditApplications.unshift({
-        accountId: formData.get('accountId'),
-        email: formData.get('email'),
-        merchantName: formData.get('merchantName'),
-        business: business,
-        status: 'pre-review',
-        applyTime: timeStr,
-        preReviewer: '',
-        preReviewTime: '',
-        preReviewRemark: '',
-        finalReviewer: '',
-        finalReviewTime: '',
-        finalReviewRemark: '',
-        files: fileArr,
-        remark: formData.get('remark'),
-        applicant: '当前用户',
-        hasReferrer: formData.get('hasReferrer'),
-        referrer: formData.get('referrer'),
-        website: formData.get('website'),
-        monthlyRevenue: formData.get('monthlyRevenue'),
-        monthlySales: formData.get('monthlySales'),
-        totalProfit: formData.get('totalProfit'),
-        currentCredit: parseInt(formData.get('currentCredit')) || 50000,
-        usedCredit: parseInt(formData.get('usedCredit')) || 15000,
-        remainingCredit: parseInt(formData.get('remainingCredit')) || 35000,
-        newCredit: parseInt(formData.get('newCredit')),
-        singleLimitType: formData.get('singleLimitType'),
-        singleLimitAmount: formData.get('singleLimitAmount') ? parseInt(formData.get('singleLimitAmount')) : 0,
-        dailyLimitType: formData.get('dailyLimitType'),
-        dailyLimitAmount: formData.get('dailyLimitAmount') ? parseInt(formData.get('dailyLimitAmount')) : 0,
-        currentPeriod: business === 'Fulfillment' ? '自然月' : formData.get('currentPeriod'),
-        currentGracePeriod: business === 'Fulfillment' ? 30 : parseInt(formData.get('currentGracePeriod')),
-        period: periodValue,
-        periodDays: periodDaysValue,
-        gracePeriod: gracePeriodValue,
-        startDate: startDateValue,
-        customPeriodDays: customPeriodDaysValue,
-      });
-      renderTable();
-      closeModal('applyModal');
-      form.reset();
-      // 重置表单显示
-      document.getElementById('advertisingForm').style.display = 'none';
-      document.getElementById('fulfillmentForm').style.display = 'none';
-      document.getElementById('customPeriodGroup').style.display = 'none';
-    });
+    // 旧版申请表单提交逻辑已移除（由新版 ADS/BPS 表单接管）
 
-    // 商户下拉模糊搜索
-    const merchantInput = document.getElementById('merchantSearch');
-    const merchantDropdown = document.getElementById('merchantDropdown');
-    merchantInput.addEventListener('input',function(){
-      const val = this.value.trim().toLowerCase();
-      let list = merchants.filter(m=>m.accountId.toLowerCase().includes(val)||m.email.toLowerCase().includes(val)||m.merchantName.toLowerCase().includes(val));
-      if(list.length===0){merchantDropdown.style.display='none';return;}
-      merchantDropdown.innerHTML = list.map(m=>`<div class='dropdown-item' style='padding:8px;cursor:pointer;' data-id='${m.accountId}' data-email='${m.email}' data-name='${m.merchantName}'>${m.accountId} | ${m.email} | ${m.merchantName}</div>`).join('');
-      merchantDropdown.style.display='block';
-    });
-    merchantDropdown.addEventListener('click',function(e){
-      if(e.target.classList.contains('dropdown-item')){
-        merchantInput.value = e.target.textContent;
-        document.querySelector('input[name="accountId"]').value = e.target.getAttribute('data-id');
-        document.querySelector('input[name="email"]').value = e.target.getAttribute('data-email');
-        document.querySelector('input[name="merchantName"]').value = e.target.getAttribute('data-name');
-        merchantDropdown.style.display='none';
-      }
-    });
-    merchantInput.addEventListener('blur',function(){setTimeout(()=>{merchantDropdown.style.display='none';},200);});
+    // 旧版商户模糊搜索已移除（改为下拉单选）
 
-    // 申请弹窗推荐人显示逻辑 - 广告业务
-    document.querySelectorAll('#advertisingForm input[name="hasReferrer"]').forEach(radio=>{
-      radio.addEventListener('change',function(){
-        document.getElementById('referrerGroup').style.display = this.value==='yes'?'block':'none';
-      });
-    });
+    // 旧版广告业务推荐人逻辑已移除（由 ADS 表单接管）
 
-    // 申请弹窗推荐人显示逻辑 - 履约业务
-    document.querySelectorAll('#fulfillmentForm input[name="hasReferrer"]').forEach(radio=>{
-      radio.addEventListener('change',function(){
-        document.getElementById('referrerGroupFulfillment').style.display = this.value==='yes'?'block':'none';
-      });
-    });
+    // 旧版履约业务推荐人逻辑已移除（BPS 不使用该逻辑）
 
-    // 子业务选择逻辑
-    document.getElementById('businessSelect').addEventListener('change', function() {
-      const business = this.value;
-      const advertisingForm = document.getElementById('advertisingForm');
-      const fulfillmentForm = document.getElementById('fulfillmentForm');
-      
-      // 隐藏所有表单
-      advertisingForm.style.display = 'none';
-      fulfillmentForm.style.display = 'none';
-      
-      // 根据选择显示对应表单
-      if (business === 'Advertising') {
-        advertisingForm.style.display = 'block';
-      } else if (business === 'Fulfillment') {
-        fulfillmentForm.style.display = 'block';
-      }
-    });
+    // 旧版子业务选择逻辑已移除（改为资金账户 ADS/BPS 切换）
 
-    // 结算周期选择逻辑 - 广告业务
-    document.getElementById('periodSelect').addEventListener('change', function() {
-      const customPeriodGroup = document.getElementById('customPeriodGroup');
-      if (this.value === 'custom') {
-        customPeriodGroup.style.display = 'block';
-      } else {
-        customPeriodGroup.style.display = 'none';
-      }
-    });
+    // 旧版结算周期选择逻辑已移除（由 ADS 表单 cycleTypeSelect 接管）
 
-    // 额度限制显示逻辑 - 广告业务
-    document.querySelectorAll('#advertisingForm select[name="singleLimitType"], #advertisingForm select[name="dailyLimitType"]').forEach(select => {
-      select.addEventListener('change', function() {
-        const inputId = this.name === 'singleLimitType' ? 'singleLimitInput' : 'dailyLimitInput';
-        const input = document.getElementById(inputId);
-        input.style.display = this.value === 'limited' ? 'block' : 'none';
-      });
-    });
+    // 旧版额度限制逻辑（广告业务）已移除
 
-    // 额度限制显示逻辑 - 履约业务
-    document.querySelectorAll('#fulfillmentForm select[name="singleLimitType"], #fulfillmentForm select[name="dailyLimitType"]').forEach(select => {
-      select.addEventListener('change', function() {
-        const inputId = this.name === 'singleLimitType' ? 'singleLimitInputFulfillment' : 'dailyLimitInputFulfillment';
-        const input = document.getElementById(inputId);
-        input.style.display = this.value === 'limited' ? 'block' : 'none';
-      });
-    });
+    // 旧版额度限制逻辑（履约业务）已移除
 
     // 分页与筛选
     let currentPage = 1, pageSize = 8;
@@ -1977,6 +1788,234 @@
       const m = document.getElementById('customAuditModal');
       if(m) m.remove();
     }
+
+    // 移除旧的商户模糊搜索与业务（Advertising/Fulfillment）相关逻辑，改为商户下拉与资金账户切换
+
+    // 打开申请模态框
+    document.getElementById('openApplyModalBtn').onclick = function() {
+      document.getElementById('applyModal').classList.add('show');
+    };
+
+    // 初始化商户下拉
+    (function initMerchantSelect(){
+      const sel = document.getElementById('merchantSelect');
+      if(!sel) return;
+      // 清空并填充
+      while(sel.options.length>1){ sel.remove(1); }
+      merchants.forEach(m=>{
+        const opt = document.createElement('option');
+        opt.value = m.accountId;
+        opt.textContent = `${m.merchantName} (${m.email})`;
+        opt.dataset.email = m.email;
+        opt.dataset.name = m.merchantName;
+        sel.appendChild(opt);
+      });
+    })();
+
+    // 商户选择联动隐藏域与信息展示
+    const merchantSelectEl = document.getElementById('merchantSelect');
+    merchantSelectEl?.addEventListener('change', function(){
+      const selected = this.options[this.selectedIndex];
+      const accountId = this.value || '';
+      const email = selected?.dataset.email || '';
+      const name = selected?.dataset.name || '';
+      document.querySelector('#applyForm input[name="accountId"]').value = accountId;
+      document.querySelector('#applyForm input[name="email"]').value = email;
+      document.querySelector('#applyForm input[name="merchantName"]').value = name;
+      // 更新信息块
+      const adsName = document.getElementById('adsMerchantName');
+      const bpsName = document.getElementById('bpsMerchantName');
+      if(adsName) adsName.textContent = name || '-';
+      if(bpsName) bpsName.textContent = name || '-';
+    });
+
+    // 资金账户切换：显示对应表单，并设置必填
+    const fundSelect = document.getElementById('fundAccountSelect');
+    function toggleADSRequired(enabled){
+      ['adsCreditLimit','adsDailyLimit','adsSingleLimit','adsRemark','adsFiles','cycleTypeSelect','accountPeriodDays','gracePeriodDays']
+        .forEach(id=>{ const el = document.getElementById(id); if(el){ if(enabled) el.setAttribute('required',''); else el.removeAttribute('required'); }});
+      // 自定义时的必填项在切换时一起调整
+      ['settlementStartDate','settlementPeriodDays'].forEach(id=>{ const el=document.getElementById(id); if(el){ if(enabled && document.getElementById('cycleTypeSelect')?.value==='custom'){ el.setAttribute('required',''); } else { el.removeAttribute('required'); }}});
+    }
+    function toggleBPSRequired(enabled){
+      ['bpsNewCredit','bpsNewDaily','bpsNewSingle','bpsRemark','bpsFiles']
+        .forEach(id=>{ const el = document.getElementById(id); if(el){ if(enabled) el.setAttribute('required',''); else el.removeAttribute('required'); }});
+    }
+    fundSelect?.addEventListener('change', function(){
+      const v = this.value;
+      const ads = document.getElementById('adsForm');
+      const bps = document.getElementById('bpsForm');
+      if(v==='ADS'){
+        ads.style.display = 'block';
+        bps.style.display = 'none';
+        toggleADSRequired(true);
+        toggleBPSRequired(false);
+        document.getElementById('adsFundAccount').textContent = 'ADS';
+      } else if(v==='BPS'){
+        ads.style.display = 'none';
+        bps.style.display = 'block';
+        toggleADSRequired(false);
+        toggleBPSRequired(true);
+        document.getElementById('bpsFundAccount').textContent = 'BPS';
+      } else {
+        ads.style.display = 'none';
+        bps.style.display = 'none';
+        toggleADSRequired(false);
+        toggleBPSRequired(false);
+      }
+    });
+
+    // ADS：结算周期联动与可视化
+    const cycleTypeSelect = document.getElementById('cycleTypeSelect');
+    function updateCycleVisualization(){
+      const cycleType = cycleTypeSelect?.value || '';
+      const accountDays = parseInt(document.getElementById('accountPeriodDays')?.value || '0',10) || 0;
+      const graceDays = parseInt(document.getElementById('gracePeriodDays')?.value || '0',10) || 0;
+      let cycleDays = 0;
+      if(cycleType === 'natural_week') cycleDays = 7;
+      else if(cycleType === 'natural_month') cycleDays = 30;
+      else if(cycleType === 'custom') cycleDays = parseInt(document.getElementById('settlementPeriodDays')?.value || '0',10) || 0;
+      const total = Math.max(1, cycleDays + accountDays + graceDays);
+      const pCycle = Math.round(cycleDays/total*100);
+      const pAccount = Math.round(accountDays/total*100);
+      const pGrace = Math.max(0, 100 - pCycle - pAccount);
+      const segCycle = document.getElementById('segmentCycle');
+      const segAccount = document.getElementById('segmentAccount');
+      const segGrace = document.getElementById('segmentGrace');
+      if(segCycle) segCycle.style.width = pCycle + '%';
+      if(segAccount) segAccount.style.width = pAccount + '%';
+      if(segGrace) segGrace.style.width = pGrace + '%';
+    }
+    cycleTypeSelect?.addEventListener('change', function(){
+      const customGroup = document.getElementById('customCycleGroup');
+      if(this.value==='custom'){
+        customGroup.style.display = 'block';
+        document.getElementById('settlementStartDate')?.setAttribute('required','');
+        document.getElementById('settlementPeriodDays')?.setAttribute('required','');
+      } else {
+        customGroup.style.display = 'none';
+        document.getElementById('settlementStartDate')?.removeAttribute('required');
+        document.getElementById('settlementPeriodDays')?.removeAttribute('required');
+      }
+      updateCycleVisualization();
+    });
+    ['accountPeriodDays','gracePeriodDays','settlementPeriodDays'].forEach(id=>{
+      document.getElementById(id)?.addEventListener('input', updateCycleVisualization);
+    });
+
+    // ADS：推荐人显示
+    Array.from(document.querySelectorAll('input[name="adsHasReferrer"]')).forEach(r=>{
+      r.addEventListener('change', function(){
+        document.getElementById('adsReferrerGroup').style.display = this.value==='yes' ? 'block' : 'none';
+      });
+    });
+
+    // 提交表单
+    const applyFormEl = document.getElementById('applyForm');
+    applyFormEl?.addEventListener('submit', function(e){
+      e.preventDefault();
+      const merchantOption = merchantSelectEl.options[merchantSelectEl.selectedIndex];
+      const merchantName = merchantOption?.dataset.name || '';
+      const email = merchantOption?.dataset.email || '';
+      const accountId = merchantSelectEl.value || '';
+      const fund = fundSelect.value;
+      if(!merchantName || !fund){ alert('请选择商户与资金账户'); return; }
+      const now = new Date();
+      const timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+
+      // 文件处理工具
+      function extractFiles(inputId){
+        const files = Array.from(document.getElementById(inputId)?.files || []).slice(0,10);
+        return files.map(f=>({name:f.name,url:'#'}));
+      }
+
+      let newItem = {
+        accountId: accountId,
+        email: email,
+        merchantName: merchantName,
+        business: fund, // 在列表"子业务名称"列展示 ADS/BPS
+        status: 'pre-review',
+        applyTime: timeStr,
+        preReviewer: '', preReviewTime: '', preReviewRemark: '',
+        finalReviewer: '', finalReviewTime: '', finalReviewRemark: '',
+        applicant: '当前用户',
+        files: [],
+        remark: ''
+      };
+
+      if(fund === 'ADS'){
+        // 新增信用额度申请
+        const credit = parseInt(document.getElementById('adsCreditLimit').value || '0',10);
+        const daily = parseInt(document.getElementById('adsDailyLimit').value || '0',10);
+        const single = parseInt(document.getElementById('adsSingleLimit').value || '0',10);
+        const cycleType = document.getElementById('cycleTypeSelect').value;
+        const accountDays = parseInt(document.getElementById('accountPeriodDays').value || '0',10);
+        const graceDays = parseInt(document.getElementById('gracePeriodDays').value || '0',10);
+        const startDate = document.getElementById('settlementStartDate')?.value || null;
+        const customDays = document.getElementById('settlementPeriodDays')?.value ? parseInt(document.getElementById('settlementPeriodDays').value,10) : null;
+
+        newItem.currentCredit = 0;
+        newItem.usedCredit = 0;
+        newItem.remainingCredit = 0;
+        newItem.newCredit = credit;
+        newItem.singleLimitType = 'limited';
+        newItem.singleLimitAmount = single;
+        newItem.dailyLimitType = 'limited';
+        newItem.dailyLimitAmount = daily;
+        newItem.currentPeriod = cycleType==='natural_week' ? '自然周' : (cycleType==='natural_month' ? '自然月' : '自定义');
+        newItem.currentGracePeriod = graceDays;
+        newItem.period = cycleType;
+        newItem.periodDays = accountDays;
+        newItem.gracePeriod = graceDays;
+        newItem.startDate = cycleType==='custom' ? startDate : null;
+        newItem.customPeriodDays = cycleType==='custom' ? customDays : null;
+        newItem.remark = document.getElementById('adsRemark').value.trim();
+        newItem.files = extractFiles('adsFiles');
+
+        // 额外信息（可选）
+        const hasRef = Array.from(document.querySelectorAll('input[name="adsHasReferrer"]')).find(x=>x.checked)?.value === 'yes';
+        newItem.hasReferrer = hasRef ? 'yes' : 'no';
+        newItem.referrer = hasRef ? (document.getElementById('adsReferrerName').value || '') : '';
+        newItem.website = document.getElementById('adsWebsite').value || '';
+        newItem.monthlyRevenue = document.getElementById('adsMonthlyRevenue').value || '';
+        newItem.monthlySales = document.getElementById('adsMonthlySales').value || '';
+        newItem.totalProfit = document.getElementById('adsTotalProfit').value || '';
+      } else if(fund === 'BPS'){
+        // 调整信用额度申请
+        const newCredit = parseInt(document.getElementById('bpsNewCredit').value || '0',10);
+        const newDaily = parseInt(document.getElementById('bpsNewDaily').value || '0',10);
+        const newSingle = parseInt(document.getElementById('bpsNewSingle').value || '0',10);
+
+        newItem.currentCredit = parseInt(document.getElementById('bpsCurrentCredit').value || '0',10);
+        newItem.usedCredit = 0;
+        newItem.remainingCredit = 0;
+        newItem.newCredit = newCredit;
+        newItem.singleLimitType = 'limited';
+        newItem.singleLimitAmount = newSingle;
+        newItem.dailyLimitType = 'limited';
+        newItem.dailyLimitAmount = newDaily;
+        newItem.currentPeriod = '自然月';
+        newItem.currentGracePeriod = 15;
+        newItem.period = 'natural_month';
+        newItem.periodDays = 30;
+        newItem.gracePeriod = 15;
+        newItem.startDate = null;
+        newItem.customPeriodDays = null;
+        newItem.remark = document.getElementById('bpsRemark').value.trim();
+        newItem.files = extractFiles('bpsFiles');
+      } else {
+        alert('请选择资金账户');
+        return;
+      }
+
+      creditApplications.unshift(newItem);
+      renderTable();
+      closeModal('applyModal');
+      this.reset();
+      // 重置显示
+      document.getElementById('adsForm').style.display = 'none';
+      document.getElementById('bpsForm').style.display = 'none';
+    });
   </script>
 </body>
 </html> 
