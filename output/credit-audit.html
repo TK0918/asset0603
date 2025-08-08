@@ -1208,8 +1208,7 @@
     document.querySelectorAll('.modal').forEach(modal => {
       modal.addEventListener('click', function(e) {
         if (e.target === this) {
-          // 仅关闭当前点击的模态，避免首次渲染误触发其他逻辑
-          this.classList.remove('show');
+          closeModal();
         }
       });
     });
@@ -1394,34 +1393,20 @@
     }
 
     // 页面加载时初始化默认Tab
-         document.addEventListener('DOMContentLoaded', function() {
-       // Tab按钮事件绑定
-       document.querySelectorAll('.tab-btn').forEach(btn => {
-         btn.addEventListener('click', function() {
-           const tabId = this.getAttribute('data-tab');
-           switchTab(tabId);
-         });
-       });
-       // 默认显示"我发起的"Tab
-       switchTab('my-applications');
-       
-       // 初始化商户下拉（确保刷新后可选）
-       if(document.getElementById('merchantSelect')){
-         const sel = document.getElementById('merchantSelect');
-         if(sel.options.length<=1){
-           while(sel.options.length>1){ sel.remove(1); }
-           merchants.forEach(m=>{
-             const opt = document.createElement('option');
-             opt.value = m.accountId; opt.textContent = `${m.merchantName} (${m.email})`;
-             opt.dataset.email = m.email; opt.dataset.name = m.merchantName;
-             sel.appendChild(opt);
-           });
-         }
-       }
-       
-       // 为搜索输入框添加事件监听器
-       addSearchEventListeners();
-     });
+    document.addEventListener('DOMContentLoaded', function() {
+      // Tab按钮事件绑定
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const tabId = this.getAttribute('data-tab');
+          switchTab(tabId);
+        });
+      });
+      // 默认显示"我发起的"Tab
+      switchTab('my-applications');
+      
+      // 为搜索输入框添加事件监听器
+      addSearchEventListeners();
+    });
     
     // 添加搜索事件监听器
     function addSearchEventListeners() {
@@ -1532,7 +1517,6 @@
       let end = start+pageSize;
       let pageData = filtered.slice(start,end);
       pageData.forEach((item, idx) => {
-        const originalIndex = creditApplications.indexOf(item);
         let statusText = '';
         let statusClass = '';
         if(item.status === 'pre-review') { statusText = '待初审'; statusClass = 'status-pending'; }
@@ -1545,18 +1529,18 @@
         switch(currentTab) {
           case 'my-applications':
             // 我发起的：详情 + 撤销（未审批完成）
-            opBtns = `<button class='btn btn-secondary btn-small' onclick=\"openDetail(${originalIndex})\">详情</button>`;
+            opBtns = `<button class='btn btn-secondary btn-small' onclick="openDetail(${start+idx})">详情</button>`;
             if(item.status==='pre-review' || item.status==='final-review'){
-              opBtns += ` <button class='btn btn-danger btn-small' onclick=\"revokeApplication(event, ${originalIndex})\">撤销</button>`;
+              opBtns += ` <button class='btn btn-danger btn-small' onclick="revokeApplication(${start+idx})">撤销</button>`;
             }
             break;
             
           case 'pending-review':
             // 待审核：统一文案"审核"，根据ADS/BPS展示不同内容
             if(item.status==='pre-review' || item.status==='final-review'){
-              opBtns = `<button class='btn btn-primary btn-small' onclick=\"openAuditModal(${originalIndex})\">审核</button>`;
+              opBtns = `<button class='btn btn-primary btn-small' onclick="openAuditModal(${start+idx})">审核</button>`;
             }
-            opBtns += ` <button class='btn btn-secondary btn-small' onclick=\"openDetail(${originalIndex})\">详情</button>`;
+            opBtns += ` <button class='btn btn-secondary btn-small' onclick="openDetail(${start+idx})">详情</button>`;
             break;
             
           case 'history':
@@ -1835,8 +1819,7 @@
       if(m) m.remove();
     }
     // 撤销申请
-    window.revokeApplication = function(ev, idx){
-      ev?.stopPropagation?.();
+    window.revokeApplication = function(idx){
       if(!confirm('确认撤销该申请吗？')) return;
       creditApplications.splice(idx,1);
       renderTable();
