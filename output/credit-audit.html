@@ -337,6 +337,36 @@
       opacity: 1;
     }
 
+    /* 帮助提示样式 */
+    .help-icon {
+      color: #2563eb;
+      cursor: help;
+      font-size: 14px;
+      margin-left: 4px;
+      display: inline-block;
+    }
+
+    .help-tooltip {
+      position: absolute;
+      background: #1f2937;
+      color: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      white-space: pre-line;
+      max-width: 400px;
+      z-index: 3000;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      line-height: 1.5;
+    }
+
+    .help-tooltip.show {
+      opacity: 1;
+    }
+
     /* Modal */
     .modal {
       display: none;
@@ -605,6 +635,7 @@
             <option value="final-review">待终审</option>
             <option value="approved">审核通过</option>
             <option value="rejected">审核不通过</option>
+            <option value="revoked">已撤销</option>
           </select>
         </div>
         <div class="search-group">
@@ -701,6 +732,7 @@
             <option value="final-review">待终审</option>
             <option value="approved">审核通过</option>
             <option value="rejected">审核不通过</option>
+            <option value="revoked">已撤销</option>
           </select>
         </div>
         <div class="search-group">
@@ -841,6 +873,9 @@
 
   <!-- Mouse-following tooltip -->
   <div class="mouse-tooltip" id="mouseTooltip"></div>
+  
+  <!-- Help tooltip -->
+  <div class="help-tooltip" id="helpTooltip"></div>
 
   <!-- 详情模态框 -->
   <div class="modal" id="detailModal">
@@ -936,6 +971,24 @@
     </div>
   </div>
 
+  <!-- 撤销确认模态框 -->
+  <div class="modal" id="revokeModal">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h2 class="modal-title">确认撤销申请</h2>
+        <button class="close-btn" onclick="closeModal('revokeModal')">&times;</button>
+      </div>
+      <div style="padding: 20px 0;">
+        <p style="color: #374151; margin-bottom: 15px;">您确定要撤销这个信用额度申请吗？</p>
+        <p style="color: #64748b; font-size: 14px;">撤销后，该申请将不再进入审核流程，您需要重新提交申请。</p>
+      </div>
+      <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 30px;">
+        <button class="btn btn-secondary" onclick="closeModal('revokeModal')">取消</button>
+        <button class="btn btn-danger" onclick="confirmRevoke()">确认撤销</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 申请模态框 -->
   <div class="modal" id="applyModal">
     <div class="modal-content">
@@ -1020,7 +1073,7 @@
               <input class="form-input" type="number" min="1" max="365" id="gracePeriodDays" required placeholder="请输入宽限期（1-365）" />
             </div>
             <div class="form-group">
-              <label>周期说明</label>
+              <label>周期说明 <span class="help-icon" id="cycleHelpIcon">?</span></label>
               <div id="cycleProgress" style="background:#e5e7eb;border-radius:8px;overflow:hidden;padding:10px;">
                 <div id="progressBar" style="display:flex;height:14px;border-radius:6px;overflow:hidden;">
                   <div id="segmentCycle" style="background:#93c5fd;width:40%"></div>
@@ -1028,7 +1081,10 @@
                   <div id="segmentGrace" style="background:#fca5a5;width:20%"></div>
                 </div>
                 <div style="display:flex;justify-content:space-between;font-size:12px;color:#64748b;margin-top:6px;">
-                  <span>结算周期</span><span>账期</span><span>宽限期</span>
+                  <span id="cycleLabel">结算周期</span><span id="accountLabel">账期</span><span id="graceLabel">宽限期</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:11px;color:#9ca3af;margin-top:4px;">
+                  <span id="cycleDays">0天</span><span id="accountDays">0天</span><span id="graceDays">0天</span>
                 </div>
               </div>
             </div>
@@ -1105,6 +1161,7 @@
 
     // Mouse-following tooltip functionality
     const tooltip = document.getElementById('mouseTooltip');
+    const helpTooltip = document.getElementById('helpTooltip');
     
     document.querySelectorAll('.remark-cell').forEach(cell => {
       cell.addEventListener('mouseenter', function(e) {
@@ -1122,6 +1179,57 @@
         tooltip.classList.remove('show');
       });
     });
+
+    // Help tooltip functionality
+    const cycleHelpIcon = document.getElementById('cycleHelpIcon');
+    if (cycleHelpIcon) {
+      const helpText = `结算周期：指系统为客户周期性出账单的时间段，用于将客户在该周期内发生的信用额度支出（如广告消耗、履约订单）统一汇总为一张账单。
+
+账期：账期是指从账单出账日开始，客户被允许在该期限内完成还款的时间段，账期内还款不视为逾期。
+
+宽限期：在账期结束后，为客户提供的一段额外容忍时间，在该时间段内客户仍可完成还款，不计入逾期惩罚，但系统会进行风险提醒。`;
+
+      cycleHelpIcon.addEventListener('mouseenter', function(e) {
+        helpTooltip.textContent = helpText;
+        helpTooltip.classList.add('show');
+        updateHelpTooltipPosition(e);
+      });
+
+      cycleHelpIcon.addEventListener('mousemove', function(e) {
+        updateHelpTooltipPosition(e);
+      });
+
+      cycleHelpIcon.addEventListener('mouseleave', function() {
+        helpTooltip.classList.remove('show');
+      });
+    }
+
+    function updateHelpTooltipPosition(e) {
+      const tooltipRect = helpTooltip.getBoundingClientRect();
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+      
+      let left = e.clientX + 15;
+      let top = e.clientY - 10;
+      
+      // 防止tooltip超出右边界
+      if (left + tooltipRect.width > windowWidth) {
+        left = e.clientX - tooltipRect.width - 15;
+      }
+      
+      // 防止tooltip超出下边界
+      if (top + tooltipRect.height > windowHeight) {
+        top = e.clientY - tooltipRect.height - 10;
+      }
+      
+      // 防止tooltip超出上边界
+      if (top < 0) {
+        top = e.clientY + 10;
+      }
+      
+      helpTooltip.style.left = left + 'px';
+      helpTooltip.style.top = top + 'px';
+    }
 
     function updateTooltipPosition(e) {
       const tooltipRect = tooltip.getBoundingClientRect();
@@ -1190,7 +1298,11 @@
     document.querySelectorAll('.modal').forEach(modal => {
       modal.addEventListener('click', function(e) {
         if (e.target === this) {
-          closeModal();
+          if (this.id === 'revokeModal') {
+            closeModal('revokeModal');
+          } else {
+            closeModal();
+          }
         }
       });
     });
@@ -1242,7 +1354,7 @@
         accountId:m.accountId,
         email:m.email,
         merchantName:m.merchantName,
-        business:i%2===0?'Advertising':'Fulfillment',
+        business:i%2===0?'ADS':'BPS', // ADS为新增，BPS为调整
         status,
         applyTime,
         preReviewer,
@@ -1260,9 +1372,9 @@
         monthlyRevenue: i%2===0?('￥'+(100000+i*1000)):'',
         monthlySales: i%2===1?('￥'+(50000+i*500)):'',
         totalProfit: i%4===0?('￥'+(1000000+i*10000)):'',
-        currentCredit: 50000,
-        usedCredit: 15000,
-        remainingCredit: 35000,
+        currentCredit: i%2===0 ? 0 : 50000, // ADS为0（新增），BPS为50000（调整）
+        usedCredit: i%2===0 ? 0 : 15000,
+        remainingCredit: i%2===0 ? 0 : 35000,
         newCredit: 60000 + i*1000,
         singleLimitType: i%2===0?'unlimited':'limited',
         singleLimitAmount: i%2===0?0:10000,
@@ -1283,6 +1395,63 @@
       document.getElementById('applyModal').classList.add('show');
     };
 
+    // 撤销相关变量
+    let currentRevokeIndex = null;
+
+    // 撤销申请
+    function revokeApplication(idx) {
+      currentRevokeIndex = idx;
+      document.getElementById('revokeModal').classList.add('show');
+    }
+
+    // 确认撤销
+    function confirmRevoke() {
+      if (currentRevokeIndex !== null) {
+        // 找到对应的申请并修改状态
+        const filtered = getFilteredApplications();
+        const item = filtered[currentRevokeIndex];
+        if (item) {
+          // 在原始数组中找到并修改
+          const originalIndex = creditApplications.indexOf(item);
+          if (originalIndex !== -1) {
+            creditApplications[originalIndex].status = 'revoked';
+            creditApplications[originalIndex].revokeTime = new Date().toLocaleString();
+            creditApplications[originalIndex].revoker = '当前用户';
+          }
+        }
+        renderTable();
+        closeModal('revokeModal');
+        currentRevokeIndex = null;
+      }
+    }
+
+    // 获取当前筛选后的申请列表
+    function getFilteredApplications() {
+      let filtered = [];
+      
+      switch(currentTab) {
+        case 'my-applications':
+          filtered = creditApplications.filter(item => item.applicant === '当前用户');
+          let emailFilterMy = document.querySelector('#search-my-applications input[placeholder="输入商户邮箱"]').value.trim();
+          let nameFilterMy = document.querySelector('#search-my-applications input[placeholder="输入商户名称"]').value.trim();
+          if(emailFilterMy) {
+            filtered = filtered.filter(item => item.email.toLowerCase().includes(emailFilterMy.toLowerCase()));
+          }
+          if(nameFilterMy) {
+            filtered = filtered.filter(item => item.merchantName.toLowerCase().includes(nameFilterMy.toLowerCase()));
+          }
+          let statusFilterMy = document.getElementById('searchStatusMy').value;
+          if(statusFilterMy) {
+            filtered = filtered.filter(item => item.status === statusFilterMy);
+          }
+          break;
+        default:
+          filtered = creditApplications;
+      }
+      
+      return filtered;
+    }
+
     // 关闭模态框（兼容无参/有参）
     function closeModal(id) {
       if(id){
@@ -1292,6 +1461,7 @@
       document.getElementById('detailModal')?.classList.remove('show');
       document.getElementById('auditModal')?.classList.remove('show');
       document.getElementById('applyModal')?.classList.remove('show');
+      document.getElementById('revokeModal')?.classList.remove('show');
     }
 
     // 旧版申请表单提交逻辑已移除（由新版 ADS/BPS 表单接管）
@@ -1505,21 +1675,26 @@
         else if(item.status === 'final-review') { statusText = '待终审'; statusClass = 'status-pending'; }
         else if(item.status === 'approved') { statusText = '审核通过'; statusClass = 'status-approved'; }
         else if(item.status === 'rejected') { statusText = '审核不通过'; statusClass = 'status-rejected'; }
+        else if(item.status === 'revoked') { statusText = '已撤销'; statusClass = 'status-rejected'; }
         let opBtns = '';
         
         // 根据不同Tab显示不同操作
         switch(currentTab) {
           case 'my-applications':
-            // 我发起的：只能查看详情
-            opBtns = `<button class='btn btn-secondary btn-small' onclick="openDetail(${start+idx})">详情</button>`;
+            // 我发起的：可以查看详情，对于待审核状态可以撤销
+            if(item.status === 'pre-review' || item.status === 'final-review') {
+              opBtns = `<button class='btn btn-danger btn-small' onclick="revokeApplication(${start+idx})">撤销</button> <button class='btn btn-secondary btn-small' onclick="openDetail(${start+idx})">详情</button>`;
+            } else {
+              opBtns = `<button class='btn btn-secondary btn-small' onclick="openDetail(${start+idx})">详情</button>`;
+            }
             break;
             
           case 'pending-review':
             // 待审核：可以审核和查看详情
             if(item.status === 'pre-review') {
-              opBtns = `<button class='btn btn-primary btn-small' onclick="openAuditModal(${start+idx},'pre')">初审</button>`;
+              opBtns = `<button class='btn btn-primary btn-small' onclick="openAuditModal(${start+idx},'pre')">审核</button>`;
             } else if(item.status === 'final-review') {
-              opBtns = `<button class='btn btn-primary btn-small' onclick="openAuditModal(${start+idx},'final')">终审</button>`;
+              opBtns = `<button class='btn btn-primary btn-small' onclick="openAuditModal(${start+idx},'final')">审核</button>`;
             }
             opBtns += `<button class='btn btn-secondary btn-small' onclick="openDetail(${start+idx})">详情</button>`;
             break;
@@ -1629,50 +1804,173 @@
     function openDetail(idx) {
       const item = creditApplications[idx];
       let html = '';
-      html += `<div style='padding:10px 0;'>`;
-      html += `<b>商户邮箱：</b>${item.email}<br/>`;
-      html += `<b>商户名称：</b>${item.merchantName}<br/>`;
-      html += `<b>子业务名称：</b>${item.business}<br/>`;
-      html += `<div style='background: #f8fafc; padding: 10px; border-radius: 6px; margin: 10px 0;'>`;
-      html += `<b style='color: #374151;'>当前额度信息：</b><br/>`;
-      html += `<span style='color: #2563eb; font-weight: bold;'>当前信用额度：${item.currentCredit}</span><br/>`;
-      html += `<span style='color: #dc2626; font-weight: bold;'>已用额度：${item.usedCredit}</span><br/>`;
-      html += `<span style='color: #059669; font-weight: bold;'>剩余额度：${item.remainingCredit}</span><br/>`;
+      
+      // 判断申请类型：ADS为新增，BPS为调整
+      const isNewCredit = item.business === 'ADS' || item.currentCredit === 0;
+      
+      if (isNewCredit) {
+        // 新增信用额度弹窗
+        html += `<div style='padding:10px 0;'>`;
+        html += `<h4 style='color:#374151;margin-bottom:15px;'>商户信息</h4>`;
+        html += `<div style='background:#f8fafc;padding:15px;border-radius:8px;margin-bottom:20px;'>`;
+        html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>商户邮箱：</span><span style='color:#1e293b;font-weight:500;'>${item.email}</span></div>`;
+        html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>商户名称：</span><span style='color:#1e293b;font-weight:500;'>${item.merchantName}</span></div>`;
+        html += `<div style='display:flex;justify-content:space-between;'><span style='color:#64748b;'>资金账户：</span><span style='color:#1e293b;font-weight:500;'>${item.business}</span></div>`;
+        html += `</div>`;
+        
+                 html += `<h4 style='color:#374151;margin-bottom:15px;'>额度</h4>`;
+         html += `<div style='background:#fef3c7;padding:15px;border-radius:8px;margin-bottom:20px;'>`;
+         html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>信用额度：</span><span style='color:#f59e0b;font-weight:bold;'>${item.newCredit}</span></div>`;
+         html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>单日额度：</span><span style='color:#1e293b;font-weight:500;'>${item.dailyLimitAmount}</span></div>`;
+         html += `<div style='display:flex;justify-content:space-between;'><span style='color:#64748b;'>单笔额度：</span><span style='color:#1e293b;font-weight:500;'>${item.singleLimitAmount}</span></div>`;
+         html += `</div>`;
+        
+                 html += `<h4 style='color:#374151;margin-bottom:15px;'>周期与日期</h4>`;
+         html += `<div style='background:#e0f2fe;padding:15px;border-radius:8px;margin-bottom:20px;'>`;
+         html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>结算周期类型：</span><span style='color:#1e293b;font-weight:500;'>${item.period==='natural_week'?'自然周':item.period==='natural_month'?'自然月':'自定义'}</span></div>`;
+         html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>账期：</span><span style='color:#1e293b;font-weight:500;'>${item.periodDays}天</span></div>`;
+         html += `<div style='display:flex;justify-content:space-between;margin-bottom:15px;'><span style='color:#64748b;'>宽限期：</span><span style='color:#1e293b;font-weight:500;'>${item.gracePeriod}天</span></div>`;
+         
+         // 进度可视化
+         let cycleDays = 0;
+         if(item.period === 'natural_week') cycleDays = 7;
+         else if(item.period === 'natural_month') cycleDays = 30;
+         else if(item.period === 'custom') cycleDays = item.customPeriodDays || 0;
+         
+         const total = Math.max(1, cycleDays + item.periodDays + item.gracePeriod);
+         const pCycle = Math.round(cycleDays/total*100);
+         const pAccount = Math.round(item.periodDays/total*100);
+         const pGrace = Math.max(0, 100 - pCycle - pAccount);
+         
+         html += `<div style='margin-top:15px;'>`;
+         html += `<div style='background:#e5e7eb;border-radius:8px;overflow:hidden;padding:10px;'>`;
+         html += `<div style='display:flex;height:14px;border-radius:6px;overflow:hidden;'>`;
+         html += `<div style='background:#93c5fd;width:${pCycle}%'></div>`;
+         html += `<div style='background:#86efac;width:${pAccount}%'></div>`;
+         html += `<div style='background:#fca5a5;width:${pGrace}%'></div>`;
+         html += `</div>`;
+         html += `<div style='display:flex;justify-content:space-between;font-size:12px;color:#64748b;margin-top:6px;'>`;
+         html += `<span>结算周期</span><span>账期</span><span>宽限期</span>`;
+         html += `</div>`;
+         html += `<div style='display:flex;justify-content:space-between;font-size:11px;color:#9ca3af;margin-top:4px;'>`;
+         html += `<span>${cycleDays}天</span><span>${item.periodDays}天</span><span>${item.gracePeriod}天</span>`;
+         html += `</div>`;
+         html += `</div>`;
+         html += `</div>`;
+         
+         if(item.period === 'custom' && item.startDate) {
+           html += `<div style='display:flex;justify-content:space-between;margin-top:8px;'><span style='color:#64748b;'>开始日期：</span><span style='color:#1e293b;font-weight:500;'>${item.startDate}</span></div>`;
+           html += `<div style='display:flex;justify-content:space-between;'><span style='color:#64748b;'>结算周期天数：</span><span style='color:#1e293b;font-weight:500;'>${item.customPeriodDays}天</span></div>`;
+         }
+         html += `</div>`;
+        
+        html += `<h4 style='color:#374151;margin-bottom:15px;'>更多信息</h4>`;
+        html += `<div style='background:#f0fdf4;padding:15px;border-radius:8px;margin-bottom:20px;'>`;
+        html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>是否有推荐人：</span><span style='color:#1e293b;font-weight:500;'>${item.hasReferrer==='yes'?'有':'无'}</span></div>`;
+        if(item.hasReferrer==='yes' && item.referrer) {
+          html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>推荐人名称：</span><span style='color:#1e293b;font-weight:500;'>${item.referrer}</span></div>`;
+        }
+        if(item.website) {
+          html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>客户网站：</span><span style='color:#1e293b;font-weight:500;'>${item.website}</span></div>`;
+        }
+        if(item.monthlyRevenue) {
+          html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>客户每月营收：</span><span style='color:#1e293b;font-weight:500;'>${item.monthlyRevenue}</span></div>`;
+        }
+        if(item.monthlySales) {
+          html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>客户每月销售额：</span><span style='color:#1e293b;font-weight:500;'>${item.monthlySales}</span></div>`;
+        }
+        if(item.totalProfit) {
+          html += `<div style='display:flex;justify-content:space-between;'><span style='color:#64748b;'>客户历史总利润：</span><span style='color:#1e293b;font-weight:500;'>${item.totalProfit}</span></div>`;
+        }
+        html += `</div>`;
+        
+        if(item.remark) {
+          html += `<h4 style='color:#374151;margin-bottom:15px;'>申请备注</h4>`;
+          html += `<div style='background:#f8fafc;padding:15px;border-radius:8px;margin-bottom:20px;'>`;
+          html += `<span style='color:#1e293b;'>${item.remark}</span>`;
+          html += `</div>`;
+        }
+        
+        if(item.files && item.files.length) {
+          html += `<h4 style='color:#374151;margin-bottom:15px;'>附件</h4>`;
+          html += `<div style='background:#f8fafc;padding:15px;border-radius:8px;margin-bottom:20px;'>`;
+          html += item.files.map(f=>`<div style='margin-bottom:8px;'><a href='${f.url}' download style='color:#2563eb;text-decoration:none;'>📎 ${f.name}</a></div>`).join('');
+          html += `</div>`;
+        }
+        
+      } else {
+        // 调整信用额度弹窗
+        html += `<div style='padding:10px 0;'>`;
+        html += `<h4 style='color:#374151;margin-bottom:15px;'>商户信息</h4>`;
+        html += `<div style='background:#f8fafc;padding:15px;border-radius:8px;margin-bottom:20px;'>`;
+        html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>商户邮箱：</span><span style='color:#1e293b;font-weight:500;'>${item.email}</span></div>`;
+        html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>商户名称：</span><span style='color:#1e293b;font-weight:500;'>${item.merchantName}</span></div>`;
+        html += `<div style='display:flex;justify-content:space-between;'><span style='color:#64748b;'>资金账户：</span><span style='color:#1e293b;font-weight:500;'>${item.business}</span></div>`;
+        html += `</div>`;
+        
+        html += `<h4 style='color:#374151;margin-bottom:15px;'>信用额度信息</h4>`;
+        html += `<div style='background:#fef3c7;padding:15px;border-radius:8px;margin-bottom:20px;'>`;
+        html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>当前信用额度：</span><span style='color:#2563eb;font-weight:bold;'>${item.currentCredit}</span></div>`;
+        html += `<div style='display:flex;justify-content:space-between;'><span style='color:#64748b;'>新的信用额度：</span><span style='color:#f59e0b;font-weight:bold;'>${item.newCredit}</span></div>`;
+        html += `</div>`;
+        
+        html += `<h4 style='color:#374151;margin-bottom:15px;'>每日额度信息</h4>`;
+        html += `<div style='background:#e0f2fe;padding:15px;border-radius:8px;margin-bottom:20px;'>`;
+        html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>当前每日额度：</span><span style='color:#2563eb;font-weight:bold;'>${item.dailyLimitAmount}</span></div>`;
+        html += `<div style='display:flex;justify-content:space-between;'><span style='color:#64748b;'>新的每日额度：</span><span style='color:#f59e0b;font-weight:bold;'>${item.dailyLimitAmount}</span></div>`;
+        html += `</div>`;
+        
+        html += `<h4 style='color:#374151;margin-bottom:15px;'>单笔额度信息</h4>`;
+        html += `<div style='background:#f0fdf4;padding:15px;border-radius:8px;margin-bottom:20px;'>`;
+        html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>当前单笔额度：</span><span style='color:#2563eb;font-weight:bold;'>${item.singleLimitAmount}</span></div>`;
+        html += `<div style='display:flex;justify-content:space-between;'><span style='color:#64748b;'>新的单笔额度：</span><span style='color:#f59e0b;font-weight:bold;'>${item.singleLimitAmount}</span></div>`;
+        html += `</div>`;
+        
+        if(item.remark) {
+          html += `<h4 style='color:#374151;margin-bottom:15px;'>备注</h4>`;
+          html += `<div style='background:#f8fafc;padding:15px;border-radius:8px;margin-bottom:20px;'>`;
+          html += `<span style='color:#1e293b;'>${item.remark}</span>`;
+          html += `</div>`;
+        }
+        
+        if(item.files && item.files.length) {
+          html += `<h4 style='color:#374151;margin-bottom:15px;'>附件</h4>`;
+          html += `<div style='background:#f8fafc;padding:15px;border-radius:8px;margin-bottom:20px;'>`;
+          html += item.files.map(f=>`<div style='margin-bottom:8px;'><a href='${f.url}' download style='color:#2563eb;text-decoration:none;'>📎 ${f.name}</a></div>`).join('');
+          html += `</div>`;
+        }
+      }
+      
+      // 添加申请基本信息
+      html += `<h4 style='color:#374151;margin-bottom:15px;'>申请信息</h4>`;
+      html += `<div style='background:#f8fafc;padding:15px;border-radius:8px;margin-bottom:20px;'>`;
+      html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>申请人：</span><span style='color:#1e293b;font-weight:500;'>${item.applicant}</span></div>`;
+      html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>申请时间：</span><span style='color:#1e293b;font-weight:500;'>${item.applyTime}</span></div>`;
+      html += `<div style='display:flex;justify-content:space-between;'><span style='color:#64748b;'>审核状态：</span><span style='color:#1e293b;font-weight:500;'>${item.status==='pre-review'?'待初审':item.status==='final-review'?'待终审':item.status==='approved'?'审核通过':item.status==='rejected'?'审核不通过':'已撤销'}</span></div>`;
       html += `</div>`;
-      html += `<div style='background: #fef3c7; padding: 10px; border-radius: 6px; margin: 10px 0;'>`;
-      html += `<b style='color: #374151;'>申请额度信息：</b><br/>`;
-      html += `<span style='color: #f59e0b; font-weight: bold;'>设定信用额度：${item.newCredit}</span><br/>`;
-      html += `<span>单笔额度限制：${item.singleLimitType==='unlimited'?'不限':item.singleLimitAmount}</span><br/>`;
-      html += `<span>当日额度限制：${item.dailyLimitType==='unlimited'?'不限':item.dailyLimitAmount}</span><br/>`;
-      html += `</div>`;
-      html += `<b>申请备注：</b>${item.remark||'-'}<br/>`;
-      if(item.files && item.files.length) {
-        html += `<b>资料：</b><br/>`;
-        html += item.files.map(f=>`<a href='${f.url}' download>${f.name}</a>`).join('<br/>');
-        html += `<br/>`;
+      
+      // 添加审核信息（如果有）
+      if(item.preReviewer || item.finalReviewer) {
+        html += `<h4 style='color:#374151;margin-bottom:15px;'>审核信息</h4>`;
+        html += `<div style='background:#f8fafc;padding:15px;border-radius:8px;margin-bottom:20px;'>`;
+        if(item.preReviewer) {
+          html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>初审人：</span><span style='color:#1e293b;font-weight:500;'>${item.preReviewer}</span></div>`;
+          html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>初审时间：</span><span style='color:#1e293b;font-weight:500;'>${item.preReviewTime}</span></div>`;
+          if(item.preReviewRemark) {
+            html += `<div style='display:flex;justify-content:space-between;'><span style='color:#64748b;'>初审备注：</span><span style='color:#1e293b;font-weight:500;'>${item.preReviewRemark}</span></div>`;
+          }
+        }
+        if(item.finalReviewer) {
+          if(item.preReviewer) html += `<hr style='margin:10px 0;border:none;border-top:1px solid #e2e8f0;'>`;
+          html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>终审人：</span><span style='color:#1e293b;font-weight:500;'>${item.finalReviewer}</span></div>`;
+          html += `<div style='display:flex;justify-content:space-between;margin-bottom:8px;'><span style='color:#64748b;'>终审时间：</span><span style='color:#1e293b;font-weight:500;'>${item.finalReviewTime}</span></div>`;
+          if(item.finalReviewRemark) {
+            html += `<div style='display:flex;justify-content:space-between;'><span style='color:#64748b;'>终审备注：</span><span style='color:#1e293b;font-weight:500;'>${item.finalReviewRemark}</span></div>`;
+          }
+        }
+        html += `</div>`;
       }
-      html += `<b>当前结算周期：</b>${item.currentPeriod}<br/>`;
-      html += `<b>当前宽限期：</b>${item.currentGracePeriod}天<br/>`;
-      html += `<b>申请结算周期：</b>${item.period==='natural_week'?'自然周（周一至周日）':item.period==='biweekly'?'双周':item.period==='half_month'?'半月（1~15，16~月末）':item.period==='custom'?'不固定周期':'自然月'}<br/>`;
-      if(item.period === 'custom') {
-        html += `<b>开始日期：</b>${item.startDate}<br/>`;
-        html += `<b>结算周期天数：</b>${item.customPeriodDays}天<br/>`;
-      }
-      html += `<b>申请账期天数：</b>${item.periodDays}天<br/>`;
-      html += `<b>申请宽限期：</b>${item.gracePeriod}天<br/>`;
-      html += `<b>申请人：</b>${item.applicant}<br/>`;
-      html += `<b>申请时间：</b>${item.applyTime}<br/>`;
-      html += `<b>审核状态：</b>${item.status==='pre-review'?'待初审':item.status==='final-review'?'待终审':item.status==='approved'?'审核通过':'审核不通过'}<br/>`;
-      if(item.preReviewer) {
-        html += `<b>初审人：</b>${item.preReviewer}<br/>`;
-        html += `<b>初审时间：</b>${item.preReviewTime}<br/>`;
-        html += `<b>初审备注：</b>${item.preReviewRemark}<br/>`;
-      }
-      if(item.finalReviewer) {
-        html += `<b>终审人：</b>${item.finalReviewer}<br/>`;
-        html += `<b>终审时间：</b>${item.finalReviewTime}<br/>`;
-        html += `<b>终审备注：</b>${item.finalReviewRemark}<br/>`;
-      }
+      
       html += `</div>`;
       document.querySelector('#detailModal .modal-content').innerHTML = `
         <div class="modal-header">
@@ -1696,38 +1994,123 @@
     // 新审核弹窗结构
     function renderAuditModal(idx, stage) {
       const item = creditApplications[idx];
+      const isNewCredit = item.business === 'ADS' || item.currentCredit === 0;
       let html = '';
       html += `<div style='padding:10px 0;'>`;
       html += `<b>商户邮箱：</b>${item.email}<br/>`;
       html += `<b>商户名称：</b>${item.merchantName}<br/>`;
       html += `<b>子业务名称：</b>${item.business}<br/>`;
-      html += `<div style='background: #f8fafc; padding: 10px; border-radius: 6px; margin: 10px 0;'>`;
-      html += `<b style='color: #374151;'>当前额度信息：</b><br/>`;
-      html += `<span style='color: #2563eb; font-weight: bold;'>当前信用额度：${item.currentCredit}</span><br/>`;
-      html += `<span style='color: #dc2626; font-weight: bold;'>已用额度：${item.usedCredit}</span><br/>`;
-      html += `<span style='color: #059669; font-weight: bold;'>剩余额度：${item.remainingCredit}</span><br/>`;
-      html += `</div>`;
-      html += `<div style='background: #fef3c7; padding: 10px; border-radius: 6px; margin: 10px 0;'>`;
-      html += `<b style='color: #374151;'>申请额度信息：</b><br/>`;
-      html += `<span style='color: #f59e0b; font-weight: bold;'>设定信用额度：${item.newCredit}</span><br/>`;
-      html += `<span>单笔额度限制：${item.singleLimitType==='unlimited'?'不限':item.singleLimitAmount}</span><br/>`;
-      html += `<span>当日额度限制：${item.dailyLimitType==='unlimited'?'不限':item.dailyLimitAmount}</span><br/>`;
-      html += `</div>`;
+      
+      if (isNewCredit) {
+        // ADS（新增信用额度）审核内容
+        html += `<div style='background: #f8fafc; padding: 10px; border-radius: 6px; margin: 10px 0;'>`;
+        html += `<b style='color: #374151;'>商户信息：</b><br/>`;
+        html += `<span style='color: #2563eb; font-weight: bold;'>商户邮箱：${item.email}</span><br/>`;
+        html += `<span style='color: #2563eb; font-weight: bold;'>商户名称：${item.merchantName}</span><br/>`;
+        html += `<span style='color: #2563eb; font-weight: bold;'>子业务名称：${item.business}</span><br/>`;
+        html += `</div>`;
+        
+        html += `<div style='background: #fef3c7; padding: 10px; border-radius: 6px; margin: 10px 0;'>`;
+        html += `<b style='color: #374151;'>额度：</b><br/>`;
+        html += `<span style='color: #f59e0b; font-weight: bold;'>信用额度：${item.newCredit}</span><br/>`;
+        html += `<span style='color: #1e293b; font-weight: 500;'>单日额度：${item.dailyLimitAmount}</span><br/>`;
+        html += `<span style='color: #1e293b; font-weight: 500;'>单笔额度：${item.singleLimitAmount}</span><br/>`;
+        html += `</div>`;
+        
+        html += `<div style='background: #e0f2fe; padding: 10px; border-radius: 6px; margin: 10px 0;'>`;
+        html += `<b style='color: #374151;'>周期与日期：</b><br/>`;
+        html += `<span style='color: #64748b;'>结算周期类型：</span><span style='color: #1e293b; font-weight: 500;'>${item.period==='natural_week'?'自然周':item.period==='natural_month'?'自然月':'自定义'}</span><br/>`;
+        html += `<span style='color: #64748b;'>账期：</span><span style='color: #1e293b; font-weight: 500;'>${item.periodDays}天</span><br/>`;
+        html += `<span style='color: #64748b;'>宽限期：</span><span style='color: #1e293b; font-weight: 500;'>${item.gracePeriod}天</span><br/>`;
+        
+        // 进度可视化
+        let cycleDays = 0;
+        if(item.period === 'natural_week') cycleDays = 7;
+        else if(item.period === 'natural_month') cycleDays = 30;
+        else if(item.period === 'custom') cycleDays = item.customPeriodDays || 0;
+        
+        const total = Math.max(1, cycleDays + item.periodDays + item.gracePeriod);
+        const pCycle = Math.round(cycleDays/total*100);
+        const pAccount = Math.round(item.periodDays/total*100);
+        const pGrace = Math.max(0, 100 - pCycle - pAccount);
+        
+        html += `<div style='margin-top:10px;'>`;
+        html += `<div style='background:#e5e7eb;border-radius:8px;overflow:hidden;padding:8px;'>`;
+        html += `<div style='display:flex;height:12px;border-radius:6px;overflow:hidden;'>`;
+        html += `<div style='background:#93c5fd;width:${pCycle}%'></div>`;
+        html += `<div style='background:#86efac;width:${pAccount}%'></div>`;
+        html += `<div style='background:#fca5a5;width:${pGrace}%'></div>`;
+        html += `</div>`;
+        html += `<div style='display:flex;justify-content:space-between;font-size:11px;color:#64748b;margin-top:4px;'>`;
+        html += `<span>结算周期</span><span>账期</span><span>宽限期</span>`;
+        html += `</div>`;
+        html += `<div style='display:flex;justify-content:space-between;font-size:10px;color:#9ca3af;margin-top:2px;'>`;
+        html += `<span>${cycleDays}天</span><span>${item.periodDays}天</span><span>${item.gracePeriod}天</span>`;
+        html += `</div>`;
+        html += `</div>`;
+        html += `</div>`;
+        
+        if(item.period === 'custom' && item.startDate) {
+          html += `<span style='color: #64748b;'>开始日期：</span><span style='color: #1e293b; font-weight: 500;'>${item.startDate}</span><br/>`;
+          html += `<span style='color: #64748b;'>结算周期天数：</span><span style='color: #1e293b; font-weight: 500;'>${item.customPeriodDays}天</span><br/>`;
+        }
+        html += `</div>`;
+        
+        html += `<div style='background: #f0f9ff; padding: 10px; border-radius: 6px; margin: 10px 0;'>`;
+        html += `<b style='color: #374151;'>更多信息：</b><br/>`;
+        if(item.hasReferrer === 'yes' && item.referrer) {
+          html += `<span style='color: #64748b;'>推荐人：</span><span style='color: #1e293b; font-weight: 500;'>${item.referrer}</span><br/>`;
+        }
+        if(item.website) {
+          html += `<span style='color: #64748b;'>网站：</span><span style='color: #1e293b; font-weight: 500;'>${item.website}</span><br/>`;
+        }
+        if(item.monthlyRevenue) {
+          html += `<span style='color: #64748b;'>营收：</span><span style='color: #1e293b; font-weight: 500;'>${item.monthlyRevenue}</span><br/>`;
+        }
+        if(item.monthlySales) {
+          html += `<span style='color: #64748b;'>销售额：</span><span style='color: #1e293b; font-weight: 500;'>${item.monthlySales}</span><br/>`;
+        }
+        if(item.totalProfit) {
+          html += `<span style='color: #64748b;'>历史利润：</span><span style='color: #1e293b; font-weight: 500;'>${item.totalProfit}</span><br/>`;
+        }
+        html += `</div>`;
+        
+      } else {
+        // BPS（调整信用额度）审核内容
+        html += `<div style='background: #f8fafc; padding: 10px; border-radius: 6px; margin: 10px 0;'>`;
+        html += `<b style='color: #374151;'>当前额度信息：</b><br/>`;
+        html += `<span style='color: #2563eb; font-weight: bold;'>当前信用额度：${item.currentCredit}</span><br/>`;
+        html += `<span style='color: #dc2626; font-weight: bold;'>已用额度：${item.usedCredit}</span><br/>`;
+        html += `<span style='color: #059669; font-weight: bold;'>剩余额度：${item.remainingCredit}</span><br/>`;
+        html += `</div>`;
+        html += `<div style='background: #fef3c7; padding: 10px; border-radius: 6px; margin: 10px 0;'>`;
+        html += `<b style='color: #374151;'>申请额度信息：</b><br/>`;
+        html += `<span style='color: #f59e0b; font-weight: bold;'>设定信用额度：${item.newCredit}</span><br/>`;
+        html += `<span>单笔额度限制：${item.singleLimitType==='unlimited'?'不限':item.singleLimitAmount}</span><br/>`;
+        html += `<span>当日额度限制：${item.dailyLimitType==='unlimited'?'不限':item.dailyLimitAmount}</span><br/>`;
+        html += `</div>`;
+      }
+      
       html += `<b>申请备注：</b>${item.remark||'-'}<br/>`;
       if(item.files && item.files.length) {
         html += `<b>资料：</b><br/>`;
         html += item.files.map(f=>`<a href='${f.url}' download>${f.name}</a>`).join('<br/>');
         html += `<br/>`;
       }
-      html += `<b>当前结算周期：</b>${item.currentPeriod}<br/>`;
-      html += `<b>当前宽限期：</b>${item.currentGracePeriod}天<br/>`;
-      html += `<b>申请结算周期：</b>${item.period==='natural_week'?'自然周（周一至周日）':item.period==='biweekly'?'双周':item.period==='half_month'?'半月（1~15，16~月末）':item.period==='custom'?'不固定周期':'自然月'}<br/>`;
-      if(item.period === 'custom') {
-        html += `<b>开始日期：</b>${item.startDate}<br/>`;
-        html += `<b>结算周期天数：</b>${item.customPeriodDays}天<br/>`;
+      
+      if (!isNewCredit) {
+        // BPS申请显示周期信息
+        html += `<b>当前结算周期：</b>${item.currentPeriod}<br/>`;
+        html += `<b>当前宽限期：</b>${item.currentGracePeriod}天<br/>`;
+        html += `<b>申请结算周期：</b>${item.period==='natural_week'?'自然周（周一至周日）':item.period==='biweekly'?'双周':item.period==='half_month'?'半月（1~15，16~月末）':item.period==='custom'?'不固定周期':'自然月'}<br/>`;
+        if(item.period === 'custom') {
+          html += `<b>开始日期：</b>${item.startDate}<br/>`;
+          html += `<b>结算周期天数：</b>${item.customPeriodDays}天<br/>`;
+        }
+        html += `<b>申请账期天数：</b>${item.periodDays}天<br/>`;
+        html += `<b>申请宽限期：</b>${item.gracePeriod}天<br/>`;
       }
-      html += `<b>申请账期天数：</b>${item.periodDays}天<br/>`;
-      html += `<b>申请宽限期：</b>${item.gracePeriod}天<br/>`;
+      
       if(stage==='final') {
         html += `<b>初审人：</b>${item.preReviewResult==='approve'?'通过':item.preReviewResult==='reject'?'不通过':'-'}<br/>`;
         html += `<b>初审备注：</b>${item.preReviewRemark||'-'}<br/>`;
@@ -1872,19 +2255,47 @@
       const accountDays = parseInt(document.getElementById('accountPeriodDays')?.value || '0',10) || 0;
       const graceDays = parseInt(document.getElementById('gracePeriodDays')?.value || '0',10) || 0;
       let cycleDays = 0;
-      if(cycleType === 'natural_week') cycleDays = 7;
-      else if(cycleType === 'natural_month') cycleDays = 30;
-      else if(cycleType === 'custom') cycleDays = parseInt(document.getElementById('settlementPeriodDays')?.value || '0',10) || 0;
+      let cycleLabel = '结算周期';
+      
+      if(cycleType === 'natural_week') {
+        cycleDays = 7;
+        cycleLabel = '自然周';
+      } else if(cycleType === 'natural_month') {
+        cycleDays = 30;
+        cycleLabel = '自然月';
+      } else if(cycleType === 'custom') {
+        cycleDays = parseInt(document.getElementById('settlementPeriodDays')?.value || '0',10) || 0;
+        cycleLabel = '自定义';
+      }
+      
       const total = Math.max(1, cycleDays + accountDays + graceDays);
       const pCycle = Math.round(cycleDays/total*100);
       const pAccount = Math.round(accountDays/total*100);
       const pGrace = Math.max(0, 100 - pCycle - pAccount);
+      
+      // 更新进度条
       const segCycle = document.getElementById('segmentCycle');
       const segAccount = document.getElementById('segmentAccount');
       const segGrace = document.getElementById('segmentGrace');
       if(segCycle) segCycle.style.width = pCycle + '%';
       if(segAccount) segAccount.style.width = pAccount + '%';
       if(segGrace) segGrace.style.width = pGrace + '%';
+      
+      // 更新标签和天数
+      const cycleLabelEl = document.getElementById('cycleLabel');
+      const accountLabelEl = document.getElementById('accountLabel');
+      const graceLabelEl = document.getElementById('graceLabel');
+      const cycleDaysEl = document.getElementById('cycleDays');
+      const accountDaysEl = document.getElementById('accountDays');
+      const graceDaysEl = document.getElementById('graceDays');
+      
+      if(cycleLabelEl) cycleLabelEl.textContent = cycleLabel;
+      if(accountLabelEl) accountLabelEl.textContent = '账期';
+      if(graceLabelEl) graceLabelEl.textContent = '宽限期';
+      
+      if(cycleDaysEl) cycleDaysEl.textContent = cycleDays + '天';
+      if(accountDaysEl) accountDaysEl.textContent = accountDays + '天';
+      if(graceDaysEl) graceDaysEl.textContent = graceDays + '天';
     }
     cycleTypeSelect?.addEventListener('change', function(){
       const customGroup = document.getElementById('customCycleGroup');
