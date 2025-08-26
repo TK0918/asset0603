@@ -1577,4 +1577,34 @@ Public component/
 
 ---
 
+### [记录] 公共组件对外分享链接 - 2025年
+**修改内容：**
+- 生成并记录公共组件对外分享链接（含RAW原始文件链接），便于外部协作与查看
+
+**链接：**
+- `Public component/button.html`
+  - Blob: https://github.com/TK0918/asset0603/blob/main/Public%20component/button.html
+  - Raw:  https://raw.githubusercontent.com/TK0918/asset0603/main/Public%20component/button.html
+- `Public component/view.html`
+  - Blob: https://github.com/TK0918/asset0603/blob/main/Public%20component/view.html
+  - Raw:  https://raw.githubusercontent.com/TK0918/asset0603/main/Public%20component/view.html
+
+**文件位置：** `Public component/`
+
 </rewritten_file>
+### [修改] 充值转账组件文案与手续费计算更新 - 2025年
+**修改内容：**
+- 中文文案将“手续费提示”统一为“服务费，钱包预计入账金额约为”
+- 英文对应更新为“charges a processing fee. The estimated wallet credited amount is approximately”
+- 手续费计算逻辑调整为按“入账金额 = 输入金额 - (输入金额*费率 + 0.3)”
+  - PayPal费率：3.9%
+  - Stripe费率：2.9%
+
+**受影响文件：** `Public component/button.html`
+
+**技术细节：**
+- 更新`translations.en`中的`fee-tip-paypal`与`fee-tip-stripe`
+- 重写`updateFeeTip()`，计算公式变更为：
+  - Stripe：`credited = amount - (amount*0.029 + 0.3)`
+  - PayPal：`credited = amount - (amount*0.039 + 0.3)`
+- 金额保留两位小数，且不小于0
