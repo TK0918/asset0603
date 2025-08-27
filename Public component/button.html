@@ -644,8 +644,8 @@
                 'validation-transfer-platform': '请选择第三方支付平台',
                 'validation-transaction-id': '请输入转账交易ID',
                 'validation-files': '请至少上传一个文件',
-                'fee-tip-stripe': 'Stripe需要收取服务费，钱包预计入账金额约为：',
-                'fee-tip-paypal': 'PayPal需要收取服务费，钱包预计入账金额约为：',
+                'fee-tip-stripe': 'Stripe需要收取手续费，实际支付金额约为：',
+                'fee-tip-paypal': 'PayPal需要收取手续费，实际支付金额约为：',
                 'fee-tip-empty': '请选择支付平台和输入充值金额',
                 'fee-currency': '美元'
             },
@@ -691,8 +691,8 @@
                 'validation-transfer-platform': 'Please select a third-party payment platform',
                 'validation-transaction-id': 'Please enter transaction ID',
                 'validation-files': 'Please upload at least one file',
-                'fee-tip-stripe': 'Stripe charges a processing fee. The estimated wallet credited amount is approximately: ',
-                'fee-tip-paypal': 'PayPal charges a processing fee. The estimated wallet credited amount is approximately: ',
+                'fee-tip-stripe': 'Stripe charges a processing fee. The actual payment amount is approximately: ',
+                'fee-tip-paypal': 'PayPal charges a processing fee. The actual payment amount is approximately: ',
                 'fee-tip-empty': 'Please select a payment platform and enter the amount',
                 'fee-currency': 'USD'
             }
@@ -1089,14 +1089,14 @@
             let tip = '';
             let show = false;
             if ((platform === 'stripe' || platform === 'paypal') && !isNaN(amount) && amount > 0) {
-                let credited = 0;
+                let pay = 0;
                 if (platform === 'stripe') {
-                    credited = amount - (amount * 0.029 + 0.3);
+                    pay = (amount + 0.3) / (1 - 0.029);
                 } else if (platform === 'paypal') {
-                    credited = amount - (amount * 0.039 + 0.3);
+                    pay = (amount + 0.3) / (1 - 0.039);
                 }
-                credited = Math.max(0, Math.round(credited * 100) / 100);
-                tip = `${translations[currentLang][`fee-tip-${platform}`]}<span style='color:#ef4444;font-weight:bold;'>$${credited}</span> <span style='color:#ef4444;font-weight:bold;'>${translations[currentLang]['fee-currency']}</span>`;
+                pay = Math.round(pay * 100) / 100;
+                tip = `${translations[currentLang][`fee-tip-${platform}`]}<span style='color:#ef4444;font-weight:bold;'>$${pay}</span> <span style='color:#ef4444;font-weight:bold;'>${translations[currentLang]['fee-currency']}</span>`;
                 show = true;
             } else if (platform && (!amount || isNaN(amount) || amount <= 0)) {
                 tip = `<span style='color:#ef4444;'>${translations[currentLang]['fee-tip-empty']}</span>`;

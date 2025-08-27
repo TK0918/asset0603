@@ -1608,3 +1608,19 @@ Public component/
   - Stripe：`credited = amount - (amount*0.029 + 0.3)`
   - PayPal：`credited = amount - (amount*0.039 + 0.3)`
 - 金额保留两位小数，且不小于0
+
+### [回滚] 充值转账组件回滚至昨晚之前版本 - 2025年
+**原因：** 用户请求恢复到昨晚修改前的稳定版本。
+
+**操作：**
+- 将 `Public component/button.html` 回滚至提交 `8f3bca1`（feat: 在线充值手续费提示功能，动态计算实际支付金额，支持中英文）。
+- 保留其他文件不变。
+
+**影响范围：** 仅影响 `Public component/button.html` 手续费提示文案与计算逻辑，恢复为回滚目标提交中的实现。
+
+**Git命令：**
+```bash
+git checkout 8f3bca1 -- "Public component/button.html"
+git add "Public component/button.html" log.md
+git commit -m "revert(button): 回滚至昨晚之前版本 8f3bca1，并记录log"
+```
