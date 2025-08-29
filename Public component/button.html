@@ -647,7 +647,9 @@
                 'fee-tip-stripe': 'Stripe需要收取手续费，实际支付金额约为：',
                 'fee-tip-paypal': 'PayPal需要收取手续费，实际支付金额约为：',
                 'fee-tip-empty': '请选择支付平台和输入充值金额',
-                'fee-currency': '美元'
+                'fee-currency': '美元',
+                'fee-amount-label': '手续费约为：',
+                'extra-fee-note': '额外费用说明：您的地区、币种、支付卡类型等因素可能会导致手续费的变动，最终手续费以官方为准。'
             },
             en: {
                 'title': 'Recharge & Transfer Component',
@@ -694,7 +696,9 @@
                 'fee-tip-stripe': 'Stripe charges a processing fee. The actual payment amount is approximately: ',
                 'fee-tip-paypal': 'PayPal charges a processing fee. The actual payment amount is approximately: ',
                 'fee-tip-empty': 'Please select a payment platform and enter the amount',
-                'fee-currency': 'USD'
+                'fee-currency': 'USD',
+                'fee-amount-label': 'Fee approximately: ',
+                'extra-fee-note': 'Additional note: Your region, currency, and card type may affect the processing fee; the final fee is determined by the provider.'
             }
         };
 
@@ -1090,13 +1094,20 @@
             let show = false;
             if ((platform === 'stripe' || platform === 'paypal') && !isNaN(amount) && amount > 0) {
                 let pay = 0;
+                // 简化费率模型：Stripe 2.9% + $0.3；PayPal 3.9% + $0.3
                 if (platform === 'stripe') {
                     pay = (amount + 0.3) / (1 - 0.029);
                 } else if (platform === 'paypal') {
                     pay = (amount + 0.3) / (1 - 0.039);
                 }
                 pay = Math.round(pay * 100) / 100;
-                tip = `${translations[currentLang][`fee-tip-${platform}`]}<span style='color:#ef4444;font-weight:bold;'>$${pay}</span> <span style='color:#ef4444;font-weight:bold;'>${translations[currentLang]['fee-currency']}</span>`;
+                const fee = Math.max(0, Math.round((pay - amount) * 100) / 100);
+                const currency = translations[currentLang]['fee-currency'];
+                const feeLabel = translations[currentLang]['fee-amount-label'];
+                const extraNote = translations[currentLang]['extra-fee-note'];
+                tip = `${translations[currentLang][`fee-tip-${platform}`]}<span style='color:#ef4444;font-weight:bold;'>$${pay}</span> <span style='color:#ef4444;font-weight:bold;'>${currency}</span><br>` +
+                      `${feeLabel}<span style='color:#ef4444;font-weight:bold;'>$${fee}</span> <span style='color:#ef4444;font-weight:bold;'>${currency}</span>。<br>` +
+                      `<span style='color:#64748b;'>${extraNote}</span>`;
                 show = true;
             } else if (platform && (!amount || isNaN(amount) || amount <= 0)) {
                 tip = `<span style='color:#ef4444;'>${translations[currentLang]['fee-tip-empty']}</span>`;

@@ -1,3 +1,26 @@
+2025-08-29 新增与导航更新
+
+- 新增页面：`output/online-recharge.html`（在线充值）。
+  - 筛选项：商户ID、子业务名称、提交时间、状态。
+  - 列表字段：商户ID、子业务名称、支付平台、支付状态、提交时间、充值时间、支付单币种、支付单金额、入账币种、入账金额、增加钱包金额(USD)、支付平台手续费。
+  - 页面样式与现有列表页保持一致，支持与其他页面互相跳转。
+- 更新导航：在以下页面的导航中于“转账审核”后新增“在线充值”菜单项（指向`online-recharge.html`）。
+  - `output/index.html`
+  - `output/customer-management.html`
+  - `output/transfer-audit.html`
+  - `output/credit-audit.html`
+  - `output/transaction-details.html`
+  - `output/permission-config.html`
+
+2025-08-29 在线充值提示增强（button.html）
+
+- 文件：`Public component/button.html`
+- 调整：
+  - 新增动态手续费与支付金额提示（基于平台：Stripe 2.9%+0.3，PayPal 3.9%+0.3 的前端估算模型）。
+  - 显示“手续费约为”与固定“额外费用说明”提示。
+  - 支持中英文多语言（新增`fee-amount-label`、`extra-fee-note`文案键）。
+  - 示例：充值200美元，Stripe显示“支付金额约为：$206.28 美元；手续费约为：$6.28 美元；额外费用说明...”
+
 # 修改日志
 
 ## 2024年修改记录
