@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>额度账单 - 资金中台管理系统</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #f8fafc;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .container { max-width: 1600px; margin: 0 auto; padding: 20px; }
+
+    /* Header */
+    header { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+    .header-content { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; }
+    .logo { font-size: 24px; font-weight: 700; color: #2563eb; text-decoration: none; }
+    .nav-menu { display: flex; list-style: none; gap: 30px; }
+    .nav-menu li a { text-decoration: none; color: #64748b; font-weight: 500; transition: color 0.3s ease; padding: 10px 15px; border-radius: 8px; }
+    .nav-menu li a:hover, .nav-menu li a.active { color: #2563eb; background: rgba(37,99,235,0.1); }
+
+    /* Page Header */
+    .page-header { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 30px; border-left: 4px solid #2563eb; }
+    .page-title { font-size: 28px; font-weight: 700; color: #1e293b; margin-bottom: 10px; }
+    .page-description { color: #64748b; font-size: 16px; }
+
+    /* Search & Filter */
+    .search-section { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 25px; }
+    .search-row { display: flex; gap: 20px; align-items: end; flex-wrap: wrap; }
+    .search-group { flex: 1; min-width: 180px; }
+    .search-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #374151; }
+    .search-input { width: 100%; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; transition: border-color 0.3s ease; }
+    .search-input:focus { outline: none; border-color: #2563eb; }
+    .btn { padding: 12px 24px; border: none; border-radius: 8px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; font-size: 14px; text-decoration: none; display: inline-block; text-align: center; }
+    .btn-primary { background: #2563eb; color: white; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-secondary { background: #6b7280; color: white; }
+    .btn-secondary:hover { background: #4b5563; }
+
+    /* Table */
+    .table-container { background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden; }
+    .table-header { display: flex; justify-content: space-between; align-items: center; padding: 25px; border-bottom: 1px solid #e2e8f0; }
+    .table-title { font-size: 20px; font-weight: 600; color: #1e293b; }
+    .table-wrapper { overflow-x: auto; position: relative; }
+    .bill-table { width: 100%; min-width: 1600px; border-collapse: collapse; position: relative; }
+    .bill-table th, .bill-table td { padding: 12px 8px; text-align: left; border-bottom: 1px solid #f1f5f9; font-size: 12px; white-space: nowrap; }
+    .bill-table th { background: #f8fafc; font-weight: 600; color: #374151; position: sticky; top: 0; z-index: 10; }
+    /* Sticky first two columns */
+    .bill-table th:nth-child(1), .bill-table td:nth-child(1) { position: sticky; left: 0; background: white; z-index: 15; }
+    .bill-table th:nth-child(2), .bill-table td:nth-child(2) { position: sticky; left: 140px; background: white; z-index: 15; }
+    .bill-table tr:hover { background: #f8fafc; }
+
+    .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+    .status-repaying { background: #fef3c7; color: #92400e; }
+    .status-partial { background: #e0f2fe; color: #075985; }
+    .status-paid { background: #dcfce7; color: #166534; }
+    .status-overdue { background: #fee2e2; color: #991b1b; }
+
+    .business-tag { background: #dbeafe; color: #1e40af; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 500; }
+    .amount { font-weight: 600; font-size: 12px; }
+    .amount-negative { color: #dc2626; }
+    .amount-positive { color: #059669; }
+
+    /* Pagination */
+    .pagination { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; gap: 12px; }
+    .pagination .page-actions { display: flex; gap: 6px; align-items: center; }
+    .pagination button { padding: 8px 12px; border: 1px solid #e2e8f0; background: white; color: #64748b; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
+    .pagination button:hover { background: #f8fafc; border-color: #cbd5e0; }
+    .pagination button.active { background: #2563eb; color: white; border-color: #2563eb; }
+    .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .page-size { display: flex; align-items: center; gap: 8px; color: #64748b; }
+    .page-size select { padding: 8px 12px; border: 2px solid #e2e8f0; border-radius: 8px; }
+
+    @media (max-width: 768px) {
+      .search-row { flex-direction: column; }
+      .search-group { min-width: 100%; }
+      .bill-table { min-width: 1200px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <a href="index.html" class="logo">资金中台</a>
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="index.html">首页</a></li>
+          <li><a href="customer-management.html">账户管理</a></li>
+          <li><a href="transfer-audit.html">转账审核</a></li>
+          <li><a href="online-recharge.html">在线充值</a></li>
+          <li><a href="credit-audit.html">信用额度</a></li>
+          <li><a href="credit-bill.html" class="active">额度账单</a></li>
+          <li><a href="transaction-details.html">交易明细</a></li>
+          <li><a href="permission-config.html">权限配置</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="page-header">
+      <h1 class="page-title">额度账单</h1>
+      <p class="page-description">展示全部客户的信用额度账单信息，支持筛选与分析</p>
+    </div>
+
+    <div class="search-section">
+      <div class="search-row">
+        <div class="search-group">
+          <label>商户ID</label>
+          <input type="text" class="search-input" id="filterMerchantId" placeholder="输入商户ID">
+        </div>
+        <div class="search-group">
+          <label>子业务名称</label>
+          <select class="search-input" id="filterBusiness">
+            <option value="">全部业务</option>
+            <option value="ADS">Advertising (ADS)</option>
+            <option value="BPS">Fulfillment (BPS)</option>
+          </select>
+        </div>
+        <div class="search-group">
+          <label>生成时间</label>
+          <input type="date" class="search-input" id="filterGenerated">
+        </div>
+        <div class="search-group">
+          <label>还款截止日期</label>
+          <input type="date" class="search-input" id="filterDue">
+        </div>
+        <div class="search-group">
+          <label>账单状态</label>
+          <select class="search-input" id="filterStatus">
+            <option value="">全部状态</option>
+            <option value="repaying">待还款</option>
+            <option value="partial">部分还款</option>
+            <option value="paid">已还款</option>
+            <option value="overdue">逾期</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-primary" id="btnSearch">搜索</button>
+          <button class="btn btn-secondary" id="btnReset">重置</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <div class="table-header">
+        <h3 class="table-title">额度账单列表</h3>
+      </div>
+      <div class="table-wrapper">
+        <table class="bill-table">
+          <thead>
+            <tr>
+              <th width="140px">商户ID</th>
+              <th width="120px">子业务名称</th>
+              <th width="160px">生成时间</th>
+              <th width="100px">账单状态</th>
+              <th width="160px">账单开始日期</th>
+              <th width="160px">账单结束日期</th>
+              <th width="120px">账单总金额</th>
+              <th width="160px">还款截止日期</th>
+              <th width="120px">待还金额</th>
+            </tr>
+          </thead>
+          <tbody id="billTbody"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="billPagination">
+        <div class="page-size">
+          <span>每页</span>
+          <select id="pageSizeSelect">
+            <option value="10" selected>10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+          </select>
+          <span>条</span>
+        </div>
+        <div class="page-actions" id="pageActions"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // 模拟账单数据，覆盖四种状态：待还款、部分还款、已还款、逾期
+    const bills = [];
+    const merchants = ['US001','US002','US003','US004','US005'];
+    const businesses = ['ADS','BPS'];
+    const today = new Date();
+
+    // 构造确保覆盖的4条基础数据
+    (function seedBaseline(){
+      const total = 30000;
+      // 待还款：在还款期内，尚未还款（unpaid=total，due>=today）
+      const gen1 = new Date(today.getTime() - 5*86400000);
+      const due1 = new Date(today.getTime() + 10*86400000);
+      bills.push({ merchantId:'US001', business:'ADS', generatedAt: gen1.toISOString().slice(0,16).replace('T',' '), status:'repaying', periodStart: new Date(gen1.getTime()-29*86400000).toISOString().slice(0,10), periodEnd: gen1.toISOString().slice(0,10), totalAmount: total, dueDate: due1.toISOString().slice(0,10), unpaidAmount: total });
+      // 部分还款：在还款期内，0<unpaid<total（due>=today）
+      const gen2 = new Date(today.getTime() - 8*86400000);
+      const due2 = new Date(today.getTime() + 5*86400000);
+      bills.push({ merchantId:'US002', business:'BPS', generatedAt: gen2.toISOString().slice(0,16).replace('T',' '), status:'partial', periodStart: new Date(gen2.getTime()-29*86400000).toISOString().slice(0,10), periodEnd: gen2.toISOString().slice(0,10), totalAmount: total, dueDate: due2.toISOString().slice(0,10), unpaidAmount: Math.floor(total*0.4) });
+      // 已还款：unpaid=0
+      const gen3 = new Date(today.getTime() - 12*86400000);
+      const due3 = new Date(today.getTime() + 3*86400000);
+      bills.push({ merchantId:'US003', business:'ADS', generatedAt: gen3.toISOString().slice(0,16).replace('T',' '), status:'paid', periodStart: new Date(gen3.getTime()-29*86400000).toISOString().slice(0,10), periodEnd: gen3.toISOString().slice(0,10), totalAmount: total, dueDate: due3.toISOString().slice(0,10), unpaidAmount: 0 });
+      // 逾期：due<today 且 unpaid>0
+      const gen4 = new Date(today.getTime() - 25*86400000);
+      const due4 = new Date(today.getTime() - 5*86400000);
+      bills.push({ merchantId:'US004', business:'BPS', generatedAt: gen4.toISOString().slice(0,16).replace('T',' '), status:'overdue', periodStart: new Date(gen4.getTime()-29*86400000).toISOString().slice(0,10), periodEnd: gen4.toISOString().slice(0,10), totalAmount: total, dueDate: due4.toISOString().slice(0,10), unpaidAmount: Math.floor(total*0.6) });
+    })();
+
+    // 其余数据随机分布但遵循业务规则
+    for(let i=0;i<26;i++){
+      const mid = merchants[i%merchants.length];
+      const biz = businesses[i%businesses.length];
+      const gen = new Date(today.getTime() - (i+3)*86400000);
+      const start = new Date(gen.getTime() - 29*86400000);
+      const roll = i % 4; // 0:repaying 1:partial 2:paid 3:overdue
+      const total = 20000 + (i*1379)%30000;
+      let due, unpaid, status;
+      if(roll===0){
+        // 待还款：未到期，未还
+        due = new Date(today.getTime() + ((i%15)+1)*86400000);
+        unpaid = total;
+        status = 'repaying';
+      } else if(roll===1){
+        // 部分还款：未到期，部分未还
+        due = new Date(today.getTime() + ((i%10)+2)*86400000);
+        unpaid = Math.max(1, Math.floor(total*0.2));
+        status = 'partial';
+      } else if(roll===2){
+        // 已还款
+        due = new Date(today.getTime() + ((i%7)+1)*86400000);
+        unpaid = 0;
+        status = 'paid';
+      } else {
+        // 逾期
+        due = new Date(today.getTime() - ((i%12)+1)*86400000);
+        unpaid = Math.max(1, Math.floor(total*0.35));
+        status = 'overdue';
+      }
+      bills.push({
+        merchantId: mid,
+        business: biz,
+        generatedAt: gen.toISOString().slice(0,16).replace('T',' '),
+        status,
+        periodStart: start.toISOString().slice(0,10),
+        periodEnd: gen.toISOString().slice(0,10),
+        totalAmount: total,
+        dueDate: due.toISOString().slice(0,10),
+        unpaidAmount: unpaid
+      });
+    }
+
+    function statusText(s){
+      if(s==='repaying') return '待还款';
+      if(s==='partial') return '部分还款';
+      if(s==='paid') return '已还款';
+      if(s==='overdue') return '逾期';
+      return s;
+    }
+    function statusClass(s){
+      if(s==='repaying') return 'status-repaying';
+      if(s==='partial') return 'status-partial';
+      if(s==='paid') return 'status-paid';
+      if(s==='overdue') return 'status-overdue';
+      return '';
+    }
+
+    let currentPage = 1;
+    let pageSize = 10;
+
+    function render(){
+      const tbody = document.getElementById('billTbody');
+      tbody.innerHTML = '';
+      const id = document.getElementById('filterMerchantId').value.trim().toLowerCase();
+      const biz = document.getElementById('filterBusiness').value;
+      const gen = document.getElementById('filterGenerated').value; // yyyy-mm-dd
+      const due = document.getElementById('filterDue').value;
+      const st = document.getElementById('filterStatus').value;
+
+      let data = bills.slice();
+      if(id) data = data.filter(x=>x.merchantId.toLowerCase().includes(id));
+      if(biz) data = data.filter(x=>x.business===biz);
+      if(gen) data = data.filter(x=>x.generatedAt.startsWith(gen));
+      if(due) data = data.filter(x=>x.dueDate===due);
+      if(st) data = data.filter(x=>x.status===st);
+
+      // 分页计算
+      const total = data.length;
+      const pageCount = Math.max(1, Math.ceil(total / pageSize));
+      if(currentPage > pageCount) currentPage = pageCount;
+      if(currentPage < 1) currentPage = 1;
+      const startIdx = (currentPage - 1) * pageSize;
+      const pageData = data.slice(startIdx, startIdx + pageSize);
+
+      pageData.forEach(item=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${item.merchantId}</td>
+          <td><span class="business-tag">${item.business}</span></td>
+          <td>${item.generatedAt}</td>
+          <td><span class="status-badge ${statusClass(item.status)}">${statusText(item.status)}</span></td>
+          <td>${item.periodStart}</td>
+          <td>${item.periodEnd}</td>
+          <td class="amount amount-positive">${item.totalAmount.toLocaleString()}</td>
+          <td>${item.dueDate}</td>
+          <td class="amount ${item.unpaidAmount>0?'amount-negative':'amount-positive'}">${item.unpaidAmount.toLocaleString()}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // 分页控件渲染
+      const pageActions = document.getElementById('pageActions');
+      pageActions.innerHTML = '';
+      const btnFirst = createPageBtn('首页', ()=>{ currentPage=1; render(); }, currentPage===1);
+      const btnPrev = createPageBtn('上一页', ()=>{ currentPage--; render(); }, currentPage===1);
+      pageActions.appendChild(btnFirst);
+      pageActions.appendChild(btnPrev);
+      // 简单页码（最多显示10个）
+      const maxButtons = 10;
+      let startPage = Math.max(1, currentPage - Math.floor(maxButtons/2));
+      let endPage = Math.min(pageCount, startPage + maxButtons - 1);
+      if(endPage - startPage + 1 < maxButtons){
+        startPage = Math.max(1, endPage - maxButtons + 1);
+      }
+      for(let p=startPage; p<=endPage; p++){
+        const b = createPageBtn(String(p), ()=>{ currentPage=p; render(); }, false);
+        if(p===currentPage){ b.classList.add('active'); b.disabled = true; }
+        pageActions.appendChild(b);
+      }
+      const btnNext = createPageBtn('下一页', ()=>{ currentPage++; render(); }, currentPage===pageCount);
+      const btnLast = createPageBtn('末页', ()=>{ currentPage=pageCount; render(); }, currentPage===pageCount);
+      pageActions.appendChild(btnNext);
+      pageActions.appendChild(btnLast);
+    }
+
+    function createPageBtn(text, onClick, disabled){
+      const btn = document.createElement('button');
+      btn.textContent = text;
+      btn.disabled = !!disabled;
+      btn.onclick = onClick;
+      return btn;
+    }
+
+    document.getElementById('btnSearch').addEventListener('click', function(){ currentPage=1; render(); });
+    document.getElementById('btnReset').addEventListener('click', function(){
+      document.getElementById('filterMerchantId').value='';
+      document.getElementById('filterBusiness').value='';
+      document.getElementById('filterGenerated').value='';
+      document.getElementById('filterDue').value='';
+      document.getElementById('filterStatus').value='';
+      currentPage=1; render();
+    });
+
+    document.getElementById('pageSizeSelect').addEventListener('change', function(){
+      pageSize = parseInt(this.value, 10) || 10;
+      currentPage = 1;
+      render();
+    });
+
+    document.addEventListener('DOMContentLoaded', function(){
+      const sel = document.getElementById('pageSizeSelect');
+      pageSize = parseInt(sel.value, 10) || 10;
+      render();
+    });
+  </script>
+</body>
+</html>
+
+

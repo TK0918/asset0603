@@ -1,5 +1,41 @@
 2025-08-29 新增与导航更新
 
+2025-08-29 新增额度账单与菜单互跳
+
+2025-08-29 额度账单状态与筛选调整
+
+2025-08-29 额度账单分页改造
+
+- 页面：`output/credit-bill.html`
+- 新增分页：
+  - 默认每页10条，支持切换为20/50。
+  - 控件包含：首页/上一页/页码/下一页/末页。
+  - 改造渲染：筛选结果先分页再渲染，重置/搜索重置到第1页。
+  - 保持现有表头粘性与两列固定、横向滚动逻辑不变。
+
+- 页面：`output/credit-bill.html`
+- 更新账单状态：改为4种明确状态，并新增对应样式与渲染逻辑：
+  - 待还款(repaying)：在还款期内，尚未还款（unpaid=total, due≥today）
+  - 部分还款(partial)：在还款期内，已部分还款（0<unpaid<total, due≥today）
+  - 已还款(paid)：unpaid=0
+  - 逾期(overdue)：超过还款截止日期且unpaid>0（due<today）
+- 更新筛选项“账单状态”可选值：待还款、部分还款、已还款、逾期。
+- 重写模拟数据生成：种子数据+循环数据，确保四种状态均有对应样例，且满足各自业务条件。
+- 样式：新增 `.status-repaying`、`.status-partial`、`.status-paid`、`.status-overdue`，保持与系统现有徽标风格一致。
+
+- 新增页面：`output/credit-bill.html`（额度账单）。
+  - 筛选项：商户ID、子业务名称、生成时间、还款截止日期、账单状态。
+  - 列表字段：商户ID、子业务名称、生成时间、账单状态、账单开始日期、账单结束日期、账单总金额、还款截止日期、待还金额。
+  - 页面样式：沿用现有列表页风格（白色卡片、表头粘性、左侧两列固定、横向滚动）。
+- 更新导航：在“信用额度”之后新增“额度账单”菜单项（指向 `credit-bill.html`），已同步至：
+  - `output/index.html`
+  - `output/customer-management.html`
+  - `output/transfer-audit.html`
+  - `output/online-recharge.html`
+  - `output/transaction-details.html`
+  - `output/permission-config.html`
+  - `output/credit-audit.html`
+
 - 新增页面：`output/online-recharge.html`（在线充值）。
   - 筛选项：商户ID、子业务名称、提交时间、状态。
   - 列表字段：商户ID、子业务名称、支付平台、支付状态、提交时间、充值时间、支付单币种、支付单金额、入账币种、入账金额、增加钱包金额(USD)、支付平台手续费。
