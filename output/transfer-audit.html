@@ -473,6 +473,20 @@
       border: 1px solid #e2e8f0;
     }
 
+    /* 覆盖处理弹窗内候选表格的固定列与sticky，避免缝隙与分层 */
+    #processModal .transfer-table th { position: static; top: auto; z-index: auto; }
+    #processModal .transfer-table th:nth-child(1),
+    #processModal .transfer-table th:nth-child(2),
+    #processModal .transfer-table th:nth-child(3),
+    #processModal .transfer-table th:nth-child(4),
+    #processModal .transfer-table td:nth-child(1),
+    #processModal .transfer-table td:nth-child(2),
+    #processModal .transfer-table td:nth-child(3),
+    #processModal .transfer-table td:nth-child(4),
+    #processModal .transfer-table th:last-child,
+    #processModal .transfer-table td:last-child { position: static; left: auto; right: auto; z-index: auto; background: white; }
+    #processModal .transfer-table thead th { background: #f8fafc; }
+
     /* Responsive Design */
     @media (max-width: 768px) {
       .search-row {
@@ -514,46 +528,23 @@
           <li><a href="index.html">首页</a></li>
           <li><a href="customer-management.html">账户管理</a></li>
           <li><a href="transfer-audit.html" class="active">转账审核</a></li>
+          <li><a href="account-config.html">收款账户</a></li>
+          <li><a href="receiving-ledger.html">收款明细</a></li>
+          <li><a href="transaction-details.html">交易明细</a></li>
           <li><a href="online-recharge.html">在线充值</a></li>
           <li><a href="credit-audit.html">信用额度</a></li>
           <li><a href="credit-bill.html">额度账单</a></li>
-          <li><a href="transaction-details.html">交易明细</a></li>
-          <li><a href="permission-config.html">权限配置</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
   <main class="container">
-    <div class="page-header">
-      <h1 class="page-title">线下充值审核</h1>
-      <p class="page-description">处理来自各子业务线的转账申请，支持批量审核和状态管理</p>
-    </div>
-
-    <div class="stats-cards">
-      <div class="stat-card">
-        <div class="stat-number stat-pending">18</div>
-        <div class="stat-label">待审核</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number stat-approved">142</div>
-        <div class="stat-label">已通过</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number stat-rejected">6</div>
-        <div class="stat-label">已拒绝</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number stat-total">166</div>
-        <div class="stat-label">总申请数</div>
-      </div>
-    </div>
-
     <div class="search-section">
       <div class="search-row">
         <div class="search-group">
-          <label>账户ID</label>
-          <input type="text" class="search-input" placeholder="输入账户ID">
+          <label>商户ID</label>
+          <input type="text" class="search-input" placeholder="输入商户ID">
         </div>
         <div class="search-group">
           <label>商户邮箱</label>
@@ -575,7 +566,7 @@
           <label>审核状态</label>
           <select class="search-input">
             <option value="">全部状态</option>
-            <option value="pending">待审核</option>
+            <option value="pending">待处理</option>
             <option value="approved">已通过</option>
             <option value="rejected">已拒绝</option>
           </select>
@@ -604,7 +595,7 @@
           <thead>
             <tr>
               <th width="40px"><input type="checkbox" id="selectAll"></th>
-              <th width="120px">账户ID</th>
+              <th width="120px">商户ID</th>
               <th width="150px">商户邮箱</th>
               <th width="120px">商户名称</th>
               <th width="120px">提交时间</th>
@@ -622,13 +613,13 @@
             </tr>
           </thead>
           <tbody>
-            <tr data-status="pending">
+            <tr data-status="待处理">
               <td><input type="checkbox" class="row-select"></td>
               <td>US001</td>
               <td>contact@apple.com</td>
               <td>Apple Inc.</td>
               <td>2024-01-15 14:30</td>
-              <td><span class="status-badge status-pending">待审核</span></td>
+              <td><span class="status-badge status-pending">待处理</span></td>
               <td><span class="business-tag">Advertising</span></td>
               <td><span class="platform-tag">Wise</span></td>
               <td>WS202401150001</td>
@@ -640,18 +631,17 @@
               <td class="audit-remark">-</td>
               <td>
                 <div class="action-buttons">
-                  <button class="btn btn-success btn-small" onclick="openModal('audit', 'approve', this)">通过</button>
-                  <button class="btn btn-danger btn-small" onclick="openModal('audit', 'reject', this)">拒绝</button>
+                  <button class="btn btn-primary btn-small" onclick="openProcess('process', this)">处理</button>
                 </div>
               </td>
             </tr>
-            <tr data-status="pending">
+            <tr data-status="待处理">
               <td><input type="checkbox" class="row-select"></td>
               <td>US002</td>
               <td>service@microsoft.com</td>
               <td>Microsoft Corporation</td>
               <td>2024-01-15 16:45</td>
-              <td><span class="status-badge status-pending">待审核</span></td>
+              <td><span class="status-badge status-pending">待处理</span></td>
               <td><span class="business-tag">Fulfillment</span></td>
               <td><span class="platform-tag">PayPal</span></td>
               <td>PP202401150002</td>
@@ -663,12 +653,11 @@
               <td class="audit-remark">-</td>
               <td>
                 <div class="action-buttons">
-                  <button class="btn btn-success btn-small" onclick="openModal('audit', 'approve', this)">通过</button>
-                  <button class="btn btn-danger btn-small" onclick="openModal('audit', 'reject', this)">拒绝</button>
+                  <button class="btn btn-primary btn-small" onclick="openProcess('process', this)">处理</button>
                 </div>
               </td>
             </tr>
-            <tr data-status="approved">
+            <tr data-status="已通过">
               <td><input type="checkbox" class="row-select" disabled></td>
               <td>US003</td>
               <td>contact@google.com</td>
@@ -689,7 +678,7 @@
                 </div>
               </td>
             </tr>
-            <tr data-status="rejected">
+            <tr data-status="已拒绝">
               <td><input type="checkbox" class="row-select" disabled></td>
               <td>US001</td>
               <td>contact@apple.com</td>
@@ -706,8 +695,7 @@
               <td>-</td>
               <td class="audit-remark">转账截图不清晰，无法确认真实性</td>
               <td>
-                <div class="action-buttons">
-                </div>
+                <div class="action-buttons"></div>
               </td>
             </tr>
           </tbody>
@@ -727,7 +715,7 @@
         <h4>账户信息</h4>
         <div class="detail-grid">
           <div class="detail-item">
-            <span class="detail-label">账户ID</span>
+            <span class="detail-label">商户ID</span>
             <span class="detail-value" id="detail-entity-id">US001</span>
           </div>
           <div class="detail-item">
@@ -807,40 +795,80 @@
     </div>
   </div>
 
-  <!-- 审核模态框 -->
-  <div class="modal" id="auditModal">
-    <div class="modal-content">
+  <!-- 处理弹窗：用于“匹配并处理/查看并处理” -->
+  <div class="modal" id="processModal">
+    <div class="modal-content" style="max-width:900px;">
       <div class="modal-header">
-        <h2 class="modal-title" id="auditModalTitle">审核转账申请</h2>
+        <h2 class="modal-title" id="processTitle">处理转账申请</h2>
         <button class="close-btn" onclick="closeModal()">&times;</button>
       </div>
-      <form id="auditForm">
-        <div class="form-group" id="creditInfoGroup" style="display: none;">
-          <h4 style="margin-bottom: 15px;">入账信息</h4>
-          <div class="form-row">
-            <div class="form-group">
-              <label>入账币种 *</label>
-              <select class="form-input" name="creditCurrency" required>
-                <option value="">请选择币种</option>
-                <option value="USD">USD - 美元</option>
-                <option value="EUR">EUR - 欧元</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>入账金额 *</label>
-              <input type="number" class="form-input" name="creditAmount" placeholder="请输入入账金额" required min="0" step="0.01">
-            </div>
+      <div class="detail-section">
+        <h4>客户上传的转账信息</h4>
+        <div class="detail-grid">
+          <div class="detail-item"><span class="detail-label">商户ID</span><span class="detail-value" id="p-entity"></span></div>
+          <div class="detail-item"><span class="detail-label">商户邮箱</span><span class="detail-value" id="p-email"></span></div>
+          <div class="detail-item"><span class="detail-label">商户名称</span><span class="detail-value" id="p-name"></span></div>
+          <div class="detail-item"><span class="detail-label">子业务</span><span class="detail-value" id="p-biz"></span></div>
+          <div class="detail-item"><span class="detail-label">支付平台</span><span class="detail-value" id="p-platform"></span></div>
+          <div class="detail-item"><span class="detail-label">转账凭证号</span><span class="detail-value" id="p-voucher"></span></div>
+        </div>
+        <div style="margin-top:8px;">
+          <button class="btn btn-secondary btn-small" id="p-attachBtn" type="button">预览附件</button>
+        </div>
+      </div>
+      <div class="detail-section">
+        <h4>系统匹配到的收款信息</h4>
+        <div id="p-candList">
+          <div style="display:flex; gap:8px; margin-bottom:8px; align-items:center;">
+            <select class="form-input" id="fPlatSel" style="padding:6px 10px; height:34px; width:160px;">
+              <option value="">支付平台（全部）</option>
+            </select>
+            <input class="form-input" id="fTx" placeholder="交易ID（关键词）" style="padding:6px 10px; height:34px; width:180px;">
+            <select class="form-input" id="fCcySel" style="padding:6px 10px; height:34px; width:140px;">
+              <option value="">币种（全部）</option><option>USD</option><option>EUR</option><option>GBP</option><option>CHF</option>
+            </select>
+            <input class="form-input" id="fMin" placeholder="金额最小" style="padding:6px 10px; height:34px; width:120px;">
+            <input class="form-input" id="fMax" placeholder="金额最大" style="padding:6px 10px; height:34px; width:120px;">
+            <button class="btn btn-primary btn-small" id="btnCandSearch" type="button">筛选</button>
+          </div>
+          <div class="table-wrap" style="max-height:38vh; overflow:auto; border:1px solid #e5e7eb; border-radius:8px;">
+            <table class="transfer-table" style="min-width:1200px; position:static;">
+              <thead>
+                <tr>
+                  <th width="40px"></th>
+                  <th>支付平台</th>
+                  <th>账户别名</th>
+                  <th>交易ID</th>
+                  <th>交易时间</th>
+                  <th>收款币种</th>
+                  <th>收款金额</th>
+                  <th>付款方信息</th>
+                  <th>认领状态</th>
+                  <th>数据来源</th>
+                </tr>
+              </thead>
+              <tbody id="p-candTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="detail-section">
+        <h4>确认入账</h4>
+        <div class="form-row">
+          <div class="form-group">
+            <label>*入账金额（该金额会入账到商户对应业务的钱包）</label>
+            <input type="number" class="form-input" id="p-amt" placeholder="请输入入账金额" min="0" step="0.01">
           </div>
         </div>
         <div class="form-group">
-          <label id="commentLabel">审核备注 *</label>
-          <textarea class="form-input" name="auditComment" rows="4" placeholder="请填写审核备注信息" required></textarea>
+          <label>备注（可选）</label>
+          <textarea class="form-input" id="p-memo" rows="3" placeholder="备注信息"></textarea>
         </div>
-        <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 30px;">
-          <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
-          <button type="submit" class="btn btn-primary" id="auditSubmitBtn">确认审核</button>
+        <div style="display:flex; gap:10px; justify-content:flex-end;">
+          <button class="btn btn-danger" id="p-reject">设为拒绝</button>
+          <button class="btn btn-success" id="p-confirm">审核通过</button>
         </div>
-      </form>
+      </div>
     </div>
   </div>
 
@@ -959,41 +987,125 @@
         }
 
         document.getElementById('detailModal').classList.add('show');
-      } else if (type === 'audit') {
-        const modal = document.getElementById('auditModal');
-        const title = document.getElementById('auditModalTitle');
-        const submitBtn = document.getElementById('auditSubmitBtn');
-        const creditInfoGroup = document.getElementById('creditInfoGroup');
-        const commentLabel = document.getElementById('commentLabel');
-        
-        if (action === 'approve') {
-          title.textContent = '通过转账申请';
-          submitBtn.textContent = '确认通过';
-          submitBtn.className = 'btn btn-success';
-          creditInfoGroup.style.display = 'block';
-          commentLabel.textContent = '审核备注';
-          document.querySelector('textarea[name="auditComment"]').required = false;
-          document.querySelector('select[name="creditCurrency"]').required = true;
-          document.querySelector('input[name="creditAmount"]').required = true;
-        } else {
-          title.textContent = '拒绝转账申请';
-          submitBtn.textContent = '确认拒绝';
-          submitBtn.className = 'btn btn-danger';
-          creditInfoGroup.style.display = 'none';
-          commentLabel.textContent = '审核备注 *';
-          document.querySelector('textarea[name="auditComment"]').required = true;
-          document.querySelector('select[name="creditCurrency"]').required = false;
-          document.querySelector('input[name="creditAmount"]').required = false;
-        }
-        
-        modal.classList.add('show');
       }
     }
 
+    // 打开处理弹窗
+    function openProcess(mode, btn){
+      const row = btn.closest('tr');
+      const cells = row.querySelectorAll('td');
+      document.getElementById('processTitle').textContent = '处理';
+      document.getElementById('p-entity').textContent = cells[1].textContent;
+      document.getElementById('p-email').textContent = cells[2].textContent;
+      document.getElementById('p-name').textContent = cells[3].textContent;
+      document.getElementById('p-biz').textContent = cells[6].textContent.trim();
+      document.getElementById('p-platform').textContent = cells[7].textContent.trim();
+      document.getElementById('p-voucher').textContent = cells[8].textContent;
+      // 申报金额已移除
+      // 附件预览按钮
+      document.getElementById('p-attachBtn').onclick = ()=>{
+        const voucher = cells[8].textContent;
+        const info = (window.transferData||{})[voucher];
+        if(info && info.screenshot){ viewScreenshot(info.screenshot); }
+        else { alert('无附件'); }
+      };
+ 
+      // 从 localStorage 读取收款明细（包含已认领，用于展示；仅未认领可选）
+      let ledger = [];
+      try{ ledger = JSON.parse(localStorage.getItem('receivingLedgerRows')||'[]'); }catch(err){ ledger = []; }
+      // 平台下拉
+      const platSel = document.getElementById('fPlatSel');
+      const plats = Array.from(new Set(ledger.map(x=>x.platform))).filter(Boolean);
+      platSel.innerHTML = '<option value="">全部</option>' + plats.map(p=>`<option>${p}</option>`).join('');
+
+      document.getElementById('p-amt').value = '';
+      document.getElementById('p-memo').value = '';
+      document.getElementById('processModal').classList.add('show');
+
+      // 列表渲染
+      const tbody = document.getElementById('p-candTbody');
+      let pickedRow = null;
+      function renderTable(list){
+        tbody.innerHTML = '';
+        list.forEach(c=>{
+          const tr = document.createElement('tr');
+          const disabled = c.claim !== '待认领';
+          tr.innerHTML = `
+            <td><input type="radio" name="candRadio" value="${c.id}" ${disabled?'disabled':''}></td>
+            <td>${c.platform}</td>
+            <td>${c.alias||'-'}</td>
+            <td>${c.txId||'-'}</td>
+            <td>${c.time||'-'}</td>
+            <td>${c.ccy||'-'}</td>
+            <td>${Number(c.amount).toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+            <td>${c.payer||'-'}</td>
+            <td>${c.claim||'-'}</td>
+            <td>${c.source||'-'}</td>`;
+          tbody.appendChild(tr);
+        });
+      }
+      function doFilter(){
+        const plat = platSel.value;
+        const tx = (document.getElementById('fTx').value||'').trim().toLowerCase();
+        const ccy = (document.getElementById('fCcySel').value||'').trim().toUpperCase();
+        const min = parseFloat((document.getElementById('fMin').value||'').trim());
+        const max = parseFloat((document.getElementById('fMax').value||'').trim());
+        return ledger.filter(x=>
+          (!plat || x.platform===plat) &&
+          (!tx || (x.txId||'').toLowerCase().includes(tx)) &&
+          (!ccy || (x.ccy||'').toUpperCase()===ccy) &&
+          (isNaN(min) || Number(x.amount)>=min) &&
+          (isNaN(max) || Number(x.amount)<=max)
+        );
+      }
+      renderTable(doFilter());
+      document.getElementById('btnCandSearch').onclick = ()=>{ renderTable(doFilter()); };
+      tbody.addEventListener('change', (e)=>{
+        const r = e.target.closest('input[type="radio"][name="candRadio"]');
+        if(!r) return;
+        const id = r.value;
+        pickedRow = ledger.find(x=> String(x.id)===String(id));
+        if(pickedRow){ document.getElementById('p-amt').value = Number(pickedRow.amount).toString(); }
+      });
+
+      document.getElementById('p-confirm').onclick = ()=>{
+        if(!pickedRow){ alert('请选择一条收款信息'); return; }
+        const inputAmt = parseFloat(document.getElementById('p-amt').value);
+        if(isNaN(inputAmt) || inputAmt<=0){ alert('请输入有效入账金额'); return; }
+        // 审核通过：更新当前行状态
+        row.querySelector('.status-badge').textContent = '已通过';
+        row.querySelector('.status-badge').className = 'status-badge status-approved';
+        const tds = row.querySelectorAll('td');
+        tds[11].textContent = '当前用户';
+        tds[10].textContent = new Date().toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(/\//g,'-');
+        tds[12].textContent = (pickedRow.ccy||'USD');
+        tds[13].innerHTML = `<span class="amount-large amount-positive">${inputAmt.toLocaleString()}</span>`;
+
+        // 回写收款明细为已认领
+        try{
+          const id = pickedRow.id;
+          let newLedger = JSON.parse(localStorage.getItem('receivingLedgerRows')||'[]');
+          newLedger = newLedger.map(x=> x.id==id ? { ...x, claim:'已认领' } : x);
+          localStorage.setItem('receivingLedgerRows', JSON.stringify(newLedger));
+        }catch(err){}
+        document.getElementById('processModal').classList.remove('show');
+      };
+      document.getElementById('p-reject').onclick = ()=>{
+        row.querySelector('.status-badge').textContent = '已拒绝';
+        row.querySelector('.status-badge').className = 'status-badge status-rejected';
+        const tds = row.querySelectorAll('td');
+        tds[10].textContent = new Date().toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(/\//g,'-');
+        tds[11].textContent = '当前用户';
+        document.getElementById('processModal').classList.remove('show');
+      };
+    }
+
     function closeModal() {
-      document.getElementById('detailModal').classList.remove('show');
-      document.getElementById('auditModal').classList.remove('show');
-      document.getElementById('screenshotModal').classList.remove('show');
+      const hide = (id)=>{ const el = document.getElementById(id); if(el) el.classList.remove('show'); };
+      hide('detailModal');
+      hide('auditModal');
+      hide('screenshotModal');
+      hide('processModal');
     }
 
     function viewScreenshot(filename) {
@@ -1027,71 +1139,8 @@
     });
 
     // 审核表单提交
-    document.getElementById('auditForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const action = currentAuditAction === 'approve' ? '通过' : '拒绝';
-      
-      if (currentAuditAction === 'approve') {
-        const currency = document.querySelector('select[name="creditCurrency"]').value;
-        const amount = document.querySelector('input[name="creditAmount"]').value;
-        
-        if (!currency || !amount) {
-          alert('请填写完整的入账信息');
-          return;
-        }
-        
-        alert(`审核${action}成功！入账金额：${currency} ${parseFloat(amount).toLocaleString()}`);
-      } else {
-        const reason = document.querySelector('textarea[name="auditComment"]').value;
-        if (!reason.trim()) {
-          alert('请填写拒绝原因');
-          return;
-        }
-        
-        alert(`审核${action}成功！`);
-      }
-      
-      closeModal();
-      
-      // 更新表格中的状态（模拟）
-      if (currentRow) {
-        const row = currentRow.closest('tr');
-        const statusCell = row.querySelector('.status-badge');
-        const checkboxCell = row.querySelector('.row-select');
-        const actionCell = row.querySelector('.action-buttons');
-        const remarkCell = row.querySelector('.audit-remark');
-        const auditComment = document.querySelector('textarea[name="auditComment"]').value;
-        
-        if (currentAuditAction === 'approve') {
-          statusCell.textContent = '已通过';
-          statusCell.className = 'status-badge status-approved';
-          // 填入审核时间、审核人、入账信息
-          const cells = row.querySelectorAll('td');
-          cells[10].textContent = new Date().toLocaleString('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}).replace(/\//g, '-');
-          cells[11].textContent = '当前用户';
-          cells[12].textContent = document.querySelector('select[name="creditCurrency"]').value;
-          cells[13].innerHTML = `<span class="amount-large amount-positive">${parseFloat(document.querySelector('input[name="creditAmount"]').value).toLocaleString()}</span>`;
-        } else {
-          statusCell.textContent = '已拒绝';
-          statusCell.className = 'status-badge status-rejected';
-          // 填入审核时间、审核人
-          const cells = row.querySelectorAll('td');
-          cells[10].textContent = new Date().toLocaleString('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}).replace(/\//g, '-');
-          cells[11].textContent = '当前用户';
-        }
-        
-        // 更新备注信息
-        if (auditComment.trim()) {
-          remarkCell.textContent = auditComment;
-          remarkCell.title = auditComment; // 添加完整内容的提示
-        }
-        
-        checkboxCell.disabled = true;
-        checkboxCell.checked = false;
-        actionCell.innerHTML = '';
-      }
-    });
+    // 关闭处理弹窗事件
+    // 复用 closeModal()
 
     // 点击模态框外部关闭
     document.querySelectorAll('.modal').forEach(modal => {

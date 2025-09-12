@@ -19,7 +19,7 @@
   - 部分还款(partial)：在还款期内，已部分还款（0<unpaid<total, due≥today）
   - 已还款(paid)：unpaid=0
   - 逾期(overdue)：超过还款截止日期且unpaid>0（due<today）
-- 更新筛选项“账单状态”可选值：待还款、部分还款、已还款、逾期。
+- 更新筛选项"账单状态"可选值：待还款、部分还款、已还款、逾期。
 - 重写模拟数据生成：种子数据+循环数据，确保四种状态均有对应样例，且满足各自业务条件。
 - 样式：新增 `.status-repaying`、`.status-partial`、`.status-paid`、`.status-overdue`，保持与系统现有徽标风格一致。
 
@@ -27,7 +27,7 @@
   - 筛选项：商户ID、子业务名称、生成时间、还款截止日期、账单状态。
   - 列表字段：商户ID、子业务名称、生成时间、账单状态、账单开始日期、账单结束日期、账单总金额、还款截止日期、待还金额。
   - 页面样式：沿用现有列表页风格（白色卡片、表头粘性、左侧两列固定、横向滚动）。
-- 更新导航：在“信用额度”之后新增“额度账单”菜单项（指向 `credit-bill.html`），已同步至：
+- 更新导航：在"信用额度"之后新增"额度账单"菜单项（指向 `credit-bill.html`），已同步至：
   - `output/index.html`
   - `output/customer-management.html`
   - `output/transfer-audit.html`
@@ -40,7 +40,7 @@
   - 筛选项：商户ID、子业务名称、提交时间、状态。
   - 列表字段：商户ID、子业务名称、支付平台、支付状态、提交时间、充值时间、支付单币种、支付单金额、入账币种、入账金额、增加钱包金额(USD)、支付平台手续费。
   - 页面样式与现有列表页保持一致，支持与其他页面互相跳转。
-- 更新导航：在以下页面的导航中于“转账审核”后新增“在线充值”菜单项（指向`online-recharge.html`）。
+- 更新导航：在以下页面的导航中于"转账审核"后新增"在线充值"菜单项（指向`online-recharge.html`）。
   - `output/index.html`
   - `output/customer-management.html`
   - `output/transfer-audit.html`
@@ -53,9 +53,9 @@
 - 文件：`Public component/button.html`
 - 调整：
   - 新增动态手续费与支付金额提示（基于平台：Stripe 2.9%+0.3，PayPal 3.9%+0.3 的前端估算模型）。
-  - 显示“手续费约为”与固定“额外费用说明”提示。
+  - 显示"手续费约为"与固定"额外费用说明"提示。
   - 支持中英文多语言（新增`fee-amount-label`、`extra-fee-note`文案键）。
-  - 示例：充值200美元，Stripe显示“支付金额约为：$206.28 美元；手续费约为：$6.28 美元；额外费用说明...”
+  - 示例：充值200美元，Stripe显示"支付金额约为：$206.28 美元；手续费约为：$6.28 美元；额外费用说明..."
 
 # 修改日志
 
@@ -1650,12 +1650,105 @@ Public component/
 
 **文件位置：** `Public component/`
 
-</rewritten_file>
+### [修改] 收款账户配置页面重构 - 2025年
+**修改内容：**
+- 调整筛选项：支付平台、账户别名、状态、创建时间（起/止）、最近同步时间（起/止）。
+- 表格字段重排：支付平台、账户别名、状态、创建时间、最近同步时间、创建人、操作。
+- 精简操作列：仅保留编辑、停用/启用、同步；移除日志、鉴权测试按钮。
+- 新增弹窗动态绑定模块：选择支付平台后显示对应绑定字段（示例已支持 PayPal：账户ID、账户名称、client_id、secret）。
+
+**受影响文件：** `output/account-config.html`
+### [修改] 收款明细筛选与字段重构 - 2025年
+**修改内容：**
+- 筛选项更新：支付平台(多选)、账户别名、交易时间(起/止，默认最近30天)、交易ID、交易金额(范围)、交易币种(多选USD/EUR/GBP/CHF)、认领状态(待认领/已认领/认领锁定)、付款方信息。
+- 列表字段更新：支付平台、账户别名、交易ID、交易时间（UTC+8）、收款币种、收款金额、手续费、付款方信息、数据来源、上传人员、认领状态、认领商户、认领业务、认领资金账户、备注。
+- 适配示例数据结构与详情弹窗字段映射。
+
+**受影响文件：** `output/receiving-ledger.html`
+### [修改] 收款明细模板下载文件名调整 - 2025年
+**修改内容：**
+- 将"下载Excel模板"按钮的下载目标由 `receiving-ledger-template.csv` 改为 `shangchuanmuban.xlsx`。
+
+**受影响文件：** `output/receiving-ledger.html`
+### [新增] 收款明细手动上传CSV解析与校验预览 - 2025年
+**功能点：**
+- 支持上传 `.xlsx/.csv/.xls`（演示解析CSV，Excel提示另存为CSV）。
+- 大小校验 ≤ 10MB；从第二行开始识别。
+- 校验规则：
+  - 去除交易ID、收款币种首尾空格；
+  - 平台代码（1-6）映射平台名称；
+  - 币种校验（USD/EUR/GBP/CHF）；金额/手续费数字校验；
+  - 同平台同交易ID重复检查（含与现有与本次批次）。
+- 预览弹窗：展示"正常/格式错误/同平台同交易ID"与统计计数。
+- 确认导入：仅导入"正常"数据并去重写入当前列表。
+
+**受影响文件：** `output/receiving-ledger.html`
+### [修复] 收款明细预览弹窗被表头遮挡问题 - 2025年
+**问题：** 打开"导入预览与校验结果"弹窗时，列表表头(sticky)置顶覆盖弹窗。
+
+**修复：**
+- 将 `.modal` z-index 提升至 2000，`.modal-inner` 提升至 2001。
+- 打开弹窗时锁定页面滚动，关闭时恢复，避免背景滚动触发表头层级影响。
+
+**受影响文件：** `output/receiving-ledger.html`
+### [增强] 收款明细上传解析支持Excel并完善平台映射 - 2025年
+**修改内容：**
+- 上传支持 `.xlsx/.xls/.csv` 三种格式；对Excel通过动态加载SheetJS解析。
+- 依旧从第二行开始读取（首行为表头）。
+- 平台代码自动翻译为平台名称（示例：2→Stripe，1→PayPal，3→Wise，4→Airwallex，5→Payoneer，6→PingPong，7→Worldfirst）。
+
+**受影响文件：** `output/receiving-ledger.html`
+### [合并] 财务确认并入转账审核页面 - 2025年
+**变更：**
+- 删除独立页面 `finance-confirm.html`，财务确认能力并入 `transfer-audit.html`。
+- 审核状态改造为：待处理、待确认、已拒绝、已通过；按状态显示操作列：
+  - 待处理：显示"匹配并处理"；
+  - 待确认：显示"查看并处理"；
+  - 已拒绝/已通过：无操作按钮。
+- 新增"处理弹窗"：展示客户上传信息与系统匹配候选；支持：
+  - 输入金额确认（可选备注）；
+  - 选择其他待认领交易后确认；
+  - 无匹配则设为拒绝。
+- 移除导航中的"财务确认"入口。
+
+**受影响文件：**
+- 删除：`output/finance-confirm.html`
+- 修改：`output/transfer-audit.html`
+### [修复] 转账审核处理弹窗关闭按钮无效 - 2025年
+**问题：** `processModal` 右上角关闭按钮无法关闭；存在对已删除弹窗ID的直接操作。
+
+**修复：**
+- 统一关闭函数 `closeModal()`，对弹窗ID做存在性判断后再移除`show`类；
+- 覆盖 `detailModal`、`processModal`、`screenshotModal`（兼容已删的 `auditModal`）。
+
+**受影响文件：** `output/transfer-audit.html`
+### [联动] 转账审核与收款明细数据关联与筛选 - 2025年
+**改动：**
+- `receiving-ledger.html`：将交易明细 `rows` 持久化到 `localStorage(receivingLedgerRows)`；渲染与导入后同步保存。
+- `transfer-audit.html`：
+  - 处理弹窗读取 `receivingLedgerRows`，仅展示`待认领`的交易；
+  - 增加筛选项（平台、别名、交易ID、币种、最小金额）；
+  - 确认入账后回写所选交易为`已认领`（防止再次认领）。
+
+**受影响文件：**
+- 修改：`output/receiving-ledger.html`、`output/transfer-audit.html`
+### [优化] 处理弹窗候选表格恢复统一风格 - 2025年
+**修改内容：**
+- 将处理弹窗中的收款信息列表表格恢复为与页面统一的 `transfer-table` 风格（浅灰表头、行悬停高亮、统一padding），但取消固定列与sticky。
+
+**受影响文件：** `output/transfer-audit.html`
+### [调整] 转账审核状态与操作统一 - 2025年
+**修改内容：**
+- 审核状态统一为三态：待处理、已通过、已拒绝；
+- 操作按钮统一为"处理"，原"匹配并处理/查看并处理"合并为同一弹窗与流程；
+- 仅待处理状态显示"处理"按钮，已通过/已拒绝无操作。
+
+**受影响文件：** `output/transfer-audit.html`
 ### [修改] 充值转账组件文案与手续费计算更新 - 2025年
 **修改内容：**
-- 中文文案将“手续费提示”统一为“服务费，钱包预计入账金额约为”
-- 英文对应更新为“charges a processing fee. The estimated wallet credited amount is approximately”
-- 手续费计算逻辑调整为按“入账金额 = 输入金额 - (输入金额*费率 + 0.3)”
+- 中文文案将"手续费提示"统一为"服务费，钱包预计入账金额约为"
+- 英文对应更新为"charges a processing fee. The estimated wallet credited amount is approximately"
+- 手续费计算逻辑调整为按"入账金额 = 输入金额 - (输入金额*费率 + 0.3)"
   - PayPal费率：3.9%
   - Stripe费率：2.9%
 
@@ -1683,3 +1776,40 @@ git checkout 8f3bca1 -- "Public component/button.html"
 git add "Public component/button.html" log.md
 git commit -m "revert(button): 回滚至昨晚之前版本 8f3bca1，并记录log"
 ```
+
+### [导航] 全站移除"财务确认"菜单 - 2025年
+**修改内容：**
+- 删除所有页面头部导航中的"财务确认"链接，避免跳转到已删除页面；
+- 验证各页面间导航互相切换正常。
+
+**受影响文件：** `output/index.html`、`output/receiving-ledger.html`、`output/account-config.html`
+
+### [导航] 新增"收款账户/收款明细"到多页面 - 2025年
+**修改内容：**
+- 在以下页面的头部导航新增"收款账户（account-config.html）""收款明细（receiving-ledger.html）"链接，保证可互相跳转：
+  - customer-management.html
+  - online-recharge.html
+  - credit-audit.html
+  - credit-bill.html
+  - transaction-details.html
+  - permission-config.html
+
+**受影响文件：** 同上 6 个 HTML 文件
+
+### [导航] 统一菜单排序并移除"权限配置" - 2025年
+**修改内容：**
+- 全站导航顺序统一为：首页、账户管理、转账审核、收款账户、收款明细、交易明细、在线充值、信用额度、额度账单；
+- 删除"权限配置"页面与导航入口。
+
+**受影响文件：**
+- 调整导航：`index.html`、`customer-management.html`、`transfer-audit.html`、`receiving-ledger.html`、`account-config.html`、`online-recharge.html`、`credit-audit.html`、`credit-bill.html`、`transaction-details.html`
+- 删除文件：`output/permission-config.html`
+
+### [样式] 统一筛选与表格为交易明细风格 - 2025年
+**修改内容：**
+- 将 `account-config.html` 与 `receiving-ledger.html` 的筛选区与表格区样式统一为 `transaction-details.html` 的白卡片搜索面板 + 统一表格容器风格；
+- 调整表头、hover、高度与阴影、边框、字体颜色与大小，以保持全站一致性。
+
+**受影响文件：**
+- `output/account-config.html`
+- `output/receiving-ledger.html`

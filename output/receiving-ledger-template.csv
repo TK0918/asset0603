@@ -1,0 +1,5 @@
+平台,账户,交易时间,交易币种,交易金额,对方名称或账号,交易ID,手续费,备注
+PayPal,PayPal-NA#1,2025-08-30 12:10:00,USD,1200.50,john@example.com,PP-987654,23.10,INV-20250830
+Stripe,Stripe-US#2,2025-08-29 08:20:00,USD,520.00,visa **** 4242,ch_1ABCD,15.70,Order#8891
+Wise,Wise-EU#1,2025-08-28 20:00:00,EUR,3000.00,IBAN **** 1234,UTR00921,0,Supplier payout
+

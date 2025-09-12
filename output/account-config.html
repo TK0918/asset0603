@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>收款账户配置</title>
+  <style>
+    :root { --primary:#2563eb; --bg:#f8fafc; --card:#ffffff; --text:#111827; --muted:#6b7280; --border:#e5e7eb; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Helvetica Neue",sans-serif; background:var(--bg); color:var(--text); }
+    header { background: white; box-shadow: 0 2px 10px rgba(0,0,0,.1); position: sticky; top:0; z-index:1000; }
+    .header-content { display:flex; justify-content:space-between; align-items:center; padding:15px 30px; }
+    .logo { font-size:24px; font-weight:700; color:#2563eb; text-decoration:none; }
+    .nav-menu { display:flex; list-style:none; gap:30px; }
+    .nav-menu li a { text-decoration:none; color:#64748b; font-weight:500; padding:10px 15px; border-radius:8px; }
+    .nav-menu li a:hover, .nav-menu li a.active { color:#2563eb; background:rgba(37,99,235,.1); }
+    .container { max-width:1200px; margin:24px auto; padding:0 16px; }
+    .card { background:var(--card); border:1px solid var(--border); border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,.04); }
+    .card-header { padding:16px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .title { font-size:18px; font-weight:700; }
+    .actions { display:flex; gap:8px; }
+    .btn { padding:8px 12px; border-radius:8px; border:1px solid var(--border); background:#fff; cursor:pointer; }
+    .btn.primary { background:var(--primary); color:#fff; border-color:var(--primary); }
+    .btn.ghost { background:#fff; color:var(--primary); border-color:var(--primary); }
+
+    /* 统一为交易明细页的搜索面板风格 */
+    .filters { background:#fff; padding:25px; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.05); margin-bottom:16px; display:grid; grid-template-columns:repeat(4,1fr); gap:12px; border:1px solid var(--border); }
+    .field { display:flex; flex-direction:column; gap:6px; }
+    .label { font-size:12px; color:var(--muted); }
+    .input, .select { height:36px; padding:0 10px; border:1px solid var(--border); border-radius:8px; background:#fff; }
+
+    /* 统一为交易明细页的表格容器风格 */
+    .table-wrap { position:relative; overflow:auto; background:#fff; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.05); border:1px solid var(--border); }
+    table { width:100%; border-collapse:separate; border-spacing:0; min-width:1000px; }
+    thead th { position:sticky; top:0; background:#f8fafc; z-index:2; text-align:left; font-size:12px; color:#374151; padding:12px 10px; border-bottom:1px solid var(--border); font-weight:600; }
+    tbody td { padding:12px 10px; border-bottom:1px solid var(--border); font-size:12px; color:#374151; white-space:nowrap; }
+    tr:hover { background:#f8fafc; }
+    .status { padding:2px 8px; border-radius:999px; font-size:12px; }
+    .status.on { background:#ecfdf5; color:#059669; }
+    .status.off { background:#fee2e2; color:#b91c1c; }
+
+    .modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.4); z-index:2000; }
+    .modal-inner { width:720px; max-width:95vw; background:#fff; border-radius:12px; overflow:hidden; border:1px solid var(--border); position:relative; z-index:2001; }
+    .modal-header { padding:14px 16px; border-bottom:1px solid var(--border); font-weight:700; }
+    .modal-body { padding:16px; display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+    .section { grid-column:1 / -1; border:1px dashed var(--border); background:#fafafa; border-radius:8px; padding:12px; }
+    .section h4 { margin:0 0 8px; font-size:14px; color:#374151; }
+    .modal-footer { padding:12px 16px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:8px; }
+    .tip { font-size:12px; color:var(--muted); }
+    .toast { position:fixed; top:24px; left:50%; transform:translateX(-50%); background:#111827; color:#fff; padding:10px 14px; border-radius:8px; box-shadow:0 6px 16px rgba(0,0,0,.2); opacity:0; pointer-events:none; transition:opacity .3s ease; z-index:3000; }
+    .spin { display:inline-block; width:14px; height:14px; border:2px solid #cbd5e1; border-top-color:#2563eb; border-radius:50%; animation:sp 0.8s linear infinite; vertical-align:-2px; }
+    @keyframes sp{ to{ transform:rotate(360deg); } }
+
+    @media (max-width: 900px){ .filters{ grid-template-columns:repeat(2,1fr);} .modal-body{ grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <a href="index.html" class="logo">资金中台</a>
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="index.html">首页</a></li>
+          <li><a href="customer-management.html">账户管理</a></li>
+          <li><a href="transfer-audit.html">转账审核</a></li>
+          <li><a href="account-config.html" class="active">收款账户</a></li>
+          <li><a href="receiving-ledger.html">收款明细</a></li>
+          <li><a href="transaction-details.html">交易明细</a></li>
+          <li><a href="online-recharge.html">在线充值</a></li>
+          <li><a href="credit-audit.html">信用额度</a></li>
+          <li><a href="credit-bill.html">额度账单</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <div class="container">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="title">收款账户配置</div>
+        <div class="actions">
+          <button class="btn" id="btnSyncAll">立即同步一次</button>
+          <button class="btn primary" id="btnCreate">新增账户</button>
+        </div>
+      </div>
+
+      <div class="filters">
+        <div class="field">
+          <label class="label">支付平台</label>
+          <select class="select" id="fPlatform">
+            <option value="">全部</option>
+            <option>PayPal</option>
+            <option>Stripe</option>
+            <option>Wise</option>
+            <option>Airwallex</option>
+            <option>Payoneer</option>
+            <option>PingPong</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="label">账户别名</label>
+          <input class="input" id="fAlias" placeholder="输入账户别名关键词" />
+        </div>
+        <div class="field">
+          <label class="label">状态</label>
+          <select class="select" id="fStatus">
+            <option value="">全部</option>
+            <option value="on">启用</option>
+            <option value="off">停用</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="label">创建时间（起）</label>
+          <input type="datetime-local" class="input" id="fCreatedStart" />
+        </div>
+        <div class="field">
+          <label class="label">创建时间（止）</label>
+          <input type="datetime-local" class="input" id="fCreatedEnd" />
+        </div>
+        <div class="field">
+          <label class="label">最近同步（起）</label>
+          <input type="datetime-local" class="input" id="fSyncStart" />
+        </div>
+        <div class="field">
+          <label class="label">最近同步（止）</label>
+          <input type="datetime-local" class="input" id="fSyncEnd" />
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table id="tblAccounts">
+          <thead>
+            <tr>
+              <th>支付平台</th>
+              <th>账户别名</th>
+              <th>状态</th>
+              <th>创建时间</th>
+              <th>最近同步时间</th>
+              <th>创建人</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalEdit">
+    <div class="modal-inner">
+      <div class="modal-header">账户配置</div>
+      <div class="modal-body">
+        <div class="field">
+          <label class="label">支付平台</label>
+          <select class="select" id="mPlatform">
+            <option>PayPal</option>
+            <option>Stripe</option>
+            <option>Wise</option>
+            <option>Airwallex</option>
+            <option>Payoneer</option>
+            <option>PingPong</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="label">账户别名</label>
+          <input class="input" id="mAlias" placeholder="如：PayPal-北美#1" />
+        </div>
+        <div class="field">
+          <label class="label">状态</label>
+          <select class="select" id="mStatus">
+            <option value="on">启用</option>
+            <option value="off">停用</option>
+          </select>
+        </div>
+
+        <div class="section" id="bindSection" style="display:none;">
+          <h4 id="bindTitle">绑定信息 - </h4>
+          <div class="field">
+            <label class="label">账户ID</label>
+            <input class="input" id="bAccountId" placeholder="平台侧账户ID（如支付邮箱或account id）" />
+          </div>
+          <div class="field">
+            <label class="label">账户名称</label>
+            <input class="input" id="bAccountName" placeholder="账户名称，用于区分展示" />
+          </div>
+          <div class="field">
+            <label class="label">client_id</label>
+            <input class="input" id="bClientId" placeholder="平台client_id" />
+          </div>
+          <div class="field">
+            <label class="label">secret</label>
+            <input class="input" id="bSecret" placeholder="平台secret" />
+          </div>
+          <div class="tip">不同支付平台需要的字段不同；当前示例为 PayPal。其他平台可按需扩展。</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" id="btnCancel">取消</button>
+        <button class="btn primary" id="btnSave">保存</button>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast">同步完成</div>
+
+  <script>
+    // 打开弹窗时可选禁用滚动（避免在移动端滚动穿透）
+    const pageScroll = {
+      lock(){ document.documentElement.style.overflow='hidden'; document.body.style.overflow='hidden'; },
+      unlock(){ document.documentElement.style.overflow=''; document.body.style.overflow=''; }
+    };
+
+    const data = [
+      { id:1, platform:'PayPal', alias:'PayPal-NA#1', account:'na-pay@company.com', status:'on', created:'2025-08-01 10:00', synced:'2025-09-01 09:12', owner:'alice@company.com' },
+      { id:2, platform:'Stripe', alias:'Stripe-US#2', account:'acct_1ABC...', status:'on', created:'2025-07-12 14:20', synced:'2025-09-01 09:10', owner:'bob@company.com' },
+      { id:3, platform:'Wise', alias:'Wise-EU#1', account:'profile_9982', status:'off', created:'2025-06-01 08:30', synced:'2025-08-29 18:42', owner:'carol@company.com' }
+    ];
+
+    const tbody = document.querySelector('#tblAccounts tbody');
+    function toDate(s){ return s? new Date(s.replace(' ','T')) : null; }
+    function inRange(dt, s, e){ if(!dt) return false; if(s && dt < new Date(s)) return false; if(e && dt > new Date(e)) return false; return true; }
+
+    function render(){
+      tbody.innerHTML = '';
+      const pf = document.getElementById('fPlatform').value;
+      const st = document.getElementById('fStatus').value;
+      const alias = document.getElementById('fAlias').value.trim().toLowerCase();
+      const cs = document.getElementById('fCreatedStart').value;
+      const ce = document.getElementById('fCreatedEnd').value;
+      const ss = document.getElementById('fSyncStart').value;
+      const se = document.getElementById('fSyncEnd').value;
+
+      data.filter(r=>{
+        if(pf && r.platform!==pf) return false;
+        if(st && r.status!==st) return false;
+        if(alias && !(r.alias||'').toLowerCase().includes(alias)) return false;
+        if(cs || ce){ if(!inRange(toDate(r.created), cs, ce)) return false; }
+        if(ss || se){ if(!inRange(toDate(r.synced), ss, se)) return false; }
+        return true;
+      }).forEach(r=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.platform}</td>
+          <td>${r.alias}</td>
+          <td><span class="status ${r.status==='on'?'on':'off'}">${r.status==='on'?'启用':'停用'}</span></td>
+          <td>${r.created}</td>
+          <td>${r.synced||'-'}</td>
+          <td>${r.owner||'-'}</td>
+          <td>
+            <button class="btn ghost" data-act="edit" data-id="${r.id}">编辑</button>
+            <button class="btn" data-act="toggle" data-id="${r.id}">${r.status==='on'?'停用':'启用'}</button>
+            ${r.status==='on' ? `<button class="btn" data-act="sync" data-id="${r.id}">同步</button>` : ''}
+          </td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.getElementById('fPlatform').addEventListener('change', render);
+    document.getElementById('fStatus').addEventListener('change', render);
+    document.getElementById('fAlias').addEventListener('input', render);
+    document.getElementById('fCreatedStart').addEventListener('change', render);
+    document.getElementById('fCreatedEnd').addEventListener('change', render);
+    document.getElementById('fSyncStart').addEventListener('change', render);
+    document.getElementById('fSyncEnd').addEventListener('change', render);
+
+    document.getElementById('btnCreate').addEventListener('click', ()=>openModal());
+    document.getElementById('btnCancel').addEventListener('click', closeModal);
+
+    tbody.addEventListener('click', (e)=>{
+      const btn = e.target.closest('button'); if(!btn) return;
+      const id = +btn.getAttribute('data-id');
+      const act = btn.getAttribute('data-act');
+      const row = data.find(x=>x.id===id);
+      if(act==='edit') openModal(row);
+      if(act==='sync') doSync(btn, row);
+    });
+
+    function confirmAction(msg){ return new Promise((resolve)=>{ if(confirm(msg)) resolve(true); else resolve(false); }); }
+
+    // 停用/启用二次确认
+    tbody.addEventListener('click', async (e)=>{
+      const btn = e.target.closest('button'); if(!btn) return;
+      const act = btn.getAttribute('data-act');
+      const id = +btn.getAttribute('data-id');
+      if(act!=='toggle') return;
+      const row = data.find(x=>x.id===id);
+      const toEnable = row.status!=='on';
+      const ok = await confirmAction(toEnable? '确认启用该账户？':'确认停用该账户？');
+      if(!ok) return;
+      row.status = toEnable? 'on':'off';
+      render();
+    });
+
+    function showToast(text){
+      const t = document.getElementById('toast');
+      t.textContent = text||'完成';
+      t.style.opacity = '1';
+      setTimeout(()=>{ t.style.opacity = '0'; }, 1000);
+    }
+
+    function doSync(button, row){
+      if(row.status !== 'on'){ return; }
+      const oldHtml = button.innerHTML;
+      button.innerHTML = '<span class="spin"></span> 同步中';
+      button.disabled = true;
+      setTimeout(()=>{
+        // 模拟同步完成
+        row.synced = new Date().toLocaleString();
+        button.innerHTML = oldHtml;
+        button.disabled = false;
+        render();
+        showToast('同步完成');
+      }, 1200);
+    }
+
+    // 保存动作（新增/编辑）
+    document.getElementById('btnSave').addEventListener('click', ()=>{
+      // 提交前可在此处做加密处理（client_id/secret等）——示例省略具体实现
+      closeModal();
+      alert('已保存（示例）');
+    });
+
+    const modal = document.getElementById('modalEdit');
+    const bindSection = document.getElementById('bindSection');
+    const mPlatform = document.getElementById('mPlatform');
+
+    function applyBindModule(platform){
+      bindSection.style.display = 'none';
+      if(platform==='PayPal'){
+        document.getElementById('bindTitle').textContent = '绑定信息 - PayPal';
+        bindSection.style.display = 'block';
+      }
+    }
+
+    mPlatform.addEventListener('change', (e)=>{
+      applyBindModule(e.target.value);
+    });
+
+    function openModal(row){
+      modal.style.display='flex';
+      pageScroll.lock();
+      document.getElementById('mPlatform').value = row?.platform||'PayPal';
+      document.getElementById('mAlias').value = row?.alias||'';
+      document.getElementById('mStatus').value = row?.status||'on';
+      document.getElementById('bAccountId').value = '';
+      document.getElementById('bAccountName').value = '';
+      document.getElementById('bClientId').value = '';
+      document.getElementById('bSecret').value = '';
+      applyBindModule(document.getElementById('mPlatform').value);
+      // 编辑模式：展示平台与别名；仅允许编辑别名
+      if(row){
+        document.getElementById('mPlatform').disabled = true;
+        document.getElementById('mStatus').disabled = false; // 状态可在编辑中修改
+        // 模拟回显绑定信息（示例：脱敏显示）
+        document.getElementById('bAccountId').value = row.account||'';
+        document.getElementById('bAccountName').value = row.alias||'';
+        document.getElementById('bClientId').value = row.platform==='PayPal' ? '****client' : '';
+        document.getElementById('bSecret').value = row.platform==='PayPal' ? '****secret' : '';
+      } else {
+        document.getElementById('mPlatform').disabled = false;
+        document.getElementById('mStatus').disabled = false;
+      }
+    }
+    function closeModal(){ modal.style.display='none'; pageScroll.unlock(); document.getElementById('mPlatform').disabled=false; document.getElementById('mStatus').disabled=false; }
+    modal.addEventListener('transitionend', ()=>{});
+    modal.addEventListener('click', (e)=>{ if(e.target===modal) closeModal(); });
+
+    render();
+  </script>
+</body>
+</html>
