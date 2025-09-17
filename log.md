@@ -1,3 +1,9 @@
+2025-08-29 转账审核页面调整
+
+- 页面：`output/transfer-audit.html`
+- 移除页面名称和统计卡片区域，简化页面布局
+- 保留搜索筛选和表格列表功能
+
 2025-08-29 新增与导航更新
 
 2025-08-29 新增额度账单与菜单互跳
@@ -1813,3 +1819,38 @@ git commit -m "revert(button): 回滚至昨晚之前版本 8f3bca1，并记录lo
 **受影响文件：**
 - `output/account-config.html`
 - `output/receiving-ledger.html`
+
+### [组件] 新增支付公共组件 - 2025年
+**修改内容：**
+- 在 `Public component/` 下新增 `payment.html` 支付公共组件；
+- 实现左右布局：左侧选择币种和支付方式，右侧展示明细和操作；
+- 支持在线支付（支付宝、Airwallex）和线下转账（HSBC、Payoneer等）；
+- 在线支付：输入金额后跳转支付平台完成授权支付；
+- 线下转账：展示收款信息，确认后上传凭证并提交审核；
+- 参考截图实现完整的支付流程和交互体验。
+
+**受影响文件：**
+- `Public component/payment.html`（新增）
+
+### [调整] 支付组件功能完善 - 2025年
+**修改内容：**
+- 支持中英双语切换，所有界面文本和提示信息支持双语显示；
+- 到账主体更新为：BESTADS LIMITED、MUXUE TRADE LIMITED；
+- 支付币种调整为：USD、EUR、GBP、CHF；
+- 在线支付方式更换为：PayPal、Stripe；
+- 线下转账支付平台根据截图更新：HSBC USD (Swift)、Bank Wise EUR/GBP/USD、Payoneer、Airwallex、Worldfirst、PingPong；
+- 账户信息显示根据各平台特点定制化展示（如HSBC显示收款人信息、Wise显示IBAN等）；
+- 线下转账流程优化：确认转账信息后切换至上传凭证界面，支持返回查看账户信息。
+
+**受影响文件：**
+- `Public component/payment.html`
+
+### [调整] 支付组件内容隐藏优化 - 2025年
+**修改内容：**
+- 点击"确认转账信息"按钮时，隐藏账户信息、"请向以下账户转账"文案、"转账后务必提交银行流水单"警告文案、温馨提示等所有展示内容；
+- 只显示上传凭证和输入信息区域，提供更专注的用户体验；
+- 返回查看账户信息时，重新显示所有被隐藏的内容；
+- 确保重置支付时所有内容都能正确显示。
+
+**受影响文件：**
+- `Public component/payment.html`
