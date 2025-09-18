@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-zh="支付组件 - 资金中台" data-en="Payment Component - Capital Middle Office">支付组件 - 资金中台</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --success: #059669;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --border-light: #f1f5f9;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .payment-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .payment-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    /* 左侧选择区域 */
+    .payment-selection {
+      background: #fafbfc;
+      padding: 32px;
+      border-right: 1px solid var(--border-light);
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+
+    .entity-selector {
+      margin-bottom: 32px;
+    }
+
+    .entity-selector label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .entity-selector select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background: var(--card);
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+
+    .entity-selector select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .currency-selector {
+      margin-bottom: 32px;
+    }
+
+    .currency-selector label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .currency-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .currency-btn {
+      padding: 8px 16px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background: var(--card);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .currency-btn:hover {
+      border-color: var(--primary);
+      background: rgba(37, 99, 235, 0.05);
+    }
+
+    .currency-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .payment-methods {
+      margin-bottom: 24px;
+    }
+
+    .payment-methods h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .method-group {
+      margin-bottom: 24px;
+    }
+
+    .method-group h5 {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .method-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 8px;
+    }
+
+    .method-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background: var(--card);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: left;
+    }
+
+    .method-btn:hover {
+      border-color: var(--primary);
+      background: rgba(37, 99, 235, 0.05);
+    }
+
+    .method-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .method-btn .check-icon {
+      margin-left: auto;
+      font-size: 16px;
+    }
+
+    .method-logo {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+    }
+
+    /* 右侧操作区域 */
+    .payment-actions {
+      padding: 32px;
+      background: var(--card);
+    }
+
+    .action-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    .account-details {
+      background: #f8fafc;
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .account-details h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .detail-item:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .detail-value {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 600;
+      font-family: 'Monaco', 'Menlo', monospace;
+    }
+
+    .copy-btn {
+      margin-left: 8px;
+      padding: 4px 8px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .copy-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    .amount-input {
+      margin-bottom: 24px;
+    }
+
+    .amount-input label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .amount-input input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      transition: border-color 0.3s ease;
+    }
+
+    .amount-input input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: var(--muted);
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #4b5563;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .warning-message {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 24px;
+    }
+
+    .warning-message .warning-text {
+      color: var(--danger);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .tips-section {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .tips-section h5 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+
+    .tips-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .tips-list li {
+      font-size: 13px;
+      color: var(--text);
+      margin-bottom: 8px;
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .tips-list li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    .tips-list li:last-child {
+      margin-bottom: 0;
+    }
+
+    .upload-section {
+      display: none;
+      background: #f8fafc;
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .upload-section.active {
+      display: block;
+    }
+
+    .upload-icon {
+      font-size: 48px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .upload-text {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .upload-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .upload-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .payment-layout {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .payment-selection {
+        border-right: none;
+        border-bottom: 1px solid var(--border-light);
+      }
+
+      .currency-buttons {
+        justify-content: center;
+      }
+
+      .method-buttons {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* 加载状态 */
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* 成功状态 */
+    .success-message {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .success-message .success-text {
+      color: var(--success);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* 语言切换按钮 */
+    .language-switcher {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      display: flex;
+      gap: 8px;
+      background: var(--card);
+      padding: 8px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .lang-btn {
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--card);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .lang-btn:hover {
+      border-color: var(--primary);
+      background: rgba(37, 99, 235, 0.05);
+    }
+
+    .lang-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* 返回按钮 */
+    .back-btn {
+      display: none;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--card);
+      color: var(--text);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 16px;
+    }
+
+    .back-btn:hover {
+      border-color: var(--primary);
+      background: rgba(37, 99, 235, 0.05);
+    }
+
+    .back-btn.show {
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <!-- 语言切换按钮 -->
+  <div class="language-switcher">
+    <button class="lang-btn active" data-lang="zh">中文</button>
+    <button class="lang-btn" data-lang="en">English</button>
+  </div>
+
+  <div class="payment-container">
+    <div class="payment-layout">
+      <!-- 左侧选择区域 -->
+      <div class="payment-selection">
+        <div class="section-title" data-zh="选择支付方式" data-en="Select Payment Method">选择支付方式</div>
+        
+        <!-- 到账主体选择 -->
+        <div class="entity-selector">
+          <label for="entitySelect" data-zh="到账主体" data-en="Recipient Entity">到账主体</label>
+          <select id="entitySelect">
+            <option value="bestads" data-zh="BESTADS LIMITED" data-en="BESTADS LIMITED">BESTADS LIMITED</option>
+            <option value="muxue" data-zh="MUXUE TRADE LIMITED" data-en="MUXUE TRADE LIMITED">MUXUE TRADE LIMITED</option>
+          </select>
+        </div>
+
+        <!-- 币种选择 -->
+        <div class="currency-selector">
+          <label data-zh="支付币种" data-en="Payment Currency">支付币种</label>
+          <div class="currency-buttons">
+            <button class="currency-btn active" data-currency="USD">USD</button>
+            <button class="currency-btn" data-currency="EUR">EUR</button>
+            <button class="currency-btn" data-currency="GBP">GBP</button>
+            <button class="currency-btn" data-currency="CHF">CHF</button>
+          </div>
+        </div>
+
+        <!-- 支付方式选择 -->
+        <div class="payment-methods">
+          <h4 data-zh="支付方式" data-en="Payment Methods">支付方式</h4>
+          
+          <!-- 在线支付 -->
+          <div class="method-group">
+            <h5 data-zh="在线支付" data-en="Online Payment">在线支付</h5>
+            <div class="method-buttons">
+              <button class="method-btn" data-method="paypal" data-type="online">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiByeD0iNCIgZmlsbD0iIzAwNkZGRiIvPgo8L3N2Zz4K" alt="PayPal" class="method-logo">
+                <span data-zh="PayPal支付" data-en="PayPal Payment">PayPal支付</span>
+              </button>
+              <button class="method-btn" data-method="stripe" data-type="online">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiByeD0iNCIgZmlsbD0iIzAwNkZGRiIvPgo8L3N2Zz4K" alt="Stripe" class="method-logo">
+                <span data-zh="Stripe支付" data-en="Stripe Payment">Stripe支付</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 银行转账 -->
+          <div class="method-group">
+            <h5 data-zh="银行转账" data-en="Bank Transfer">银行转账</h5>
+            <div class="method-buttons">
+              <button class="method-btn active" data-method="hsbc-usd" data-type="offline">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiByeD0iNCIgZmlsbD0iIzAwNkZGRiIvPgo8L3N2Zz4K" alt="HSBC" class="method-logo">
+                <span data-zh="HSBC USD (Swift)" data-en="HSBC USD (Swift)">HSBC USD (Swift)</span>
+                <span class="check-icon">✓</span>
+              </button>
+              <button class="method-btn" data-method="wise-eur" data-type="offline">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiByeD0iNCIgZmlsbD0iIzAwNkZGRiIvPgo8L3N2Zz4K" alt="Wise" class="method-logo">
+                <span data-zh="Bank Wise EUR (SEPA)" data-en="Bank Wise EUR (SEPA)">Bank Wise EUR (SEPA)</span>
+              </button>
+              <button class="method-btn" data-method="wise-gbp" data-type="offline">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiByeD0iNCIgZmlsbD0iIzAwNkZGRiIvPgo8L3N2Zz4K" alt="Wise" class="method-logo">
+                <span data-zh="Bank Wise GBP (domestic)" data-en="Bank Wise GBP (domestic)">Bank Wise GBP (domestic)</span>
+              </button>
+              <button class="method-btn" data-method="wise-usd" data-type="offline">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiByeD0iNCIgZmlsbD0iIzAwNkZGRiIvPgo8L3N2Zz4K" alt="Wise" class="method-logo">
+                <span data-zh="Bank Wise USD (Swift)" data-en="Bank Wise USD (Swift)">Bank Wise USD (Swift)</span>
+              </button>
+              <button class="method-btn" data-method="payoneer" data-type="offline">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiByeD0iNCIgZmlsbD0iIzAwNkZGRiIvPgo8L3N2Zz4K" alt="Payoneer" class="method-logo">
+                <span data-zh="Payoneer" data-en="Payoneer">Payoneer</span>
+              </button>
+              <button class="method-btn" data-method="airwallex" data-type="offline">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiByeD0iNCIgZmlsbD0iIzAwNkZGRiIvPgo8L3N2Zz4K" alt="Airwallex" class="method-logo">
+                <span data-zh="Airwallex" data-en="Airwallex">Airwallex</span>
+              </button>
+              <button class="method-btn" data-method="worldfirst" data-type="offline">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiByeD0iNCIgZmlsbD0iIzAwNkZGRiIvPgo8L3N2Zz4K" alt="WorldFirst" class="method-logo">
+                <span data-zh="Worldfirst" data-en="Worldfirst">Worldfirst</span>
+              </button>
+              <button class="method-btn" data-method="pingpong" data-type="offline">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiByeD0iNCIgZmlsbD0iIzAwNkZGRiIvPgo8L3N2Zz4K" alt="PingPong" class="method-logo">
+                <span data-zh="PingPong" data-en="PingPong">PingPong</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧操作区域 -->
+      <div class="payment-actions">
+        <button class="back-btn" id="backBtn" onclick="showAccountDetails()" data-zh="← 返回查看账户信息" data-en="← Back to Account Details">← 返回查看账户信息</button>
+        <div class="action-title" data-zh="请向以下账户转账" data-en="Please transfer to the following account">请向以下账户转账</div>
+        
+        <!-- 账户详情 -->
+        <div class="account-details" id="accountDetails">
+          <h4 data-zh="账户信息" data-en="Account Information">账户信息</h4>
+          <div id="accountInfoContent">
+            <!-- 动态内容将在这里显示 -->
+          </div>
+        </div>
+
+        <!-- 在线支付金额输入 -->
+        <div class="amount-input" id="onlineAmountInput" style="display: none;">
+          <label for="amountInput" data-zh="支付金额" data-en="Payment Amount">支付金额</label>
+          <input type="number" id="amountInput" placeholder="请输入支付金额" step="0.01" min="0">
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="action-buttons">
+          <button class="btn btn-primary" id="payButton" onclick="handlePayment()" data-zh="确认转账信息" data-en="Confirm Transfer Info">确认转账信息</button>
+          <button class="btn btn-secondary" id="cancelButton" onclick="resetPayment()" style="display: none;" data-zh="取消" data-en="Cancel">取消</button>
+        </div>
+
+        <!-- 警告信息 -->
+        <div class="warning-message">
+          <div class="warning-text" data-zh="转账后务必提交银行流水单,否则无法及时审核到账" data-en="Please submit bank statement after transfer, otherwise payment cannot be reviewed in time">转账后务必提交银行流水单,否则无法及时审核到账</div>
+        </div>
+
+        <!-- 温馨提示 -->
+        <div class="tips-section">
+          <h5 data-zh="温馨提示" data-en="Warm Reminder">温馨提示</h5>
+          <ul class="tips-list">
+            <li data-zh="支付金额必须与交易金额一致，多付、少付或分期付款均无法通过审核，以实际银行回单金额为准。请勿对同一笔转账重复提交申请。" data-en="Payment amount must match transaction amount. Overpayment, underpayment or installment payments will not pass review. Actual bank receipt amount prevails. Do not submit duplicate applications for the same transfer.">支付金额必须与交易金额一致，多付、少付或分期付款均无法通过审核，以实际银行回单金额为准。请勿对同一笔转账重复提交申请。</li>
+            <li data-zh="转账后请打印/拍摄交易回单，提供准确的付款时间，否则无法审核。" data-en="Please print/photograph transaction receipt after transfer and provide accurate payment time, otherwise payment will not be reviewed.">转账后请打印/拍摄交易回单，提供准确的付款时间，否则无法审核。</li>
+            <li data-zh="建议在成功提交后4小时查看可用余额。工作时间内提交当日处理，非工作时间提交次日工作日处理。如有疑问请联系客服。" data-en="Check available balance 4 hours after successful submission. Same-day processing during working hours, next working day for non-working hours. Contact customer service for questions.">建议在成功提交后4小时查看可用余额。工作时间内提交当日处理，非工作时间提交次日工作日处理。如有疑问请联系客服。</li>
+            <li data-zh="P卡转账可能存在10分钟延迟，请耐心等待。" data-en="P-card transfer may have 10-minute delay, please be patient.">P卡转账可能存在10分钟延迟，请耐心等待。</li>
+            <li data-zh="Airwallex支付收取0.02%手续费。" data-en="Airwallex payment charges 0.02% handling fee.">Airwallex支付收取0.02%手续费。</li>
+            <li data-zh="预付费充值收取1%平台技术服务费，详见《费用规则》。" data-en="Prepaid top-up charges 1% platform technical service fee, see Fee Rules.">预付费充值收取1%平台技术服务费，详见《费用规则》。</li>
+          </ul>
+        </div>
+
+        <!-- 上传凭证区域 -->
+        <div class="upload-section" id="uploadSection">
+          <div class="upload-icon">📄</div>
+          <div class="upload-text" data-zh="请上传银行转账凭证" data-en="Please upload bank transfer receipt">请上传银行转账凭证</div>
+          <input type="file" id="fileInput" class="file-input" accept="image/*,.pdf" onchange="handleFileUpload(this)">
+          <button class="upload-btn" onclick="document.getElementById('fileInput').click()" data-zh="选择文件" data-en="Select File">选择文件</button>
+          
+          <div class="form-group" style="margin-top: 20px;">
+            <label for="transferTime" data-zh="转账时间" data-en="Transfer Time">转账时间</label>
+            <input type="datetime-local" id="transferTime" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="transferAmount" data-zh="转账金额" data-en="Transfer Amount">转账金额</label>
+            <input type="number" id="transferAmount" placeholder="请输入实际转账金额" step="0.01" min="0" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="transferNote" data-zh="备注信息" data-en="Remarks">备注信息</label>
+            <textarea id="transferNote" placeholder="请输入备注信息（可选）"></textarea>
+          </div>
+          
+          <div class="action-buttons" style="margin-top: 20px;">
+            <button class="btn btn-primary" onclick="submitTransfer()" data-zh="提交审核" data-en="Submit for Review">提交审核</button>
+            <button class="btn btn-secondary" onclick="cancelUpload()" data-zh="取消" data-en="Cancel">取消</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 当前选择的支付方式
+    let currentMethod = 'hsbc-usd';
+    let currentType = 'offline';
+    let currentCurrency = 'USD';
+    let currentEntity = 'bestads';
+    let currentLanguage = 'zh';
+
+    // 支付方式配置数据
+    const paymentMethods = {
+      // 在线支付
+      paypal: {
+        name: { zh: 'PayPal支付', en: 'PayPal Payment' },
+        type: 'online',
+        logo: 'paypal-logo.png'
+      },
+      stripe: {
+        name: { zh: 'Stripe支付', en: 'Stripe Payment' },
+        type: 'online',
+        logo: 'stripe-logo.png'
+      },
+      // 银行转账
+      'hsbc-usd': {
+        name: { zh: 'HSBC USD (Swift)', en: 'HSBC USD (Swift)' },
+        type: 'offline',
+        account: {
+          bankName: { zh: '汇丰银行', en: 'HSBC' },
+          accountHolder: 'MUXUE TRADE LIMITED',
+          accountNumber: '909100109055',
+          swiftCode: 'HSBCCNSHGZF',
+          bankCode: '004',
+          bankAddress: 'UNIT 101 GF CHENGCHUANG BLDG, NO.10 GUI CHENG DENG HU EAST ROAD, NANHAI, FOSHAN, GUANGDONG, CHINA',
+          beneficiaryAddress: 'Office Unit B ON 9/F Thomson Commercial Building 8 Thomson Road. Hong Kong',
+          postalCode: '999077',
+          branchName: 'HSBC BANK (CHINA) COMPANY LIMITED FOSHAN BRANCH'
+        }
+      },
+      'wise-eur': {
+        name: { zh: 'Bank Wise EUR (SEPA)', en: 'Bank Wise EUR (SEPA)' },
+        type: 'offline',
+        account: {
+          bankName: { zh: 'Wise', en: 'Wise' },
+          accountHolder: 'BESTADS LIMITED',
+          accountNumber: 'BE81905548992624',
+          swiftCode: 'TRWIBEB1XXX',
+          bankCode: '001',
+          bankAddress: 'Rue du Trône 100, 3rd floor, Brussels, 1050, Belgium'
+        }
+      },
+      'wise-gbp': {
+        name: { zh: 'Bank Wise GBP (domestic)', en: 'Bank Wise GBP (domestic)' },
+        type: 'offline',
+        account: {
+          bankName: { zh: 'Wise Payments Limited', en: 'Wise Payments Limited' },
+          accountHolder: 'BESTADS LIMITED',
+          accountNumber: '54330067',
+          sortCode: '23-08-01',
+          iban: 'GB32TRWI23080154330067',
+          swiftCode: 'TRWIGB2LXXX',
+          bankCode: '002',
+          bankAddress: '1st Floor, Worship Square, 65 Clifton Street, London, EC2A 4JE, United Kingdom'
+        }
+      },
+      'wise-usd': {
+        name: { zh: 'Bank Wise USD (Swift)', en: 'Bank Wise USD (Swift)' },
+        type: 'offline',
+        account: {
+          bankName: { zh: 'Wise Payments Limited', en: 'Wise Payments Limited' },
+          accountHolder: 'BESTADS LIMITED',
+          accountNumber: '54330067',
+          sortCode: '23-08-01',
+          iban: 'GB32TRWI23080154330067',
+          swiftCode: 'TRWIGB2LXXX',
+          bankCode: '003',
+          bankAddress: '1st Floor, Worship Square, 65 Clifton Street, London, EC2A 4JE, United Kingdom'
+        }
+      },
+      payoneer: {
+        name: { zh: 'Payoneer', en: 'Payoneer' },
+        type: 'offline',
+        account: {
+          bankName: { zh: 'Payoneer', en: 'Payoneer' },
+          accountHolder: 'BESTFULFILL INTERNATIONAL LIMITED',
+          accountNumber: 'bestfulfill@163.com',
+          swiftCode: 'PAYONEER',
+          bankCode: '004',
+          bankAddress: 'Payoneer Address'
+        }
+      },
+      airwallex: {
+        name: { zh: 'Airwallex', en: 'Airwallex' },
+        type: 'offline',
+        account: {
+          bankName: { zh: 'Airwallex Pay', en: 'Airwallex Pay' },
+          accountHolder: '牧雪貿易有限公司 (Muxue Trade Co., Ltd.)',
+          accountNumber: '1011106829132869',
+          swiftCode: 'AIRWALLEX',
+          bankCode: '005',
+          bankAddress: 'Airwallex Address',
+          alternativeName: 'MUXUE TRADE LIMITED',
+          note: { zh: '请使用确切的账户名称，否则存款可能被拒绝', en: 'Please use exact account name or your deposit may be rejected' }
+        }
+      },
+      worldfirst: {
+        name: { zh: 'Worldfirst', en: 'Worldfirst' },
+        type: 'offline',
+        account: {
+          bankName: { zh: 'WorldFirst', en: 'WorldFirst' },
+          accountHolder: 'MUXUE TRADE LIMITED',
+          accountNumber: 'WF-281024151920307013261793',
+          swiftCode: 'WORLDFIRST',
+          bankCode: '006',
+          bankAddress: 'WorldFirst Address'
+        }
+      },
+      pingpong: {
+        name: { zh: 'PingPong', en: 'PingPong' },
+        type: 'offline',
+        account: {
+          bankName: { zh: 'PingPong', en: 'PingPong' },
+          accountHolder: 'BESTFULFILL INTERNATIONAL LIMITED',
+          accountNumber: 'bestfulfill_intl@163.com',
+          swiftCode: 'PINGPONG',
+          bankCode: '007',
+          bankAddress: 'PingPong Address'
+        }
+      }
+    };
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeEventListeners();
+      updateAccountDetails();
+      updateLanguage();
+    });
+
+    // 初始化事件监听器
+    function initializeEventListeners() {
+      // 语言切换
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentLanguage = this.dataset.lang;
+          updateLanguage();
+        });
+      });
+
+      // 币种选择
+      document.querySelectorAll('.currency-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.currency-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentCurrency = this.dataset.currency;
+          updateAccountDetails();
+        });
+      });
+
+      // 支付方式选择
+      document.querySelectorAll('.method-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const method = this.dataset.method;
+          const type = this.dataset.type;
+          
+          // 更新按钮状态
+          document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          
+          currentMethod = method;
+          currentType = type;
+          
+          updateAccountDetails();
+          updateActionArea();
+        });
+      });
+
+      // 到账主体选择
+      document.getElementById('entitySelect').addEventListener('change', function() {
+        currentEntity = this.value;
+        updateAccountDetails();
+      });
+    }
+
+    // 更新语言
+    function updateLanguage() {
+      const elements = document.querySelectorAll('[data-zh][data-en]');
+      elements.forEach(element => {
+        const text = element.dataset[currentLanguage];
+        if (text) {
+          if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+            element.placeholder = text;
+          } else {
+            element.textContent = text;
+          }
+        }
+      });
+    }
+
+    // 更新账户详情
+    function updateAccountDetails() {
+      const method = paymentMethods[currentMethod];
+      if (!method || !method.account) return;
+
+      const account = method.account;
+      const accountInfoContent = document.getElementById('accountInfoContent');
+      
+      let accountInfo = '';
+      
+      // 根据不同的支付方式显示不同的账户信息
+      if (currentMethod === 'hsbc-usd') {
+        accountInfo = `
+          <div class="detail-item">
+            <span class="detail-label" data-zh="收款人名称" data-en="Beneficiary name">收款人名称</span>
+            <span class="detail-value">${account.accountHolder}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="收款人地址" data-en="Beneficiary Address">收款人地址</span>
+            <span class="detail-value">${account.beneficiaryAddress}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="邮政编码" data-en="Postal Code">邮政编码</span>
+            <span class="detail-value">${account.postalCode}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="银行名称" data-en="Bank Name">银行名称</span>
+            <span class="detail-value">${account.bankName[currentLanguage] || account.bankName}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="账号" data-en="Account number">账号</span>
+            <span class="detail-value">${account.accountNumber} <button class="copy-btn" onclick="copyToClipboard('${account.accountNumber}')" data-zh="复制" data-en="Copy">复制</button></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="SWIFT" data-en="SWIFT">SWIFT</span>
+            <span class="detail-value">${account.swiftCode} <button class="copy-btn" onclick="copyToClipboard('${account.swiftCode}')" data-zh="复制" data-en="Copy">复制</button></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="收款银行分行名称" data-en="Beneficiary Bank Branch name">收款银行分行名称</span>
+            <span class="detail-value">${account.branchName}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="银行地址" data-en="Bank Address">银行地址</span>
+            <span class="detail-value">${account.bankAddress}</span>
+          </div>
+        `;
+      } else if (currentMethod.includes('wise-eur')) {
+        accountInfo = `
+          <div class="detail-item">
+            <span class="detail-label" data-zh="姓名" data-en="Name">姓名</span>
+            <span class="detail-value">${account.accountHolder}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="IBAN" data-en="IBAN">IBAN</span>
+            <span class="detail-value">${account.accountNumber} <button class="copy-btn" onclick="copyToClipboard('${account.accountNumber}')" data-zh="复制" data-en="Copy">复制</button></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="Swift/BIC" data-en="Swift/BIC">Swift/BIC</span>
+            <span class="detail-value">${account.swiftCode} <button class="copy-btn" onclick="copyToClipboard('${account.swiftCode}')" data-zh="复制" data-en="Copy">复制</button></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="银行名称" data-en="Bank name">银行名称</span>
+            <span class="detail-value">${account.bankName[currentLanguage] || account.bankName}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="银行地址" data-en="Bank address">银行地址</span>
+            <span class="detail-value">${account.bankAddress}</span>
+          </div>
+        `;
+      } else if (currentMethod.includes('wise-gbp') || currentMethod.includes('wise-usd')) {
+        accountInfo = `
+          <div class="detail-item">
+            <span class="detail-label" data-zh="姓名" data-en="Name">姓名</span>
+            <span class="detail-value">${account.accountHolder}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="账号" data-en="Account number">账号</span>
+            <span class="detail-value">${account.accountNumber} <button class="copy-btn" onclick="copyToClipboard('${account.accountNumber}')" data-zh="复制" data-en="Copy">复制</button></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="Sort code" data-en="Sort code">Sort code</span>
+            <span class="detail-value">${account.sortCode}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="IBAN" data-en="IBAN">IBAN</span>
+            <span class="detail-value">${account.iban} <button class="copy-btn" onclick="copyToClipboard('${account.iban}')" data-zh="复制" data-en="Copy">复制</button></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="Swift/BIC" data-en="Swift/BIC">Swift/BIC</span>
+            <span class="detail-value">${account.swiftCode} <button class="copy-btn" onclick="copyToClipboard('${account.swiftCode}')" data-zh="复制" data-en="Copy">复制</button></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="银行名称" data-en="Bank name">银行名称</span>
+            <span class="detail-value">${account.bankName[currentLanguage] || account.bankName}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="银行地址" data-en="Bank address">银行地址</span>
+            <span class="detail-value">${account.bankAddress}</span>
+          </div>
+        `;
+      } else if (currentMethod === 'payoneer') {
+        accountInfo = `
+          <div class="detail-item">
+            <span class="detail-label" data-zh="Payoneer账户" data-en="Payoneer Account">Payoneer账户</span>
+            <span class="detail-value">${account.accountNumber} <button class="copy-btn" onclick="copyToClipboard('${account.accountNumber}')" data-zh="复制" data-en="Copy">复制</button></span>
+          </div>
+        `;
+      } else if (currentMethod === 'airwallex') {
+        accountInfo = `
+          <div class="detail-item">
+            <span class="detail-label" data-zh="Airwallex Pay账户信息" data-en="Airwallex Pay account information">Airwallex Pay账户信息</span>
+            <span class="detail-value"></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="账号" data-en="Account number">账号</span>
+            <span class="detail-value">${account.accountNumber} <button class="copy-btn" onclick="copyToClipboard('${account.accountNumber}')" data-zh="复制" data-en="Copy">复制</button></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="账户名称" data-en="Account name">账户名称</span>
+            <span class="detail-value">${account.accountHolder}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="备用账户名称" data-en="Alternative account name">备用账户名称</span>
+            <span class="detail-value">${account.alternativeName}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="备注" data-en="Note">备注</span>
+            <span class="detail-value">${account.note[currentLanguage] || account.note}</span>
+          </div>
+        `;
+      } else if (currentMethod === 'worldfirst') {
+        accountInfo = `
+          <div class="detail-item">
+            <span class="detail-label" data-zh="账号" data-en="Account number">账号</span>
+            <span class="detail-value">${account.accountNumber} <button class="copy-btn" onclick="copyToClipboard('${account.accountNumber}')" data-zh="复制" data-en="Copy">复制</button></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="账户名称" data-en="Account name">账户名称</span>
+            <span class="detail-value">${account.accountHolder}</span>
+          </div>
+        `;
+      } else if (currentMethod === 'pingpong') {
+        accountInfo = `
+          <div class="detail-item">
+            <span class="detail-label" data-zh="账号" data-en="Account number">账号</span>
+            <span class="detail-value">${account.accountNumber} <button class="copy-btn" onclick="copyToClipboard('${account.accountNumber}')" data-zh="复制" data-en="Copy">复制</button></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="账户名称" data-en="Account name">账户名称</span>
+            <span class="detail-value">${account.accountHolder}</span>
+          </div>
+        `;
+      }
+      
+      accountInfoContent.innerHTML = accountInfo;
+      updateLanguage(); // 更新语言显示
+    }
+
+    // 更新操作区域
+    function updateActionArea() {
+      const onlineAmountInput = document.getElementById('onlineAmountInput');
+      const payButton = document.getElementById('payButton');
+      const uploadSection = document.getElementById('uploadSection');
+      
+      if (currentType === 'online') {
+        // 在线支付
+        onlineAmountInput.style.display = 'block';
+        payButton.textContent = '立即支付';
+        payButton.onclick = handleOnlinePayment;
+        uploadSection.classList.remove('active');
+      } else {
+        // 线下转账
+        onlineAmountInput.style.display = 'none';
+        payButton.textContent = '确认转账信息';
+        payButton.onclick = handleOfflinePayment;
+        uploadSection.classList.remove('active');
+      }
+    }
+
+    // 处理在线支付
+    function handleOnlinePayment() {
+      const amount = document.getElementById('amountInput').value;
+      if (!amount || amount <= 0) {
+        alert(currentLanguage === 'zh' ? '请输入有效的支付金额' : 'Please enter a valid payment amount');
+        return;
+      }
+
+      // 显示加载状态
+      const button = document.getElementById('payButton');
+      const originalText = button.textContent;
+      button.innerHTML = `<span class="loading"></span> ${currentLanguage === 'zh' ? '处理中...' : 'Processing...'}`;
+      button.disabled = true;
+
+      // 模拟跳转到支付平台
+      setTimeout(() => {
+        // 这里应该跳转到实际的支付平台
+        const methodName = paymentMethods[currentMethod].name[currentLanguage] || paymentMethods[currentMethod].name;
+        alert(currentLanguage === 'zh' 
+          ? `正在跳转到${methodName}支付页面，金额：${currentCurrency} ${amount}`
+          : `Redirecting to ${methodName} payment page, amount: ${currentCurrency} ${amount}`);
+        
+        // 恢复按钮状态
+        button.textContent = originalText;
+        button.disabled = false;
+      }, 2000);
+    }
+
+    // 处理线下转账
+    function handleOfflinePayment() {
+      // 显示上传凭证区域
+      document.getElementById('uploadSection').classList.add('active');
+      
+      // 隐藏账户详情、提示文案和温馨提示，显示返回按钮
+      document.getElementById('accountDetails').style.display = 'none';
+      document.querySelector('.action-title').style.display = 'none';
+      document.querySelector('.warning-message').style.display = 'none';
+      document.querySelector('.tips-section').style.display = 'none';
+      document.getElementById('backBtn').classList.add('show');
+      
+      // 更新按钮
+      const payButton = document.getElementById('payButton');
+      const cancelButton = document.getElementById('cancelButton');
+      payButton.style.display = 'none';
+      cancelButton.style.display = 'block';
+    }
+
+    // 显示账户详情
+    function showAccountDetails() {
+      // 隐藏上传凭证区域
+      document.getElementById('uploadSection').classList.remove('active');
+      
+      // 显示账户详情、提示文案和温馨提示，隐藏返回按钮
+      document.getElementById('accountDetails').style.display = 'block';
+      document.querySelector('.action-title').style.display = 'block';
+      document.querySelector('.warning-message').style.display = 'block';
+      document.querySelector('.tips-section').style.display = 'block';
+      document.getElementById('backBtn').classList.remove('show');
+      
+      // 更新按钮
+      const payButton = document.getElementById('payButton');
+      const cancelButton = document.getElementById('cancelButton');
+      payButton.style.display = 'block';
+      cancelButton.style.display = 'none';
+    }
+
+    // 处理文件上传
+    function handleFileUpload(input) {
+      const file = input.files[0];
+      if (file) {
+        const uploadBtn = input.nextElementSibling;
+        uploadBtn.textContent = `${currentLanguage === 'zh' ? '已选择' : 'Selected'}: ${file.name}`;
+        uploadBtn.style.background = '#059669';
+      }
+    }
+
+    // 提交转账申请
+    function submitTransfer() {
+      const transferTime = document.getElementById('transferTime').value;
+      const transferAmount = document.getElementById('transferAmount').value;
+      const fileInput = document.getElementById('fileInput');
+      
+      if (!transferTime) {
+        alert(currentLanguage === 'zh' ? '请选择转账时间' : 'Please select transfer time');
+        return;
+      }
+      
+      if (!transferAmount || transferAmount <= 0) {
+        alert(currentLanguage === 'zh' ? '请输入有效的转账金额' : 'Please enter a valid transfer amount');
+        return;
+      }
+      
+      if (!fileInput.files[0]) {
+        alert(currentLanguage === 'zh' ? '请上传银行转账凭证' : 'Please upload bank transfer receipt');
+        return;
+      }
+
+      // 显示加载状态
+      const button = event.target;
+      const originalText = button.textContent;
+      button.innerHTML = `<span class="loading"></span> ${currentLanguage === 'zh' ? '提交中...' : 'Submitting...'}`;
+      button.disabled = true;
+
+      // 模拟提交
+      setTimeout(() => {
+        // 显示成功消息
+        const successMessage = document.createElement('div');
+        successMessage.className = 'success-message';
+        successMessage.innerHTML = `<div class="success-text">${currentLanguage === 'zh' 
+          ? '转账申请提交成功！我们将在1-2个工作日内审核您的申请。'
+          : 'Transfer application submitted successfully! We will review your application within 1-2 business days.'}</div>`;
+        
+        document.querySelector('.payment-actions').insertBefore(successMessage, document.querySelector('.tips-section'));
+        
+        // 重置表单
+        resetPayment();
+        
+        // 恢复按钮状态
+        button.textContent = originalText;
+        button.disabled = false;
+      }, 2000);
+    }
+
+    // 取消上传
+    function cancelUpload() {
+      showAccountDetails(); // 使用统一的显示账户详情函数
+      
+      // 重置表单
+      document.getElementById('fileInput').value = '';
+      document.getElementById('transferTime').value = '';
+      document.getElementById('transferAmount').value = '';
+      document.getElementById('transferNote').value = '';
+      document.querySelector('.upload-btn').textContent = currentLanguage === 'zh' ? '选择文件' : 'Select File';
+      document.querySelector('.upload-btn').style.background = '';
+    }
+
+    // 重置支付
+    function resetPayment() {
+      showAccountDetails(); // 使用统一的显示账户详情函数
+      document.getElementById('amountInput').value = '';
+      
+      // 确保所有内容都显示
+      document.getElementById('accountDetails').style.display = 'block';
+      document.querySelector('.action-title').style.display = 'block';
+      document.querySelector('.warning-message').style.display = 'block';
+      document.querySelector('.tips-section').style.display = 'block';
+      
+      // 移除成功消息
+      const successMessage = document.querySelector('.success-message');
+      if (successMessage) {
+        successMessage.remove();
+      }
+    }
+
+    // 复制到剪贴板
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        // 显示复制成功提示
+        const button = event.target;
+        const originalText = button.textContent;
+        button.textContent = currentLanguage === 'zh' ? '已复制' : 'Copied';
+        button.style.background = '#059669';
+        
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.style.background = '';
+        }, 2000);
+      }).catch(err => {
+        console.error('复制失败:', err);
+        alert(currentLanguage === 'zh' ? '复制失败，请手动复制' : 'Copy failed, please copy manually');
+      });
+    }
+
+    // 处理支付
+    function handlePayment() {
+      if (currentType === 'online') {
+        handleOnlinePayment();
+      } else {
+        handleOfflinePayment();
+      }
+    }
+  </script>
+</body>
+</html>

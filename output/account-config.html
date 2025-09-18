@@ -13,44 +13,72 @@
     .nav-menu { display:flex; list-style:none; gap:30px; }
     .nav-menu li a { text-decoration:none; color:#64748b; font-weight:500; padding:10px 15px; border-radius:8px; }
     .nav-menu li a:hover, .nav-menu li a.active { color:#2563eb; background:rgba(37,99,235,.1); }
-    .container { max-width:1200px; margin:24px auto; padding:0 16px; }
-    .card { background:var(--card); border:1px solid var(--border); border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,.04); }
-    .card-header { padding:16px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
-    .title { font-size:18px; font-weight:700; }
-    .actions { display:flex; gap:8px; }
-    .btn { padding:8px 12px; border-radius:8px; border:1px solid var(--border); background:#fff; cursor:pointer; }
-    .btn.primary { background:var(--primary); color:#fff; border-color:var(--primary); }
-    .btn.ghost { background:#fff; color:var(--primary); border-color:var(--primary); }
 
-    /* 统一为交易明细页的搜索面板风格 */
-    .filters { background:#fff; padding:25px; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.05); margin-bottom:16px; display:grid; grid-template-columns:repeat(4,1fr); gap:12px; border:1px solid var(--border); }
-    .field { display:flex; flex-direction:column; gap:6px; }
-    .label { font-size:12px; color:var(--muted); }
-    .input, .select { height:36px; padding:0 10px; border:1px solid var(--border); border-radius:8px; background:#fff; }
+    /* 与 transfer-audit 一致的容器与控件样式 */
+    .container { max-width:1600px; margin:24px auto; padding:0 16px; }
+    .btn { padding:12px 24px; border:none; border-radius:8px; font-weight:500; cursor:pointer; transition:all .3s ease; font-size:14px; text-decoration:none; display:inline-block; text-align:center; }
+    .btn-sm { padding:6px 10px; font-size:12px; border-radius:6px; }
+    .btn-sm.ghost { background:#fff; color:var(--primary); border:1px solid var(--primary); }
+    .btn-sm.secondary { background:#6b7280; color:#fff; border:none; }
+    .btn.primary { background:var(--primary); color:#fff; border: none; }
+    .btn.ghost { background:#fff; color:var(--primary); border:1px solid var(--primary); }
+    .btn.secondary { background:#6b7280; color:#fff; }
 
-    /* 统一为交易明细页的表格容器风格 */
-    .table-wrap { position:relative; overflow:auto; background:#fff; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.05); border:1px solid var(--border); }
-    table { width:100%; border-collapse:separate; border-spacing:0; min-width:1000px; }
-    thead th { position:sticky; top:0; background:#f8fafc; z-index:2; text-align:left; font-size:12px; color:#374151; padding:12px 10px; border-bottom:1px solid var(--border); font-weight:600; }
-    tbody td { padding:12px 10px; border-bottom:1px solid var(--border); font-size:12px; color:#374151; white-space:nowrap; }
-    tr:hover { background:#f8fafc; }
+    .search-section { background:#fff; padding:25px; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.05); margin-bottom:25px; border:1px solid var(--border); }
+    .search-row {
+      display: flex;
+      gap: 20px;
+      align-items: end;
+      flex-wrap: wrap;
+    }
+
+    .search-group {
+      flex: 1;
+      min-width: 180px;
+    }
+    .search-group label { display:block; margin-bottom:8px; font-weight:500; color:#374151; }
+    .search-input { width:100%; padding:12px 16px; border:1px solid var(--border); border-radius:8px; font-size:14px; transition:border-color .3s ease; }
+    .search-input:focus { outline:none; border-color:var(--primary); }
+
+    .table-container { background:#fff; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.05); overflow:hidden; border:1px solid var(--border); }
+    .table-header { display:flex; justify-content:space-between; align-items:center; padding:25px; border-bottom:1px solid var(--border); }
+    .table-title { font-size:20px; font-weight:600; color:#1e293b; }
+    .table-actions { display:flex; gap:10px; }
+    .table-wrapper { overflow-x:auto; position:relative; }
+    .transfer-table { width:100%; min-width:1000px; border-collapse:collapse; position:relative; }
+    .transfer-table th, .transfer-table td { padding:12px 10px; text-align:left; border-bottom:1px solid var(--border); font-size:12px; white-space:nowrap; color:#374151; }
+    .transfer-table th { background:#f8fafc; font-weight:600; color:#374151; position:sticky; top:0; z-index:2; }
+    .transfer-table tr:hover { background:#f8fafc; }
     .status { padding:2px 8px; border-radius:999px; font-size:12px; }
     .status.on { background:#ecfdf5; color:#059669; }
     .status.off { background:#fee2e2; color:#b91c1c; }
 
-    .modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.4); z-index:2000; }
-    .modal-inner { width:720px; max-width:95vw; background:#fff; border-radius:12px; overflow:hidden; border:1px solid var(--border); position:relative; z-index:2001; }
-    .modal-header { padding:14px 16px; border-bottom:1px solid var(--border); font-weight:700; }
-    .modal-body { padding:16px; display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
-    .section { grid-column:1 / -1; border:1px dashed var(--border); background:#fafafa; border-radius:8px; padding:12px; }
-    .section h4 { margin:0 0 8px; font-size:14px; color:#374151; }
-    .modal-footer { padding:12px 16px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:8px; }
+    .modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.5); z-index:2000; }
+    .modal-inner { width:800px; max-width:95vw; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 10px 10px -5px rgba(0,0,0,.04); position:relative; z-index:2001; box-sizing:border-box; }
+    .modal-header { padding:25px 30px; border-bottom:1px solid var(--border); font-size:20px; font-weight:600; color:#1e293b; }
+    .modal-body { padding:30px; width:100%; box-sizing:border-box; }
+    .form-group { margin-bottom:20px; }
+    .form-group label { display:block; margin-bottom:8px; font-weight:500; color:#374151; font-size:14px; }
+    .form-group input, .form-group select { width:100%; max-width:100%; padding:12px 16px; border:2px solid #e2e8f0; border-radius:8px; font-size:14px; transition:border-color .3s ease; box-sizing:border-box; }
+    .form-group input:focus, .form-group select:focus { outline:none; border-color:var(--primary); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; }
+    .form-group { width:100%; box-sizing:border-box; }
+    .section { margin-top:20px; padding:20px; border:1px solid #e2e8f0; background:#f8fafc; border-radius:8px; width:100%; box-sizing:border-box; }
+    .section h4 { margin:0 0 15px; font-size:16px; color:#374151; font-weight:600; }
+    .modal-footer { padding:20px 30px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:12px; background:#f8fafc; }
     .tip { font-size:12px; color:var(--muted); }
     .toast { position:fixed; top:24px; left:50%; transform:translateX(-50%); background:#111827; color:#fff; padding:10px 14px; border-radius:8px; box-shadow:0 6px 16px rgba(0,0,0,.2); opacity:0; pointer-events:none; transition:opacity .3s ease; z-index:3000; }
     .spin { display:inline-block; width:14px; height:14px; border:2px solid #cbd5e1; border-top-color:#2563eb; border-radius:50%; animation:sp 0.8s linear infinite; vertical-align:-2px; }
     @keyframes sp{ to{ transform:rotate(360deg); } }
 
-    @media (max-width: 900px){ .filters{ grid-template-columns:repeat(2,1fr);} .modal-body{ grid-template-columns:1fr; } }
+    @media (max-width: 900px){ 
+      .form-row{ grid-template-columns:1fr; gap:15px; } 
+      .modal-inner{ width:95vw; margin:20px; max-width:calc(100vw - 40px); }
+      .modal-header{ padding:20px; font-size:18px; }
+      .modal-body{ padding:20px; }
+      .modal-footer{ padding:15px 20px; }
+      .form-group input, .form-group select{ padding:10px 12px; }
+    }
   </style>
 </head>
 <body>
@@ -73,20 +101,11 @@
     </div>
   </header>
   <div class="container">
-
-    <div class="card">
-      <div class="card-header">
-        <div class="title">收款账户配置</div>
-        <div class="actions">
-          <button class="btn" id="btnSyncAll">立即同步一次</button>
-          <button class="btn primary" id="btnCreate">新增账户</button>
-        </div>
-      </div>
-
-      <div class="filters">
-        <div class="field">
-          <label class="label">支付平台</label>
-          <select class="select" id="fPlatform">
+    <div class="search-section">
+      <div class="search-row">
+        <div class="search-group">
+          <label>支付平台</label>
+          <select class="search-input" id="fPlatform">
             <option value="">全部</option>
             <option>PayPal</option>
             <option>Stripe</option>
@@ -96,38 +115,43 @@
             <option>PingPong</option>
           </select>
         </div>
-        <div class="field">
-          <label class="label">账户别名</label>
-          <input class="input" id="fAlias" placeholder="输入账户别名关键词" />
+        <div class="search-group">
+          <label>账户别名</label>
+          <input class="search-input" id="fAlias" placeholder="输入账户别名关键词" />
         </div>
-        <div class="field">
-          <label class="label">状态</label>
-          <select class="select" id="fStatus">
+        <div class="search-group">
+          <label>状态</label>
+          <select class="search-input" id="fStatus">
             <option value="">全部</option>
             <option value="on">启用</option>
             <option value="off">停用</option>
           </select>
         </div>
-        <div class="field">
-          <label class="label">创建时间（起）</label>
-          <input type="datetime-local" class="input" id="fCreatedStart" />
+        <div class="search-group">
+          <label>创建时间</label>
+          <input type="date" class="search-input" id="fCreatedDate" />
         </div>
-        <div class="field">
-          <label class="label">创建时间（止）</label>
-          <input type="datetime-local" class="input" id="fCreatedEnd" />
+        <div class="search-group">
+          <label>最近同步时间</label>
+          <input type="date" class="search-input" id="fSyncDate" />
         </div>
-        <div class="field">
-          <label class="label">最近同步（起）</label>
-          <input type="datetime-local" class="input" id="fSyncStart" />
-        </div>
-        <div class="field">
-          <label class="label">最近同步（止）</label>
-          <input type="datetime-local" class="input" id="fSyncEnd" />
+        <div style="display: flex; gap: 10px;">
+          <button class="btn primary" id="btnSearch">搜索</button>
+          <button class="btn secondary" id="btnReset">重置</button>
         </div>
       </div>
+    </div>
 
-      <div class="table-wrap">
-        <table id="tblAccounts">
+    <div class="table-container">
+      <div class="table-header">
+        <h3 class="table-title">收款账户列表</h3>
+        <div class="table-actions">
+          <button class="btn primary" id="btnSyncAllTop">立即同步一次</button>
+          <button class="btn secondary" id="btnCreateTop">新增账户</button>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table id="tblAccounts" class="transfer-table">
           <thead>
             <tr>
               <th>支付平台</th>
@@ -149,52 +173,59 @@
     <div class="modal-inner">
       <div class="modal-header">账户配置</div>
       <div class="modal-body">
-        <div class="field">
-          <label class="label">支付平台</label>
-          <select class="select" id="mPlatform">
-            <option>PayPal</option>
-            <option>Stripe</option>
-            <option>Wise</option>
-            <option>Airwallex</option>
-            <option>Payoneer</option>
-            <option>PingPong</option>
-          </select>
+        <div class="form-row">
+          <div class="form-group">
+            <label>支付平台</label>
+            <select id="mPlatform">
+              <option>PayPal</option>
+              <option>Stripe</option>
+              <option>Wise</option>
+              <option>Airwallex</option>
+              <option>Payoneer</option>
+              <option>PingPong</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>状态</label>
+            <select id="mStatus">
+              <option value="on">启用</option>
+              <option value="off">停用</option>
+            </select>
+          </div>
         </div>
-        <div class="field">
-          <label class="label">账户别名</label>
-          <input class="input" id="mAlias" placeholder="如：PayPal-北美#1" />
-        </div>
-        <div class="field">
-          <label class="label">状态</label>
-          <select class="select" id="mStatus">
-            <option value="on">启用</option>
-            <option value="off">停用</option>
-          </select>
+        
+        <div class="form-group">
+          <label>账户别名</label>
+          <input id="mAlias" placeholder="如：PayPal-北美#1" />
         </div>
 
         <div class="section" id="bindSection" style="display:none;">
-          <h4 id="bindTitle">绑定信息 - </h4>
-          <div class="field">
-            <label class="label">账户ID</label>
-            <input class="input" id="bAccountId" placeholder="平台侧账户ID（如支付邮箱或account id）" />
+          <h4 id="bindTitle">绑定信息</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label>账户ID</label>
+              <input id="bAccountId" placeholder="平台侧账户ID（如支付邮箱或account id）" />
+            </div>
+            <div class="form-group">
+              <label>账户名称</label>
+              <input id="bAccountName" placeholder="账户名称，用于区分展示" />
+            </div>
           </div>
-          <div class="field">
-            <label class="label">账户名称</label>
-            <input class="input" id="bAccountName" placeholder="账户名称，用于区分展示" />
-          </div>
-          <div class="field">
-            <label class="label">client_id</label>
-            <input class="input" id="bClientId" placeholder="平台client_id" />
-          </div>
-          <div class="field">
-            <label class="label">secret</label>
-            <input class="input" id="bSecret" placeholder="平台secret" />
+          <div class="form-row">
+            <div class="form-group">
+              <label>client_id</label>
+              <input id="bClientId" placeholder="平台client_id" />
+            </div>
+            <div class="form-group">
+              <label>secret</label>
+              <input id="bSecret" placeholder="平台secret" />
+            </div>
           </div>
           <div class="tip">不同支付平台需要的字段不同；当前示例为 PayPal。其他平台可按需扩展。</div>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn" id="btnCancel">取消</button>
+        <button class="btn secondary" id="btnCancel">取消</button>
         <button class="btn primary" id="btnSave">保存</button>
       </div>
     </div>
@@ -223,17 +254,15 @@
       const pf = document.getElementById('fPlatform').value;
       const st = document.getElementById('fStatus').value;
       const alias = document.getElementById('fAlias').value.trim().toLowerCase();
-      const cs = document.getElementById('fCreatedStart').value;
-      const ce = document.getElementById('fCreatedEnd').value;
-      const ss = document.getElementById('fSyncStart').value;
-      const se = document.getElementById('fSyncEnd').value;
+      const cd = document.getElementById('fCreatedDate').value;
+      const sd = document.getElementById('fSyncDate').value;
 
       data.filter(r=>{
         if(pf && r.platform!==pf) return false;
         if(st && r.status!==st) return false;
         if(alias && !(r.alias||'').toLowerCase().includes(alias)) return false;
-        if(cs || ce){ if(!inRange(toDate(r.created), cs, ce)) return false; }
-        if(ss || se){ if(!inRange(toDate(r.synced), ss, se)) return false; }
+        if(cd && !r.created.startsWith(cd)) return false;
+        if(sd && !(r.synced||'').startsWith(sd)) return false;
         return true;
       }).forEach(r=>{
         const tr = document.createElement('tr');
@@ -245,9 +274,9 @@
           <td>${r.synced||'-'}</td>
           <td>${r.owner||'-'}</td>
           <td>
-            <button class="btn ghost" data-act="edit" data-id="${r.id}">编辑</button>
-            <button class="btn" data-act="toggle" data-id="${r.id}">${r.status==='on'?'停用':'启用'}</button>
-            ${r.status==='on' ? `<button class="btn" data-act="sync" data-id="${r.id}">同步</button>` : ''}
+            <button class="btn btn-sm ghost" data-act="edit" data-id="${r.id}">编辑</button>
+            <button class="btn btn-sm secondary" data-act="toggle" data-id="${r.id}">${r.status==='on'?'停用':'启用'}</button>
+            ${r.status==='on' ? `<button class="btn btn-sm" data-act="sync" data-id="${r.id}">同步</button>` : ''}
           </td>`;
         tbody.appendChild(tr);
       });
@@ -256,13 +285,23 @@
     document.getElementById('fPlatform').addEventListener('change', render);
     document.getElementById('fStatus').addEventListener('change', render);
     document.getElementById('fAlias').addEventListener('input', render);
-    document.getElementById('fCreatedStart').addEventListener('change', render);
-    document.getElementById('fCreatedEnd').addEventListener('change', render);
-    document.getElementById('fSyncStart').addEventListener('change', render);
-    document.getElementById('fSyncEnd').addEventListener('change', render);
+    document.getElementById('fCreatedDate').addEventListener('change', render);
+    document.getElementById('fSyncDate').addEventListener('change', render);
 
-    document.getElementById('btnCreate').addEventListener('click', ()=>openModal());
+    // 顶部按钮事件
+    document.getElementById('btnCreateTop').addEventListener('click', ()=>openModal());
     document.getElementById('btnCancel').addEventListener('click', closeModal);
+    
+    // 搜索和重置按钮事件
+    document.getElementById('btnSearch').addEventListener('click', ()=>render());
+    document.getElementById('btnReset').addEventListener('click', ()=>{
+      document.getElementById('fPlatform').value = '';
+      document.getElementById('fAlias').value = '';
+      document.getElementById('fStatus').value = '';
+      document.getElementById('fCreatedDate').value = '';
+      document.getElementById('fSyncDate').value = '';
+      render();
+    });
 
     tbody.addEventListener('click', (e)=>{
       const btn = e.target.closest('button'); if(!btn) return;
@@ -310,6 +349,11 @@
         showToast('同步完成');
       }, 1200);
     }
+
+    // 表头“立即同步一次”整体动作（示例：仅提示）
+    document.getElementById('btnSyncAllTop').addEventListener('click', ()=>{
+      showToast('已触发一次性同步（示例）');
+    });
 
     // 保存动作（新增/编辑）
     document.getElementById('btnSave').addEventListener('click', ()=>{

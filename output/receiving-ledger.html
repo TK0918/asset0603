@@ -20,27 +20,235 @@
     .card-header { padding:16px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
     .title { font-size:18px; font-weight:700; }
     .actions { display:flex; gap:8px; }
-    .btn { padding:8px 12px; border-radius:8px; border:1px solid var(--border); background:#fff; cursor:pointer; }
-    .btn.primary { background:var(--primary); color:#fff; border-color:var(--primary); }
+    .btn { 
+      padding: 12px 24px; 
+      border: none; 
+      border-radius: 8px; 
+      font-weight: 500; 
+      cursor: pointer; 
+      transition: all 0.3s ease; 
+      font-size: 14px; 
+      text-decoration: none; 
+      display: inline-block; 
+      text-align: center; 
+    }
+    .btn-primary { background: #2563eb; color: white; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-secondary { background: #6b7280; color: white; }
+    .btn-secondary:hover { background: #4b5563; }
+    .btn-danger { background: #dc2626; color: white; }
+    .btn-danger:hover { background: #b91c1c; }
+    .btn-small { padding: 4px 8px; font-size: 11px; border-radius: 4px; }
 
-    /* 统一为交易明细页的搜索面板风格 */
-    .filters { background:#fff; padding:25px; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.05); margin-bottom:16px; display:grid; grid-template-columns:repeat(6,1fr); gap:12px; border:1px solid var(--border); }
-    .field { display:flex; flex-direction:column; gap:6px; }
-    .label { font-size:12px; color:var(--muted); }
-    .input, .select { height:36px; padding:0 10px; border:1px solid var(--border); border-radius:8px; background:#fff; }
+    /* 搜索区域样式 - 参考转账审核页面 */
+    .search-section {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 25px;
+    }
 
-    /* 统一为交易明细页的表格容器风格 */
-    .table-wrap { position:relative; overflow:auto; background:#fff; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.05); border:1px solid var(--border); }
-    table { width:100%; border-collapse:separate; border-spacing:0; min-width:1600px; }
-    thead th { position:sticky; top:0; background:#f8fafc; z-index:2; text-align:left; font-size:12px; color:#374151; padding:12px 10px; border-bottom:1px solid var(--border); font-weight:600; }
-    tbody td { padding:12px 10px; border-bottom:1px solid var(--border); font-size:12px; color:#374151; white-space:nowrap; }
-    tr:hover { background:#f8fafc; }
+    .search-row {
+      display: flex;
+      gap: 20px;
+      align-items: end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
 
-    .tag { font-size:12px; padding:2px 8px; border-radius:999px; background:#eef2ff; color:#3730a3; }
-    .state { font-size:12px; padding:2px 8px; border-radius:999px; }
-    .state.unclaimed { background:#fff7ed; color:#c2410c; }
-    .state.claimed { background:#ecfdf5; color:#065f46; }
-    .state.excluded { background:#fee2e2; color:#991b1b; }
+    .search-group {
+      flex: 1;
+      min-width: 150px;
+      max-width: 200px;
+    }
+
+    .search-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    /* 表格容器样式 - 参考转账审核页面 */
+    .table-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 25px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .table-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .table-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      position: relative;
+    }
+
+    .receiving-table {
+      width: 100%;
+      min-width: 2200px;
+      border-collapse: collapse;
+      position: relative;
+    }
+
+    .receiving-table th,
+    .receiving-table td {
+      padding: 12px 8px;
+      text-align: left;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .receiving-table th {
+      background: #f8fafc;
+      font-weight: 600;
+      color: #374151;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    /* 固定列样式 */
+    .receiving-table th:nth-child(1),
+    .receiving-table th:nth-child(2),
+    .receiving-table th:nth-child(3),
+    .receiving-table th:nth-child(4),
+    .receiving-table td:nth-child(1),
+    .receiving-table td:nth-child(2),
+    .receiving-table td:nth-child(3),
+    .receiving-table td:nth-child(4) {
+      position: sticky;
+      left: 0;
+      background: white;
+      z-index: 15;
+    }
+
+    .receiving-table th:nth-child(2),
+    .receiving-table td:nth-child(2) { left: 40px; }
+    .receiving-table th:nth-child(3),
+    .receiving-table td:nth-child(3) { left: 160px; }
+    .receiving-table th:nth-child(4),
+    .receiving-table td:nth-child(4) { left: 310px; }
+
+    /* 固定操作列 */
+    .receiving-table th:last-child,
+    .receiving-table td:last-child {
+      position: sticky;
+      right: 0;
+      background: white;
+      z-index: 15;
+    }
+
+    .receiving-table tr:hover {
+      background: #f8fafc;
+    }
+
+    .receiving-table tr:hover td:nth-child(1),
+    .receiving-table tr:hover td:nth-child(2),
+    .receiving-table tr:hover td:nth-child(3),
+    .receiving-table tr:hover td:nth-child(4),
+    .receiving-table tr:hover td:last-child {
+      background: #f8fafc;
+    }
+
+    .tag { 
+      font-size: 12px; 
+      padding: 2px 8px; 
+      border-radius: 999px; 
+      background: #eef2ff; 
+      color: #3730a3; 
+    }
+    .state { 
+      font-size: 12px; 
+      padding: 2px 8px; 
+      border-radius: 999px; 
+    }
+    .state.unclaimed { background: #fff7ed; color: #c2410c; }
+    .state.claimed { background: #ecfdf5; color: #065f46; }
+    .state.excluded { background: #fee2e2; color: #991b1b; }
+
+    /* 支付平台选择弹窗样式 */
+    .platform-selection {
+      padding: 20px 0;
+    }
+
+    .platform-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .platform-option {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: #fff;
+    }
+
+    .platform-option:hover {
+      border-color: #3b82f6;
+      background: #f8fafc;
+    }
+
+    .platform-option input[type="radio"] {
+      margin-right: 12px;
+      width: 16px;
+      height: 16px;
+    }
+
+    .platform-option input[type="radio"]:checked + .platform-name {
+      color: #3b82f6;
+      font-weight: 600;
+    }
+
+    .platform-option:has(input[type="radio"]:checked) {
+      border-color: #3b82f6;
+      background: #eff6ff;
+    }
+
+    .platform-name {
+      font-size: 14px;
+      color: #374151;
+      transition: all 0.3s ease;
+    }
+
 
     .modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.4); z-index:2000; }
     .modal-inner { width:860px; max-width:95vw; background:#fff; border-radius:12px; overflow:auto; border:1px solid var(--border); max-height:90vh; z-index:2001; }
@@ -51,7 +259,24 @@
     .v { flex:1; font-size:13px; }
     .json { grid-column:1 / -1; background:#f8fafc; border:1px dashed var(--border); padding:10px; border-radius:8px; font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size:12px; white-space:pre-wrap; }
 
-    @media (max-width: 1100px){ .filters{ grid-template-columns:repeat(3,1fr);} .modal-body{ grid-template-columns:1fr; } }
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .search-row {
+        flex-direction: column;
+      }
+
+      .search-group {
+        min-width: 100%;
+      }
+
+      .table-actions {
+        flex-direction: column;
+      }
+
+      .platform-options {
+        grid-template-columns: 1fr;
+      }
+    }
 
     /* 预览弹窗样式 */
     .modal-actions { padding:12px 16px; border-top:1px solid var(--border); display:flex; gap:8px; justify-content:flex-end; }
@@ -89,92 +314,97 @@
     <div class="card">
       <div class="card-header">
         <div class="title">全账户收款明细</div>
-        <div class="actions">
-          <button class="btn" id="btnDownloadTpl">下载Excel模板</button>
-          <button class="btn" id="btnUpload">手动上传Excel</button>
-          <button class="btn primary" id="btnExport">导出当前结果</button>
-        </div>
       </div>
 
-      <div class="filters">
-        <div class="field">
-          <label class="label">支付平台（多选）</label>
-          <select class="select" id="fPlatform" multiple>
-            <option>PayPal</option>
-            <option>Wise</option>
-            <option>Airwallex</option>
-            <option>Worldfirst</option>
-            <option>Payoneer</option>
-            <option>PingPong</option>
+      <div class="search-section">
+        <div class="search-row">
+          <div class="search-group">
+            <label>支付平台</label>
+            <select class="search-input" id="fPlatform">
+              <option value="">全部</option>
+              <option value="PayPal">PayPal</option>
+              <option value="Wise">Wise</option>
+              <option value="Airwallex">Airwallex</option>
+              <option value="Worldfirst">Worldfirst</option>
+              <option value="Payoneer">Payoneer</option>
+              <option value="PingPong">PingPong</option>
           </select>
         </div>
-        <div class="field">
-          <label class="label">账户别名</label>
-          <input class="input" id="fAlias" placeholder="输入账户别名关键词" />
+          <div class="search-group">
+            <label>账户别名</label>
+            <input class="search-input" id="fAlias" placeholder="输入账户别名关键词" />
         </div>
-        <div class="field">
-          <label class="label">交易时间（起）</label>
-          <input type="date" class="input" id="fStart" />
+          <div class="search-group">
+            <label>交易时间</label>
+            <input type="date" class="search-input" id="fTime" />
         </div>
-        <div class="field">
-          <label class="label">交易时间（止）</label>
-          <input type="date" class="input" id="fEnd" />
+          <div class="search-group">
+            <label>交易ID</label>
+            <input class="search-input" id="fTxId" placeholder="模糊搜索交易ID" />
         </div>
-        <div class="field">
-          <label class="label">交易ID</label>
-          <input class="input" id="fTxId" placeholder="模糊搜索交易ID" />
+          <div class="search-group">
+            <label>交易金额</label>
+            <input class="search-input" id="fAmount" placeholder="如 1000" />
         </div>
-        <div class="field">
-          <label class="label">交易金额(最小)</label>
-          <input class="input" id="fAmtMin" placeholder="如 100" />
-        </div>
-        <div class="field">
-          <label class="label">交易金额(最大)</label>
-          <input class="input" id="fAmtMax" placeholder="如 50000" />
-        </div>
-        <div class="field">
-          <label class="label">交易币种（多选）</label>
-          <select class="select" id="fCcy" multiple>
-            <option>USD</option>
-            <option>EUR</option>
-            <option>GBP</option>
-            <option>CHF</option>
+          <div class="search-group">
+            <label>交易币种</label>
+            <select class="search-input" id="fCcy">
+              <option value="">全部</option>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+              <option value="CHF">CHF</option>
           </select>
         </div>
-        <div class="field">
-          <label class="label">认领状态</label>
-          <select class="select" id="fClaim">
+          <div class="search-group">
+            <label>认领状态</label>
+            <select class="search-input" id="fClaim">
             <option value="">全部</option>
             <option value="unclaimed">待认领</option>
             <option value="claimed">已认领</option>
             <option value="locked">认领锁定</option>
           </select>
         </div>
-        <div class="field">
-          <label class="label">付款方信息</label>
-          <input class="input" id="fPayer" placeholder="付款方名称/账号模糊" />
+          <div class="search-group">
+            <label>付款方信息</label>
+            <input class="search-input" id="fPayer" placeholder="付款方名称/账号模糊" />
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn btn-primary">搜索</button>
+            <button class="btn btn-secondary">重置</button>
+          </div>
         </div>
       </div>
 
-      <div class="table-wrap">
-        <table id="tbl">
+      <div class="table-container">
+        <div class="table-header">
+          <h3 class="table-title">收款明细列表</h3>
+          <div class="table-actions">
+            <button class="btn" id="btnDownloadTpl">下载Excel模板</button>
+            <button class="btn" id="btnUpload">手动上传Excel</button>
+            <button class="btn btn-primary" id="btnExport">导出当前结果</button>
+          </div>
+        </div>
+        
+        <div class="table-wrapper">
+          <table class="receiving-table" id="tbl">
           <thead>
             <tr>
-              <th>支付平台</th>
-              <th>账户别名</th>
-              <th>交易ID</th>
-              <th>交易时间（UTC +8）</th>
-              <th>收款币种</th>
-              <th>收款金额</th>
-              <th>手续费</th>
-              <th>付款方信息</th>
-              <th>数据来源</th>
-              <th>上传人员</th>
-              <th>认领状态</th>
-              <th>认领商户</th>
-              <th>认领业务</th>
-              <th>认领资金账户</th>
-              <th>备注</th>
+                <th width="120px">支付平台</th>
+                <th width="150px">账户别名</th>
+                <th width="150px">交易ID</th>
+                <th width="150px">交易时间（UTC +8）</th>
+                <th width="100px">收款币种</th>
+                <th width="120px">收款金额</th>
+                <th width="100px">手续费</th>
+                <th width="150px">付款方信息</th>
+                <th width="100px">数据来源</th>
+                <th width="100px">上传人员</th>
+                <th width="100px">认领状态</th>
+                <th width="120px">认领商户</th>
+                <th width="120px">认领业务</th>
+                <th width="150px">认领资金账户</th>
+                <th width="150px">备注</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -182,6 +412,51 @@
       </div>
     </div>
   </div>
+  </div>
+
+  <!-- 支付平台选择弹窗 -->
+  <div id="platformModal" class="modal">
+    <div class="modal-inner">
+      <div class="modal-header">选择支付平台</div>
+      <div class="modal-body">
+        <div class="platform-selection">
+          <div class="platform-options">
+            <label class="platform-option">
+              <input type="radio" name="platform" value="PayPal">
+              <span class="platform-name">PayPal</span>
+            </label>
+            <label class="platform-option">
+              <input type="radio" name="platform" value="Wise">
+              <span class="platform-name">Wise</span>
+            </label>
+            <label class="platform-option">
+              <input type="radio" name="platform" value="Airwallex">
+              <span class="platform-name">Airwallex</span>
+            </label>
+            <label class="platform-option">
+              <input type="radio" name="platform" value="Worldfirst">
+              <span class="platform-name">Worldfirst</span>
+            </label>
+            <label class="platform-option">
+              <input type="radio" name="platform" value="Payoneer">
+              <span class="platform-name">Payoneer</span>
+            </label>
+            <label class="platform-option">
+              <input type="radio" name="platform" value="PingPong">
+              <span class="platform-name">PingPong</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closePlatformModal()">取消</button>
+        <button class="btn btn-primary" id="confirmPlatformBtn" onclick="confirmPlatform()">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 文件上传隐藏input -->
+  <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;">
 
   <div class="modal" id="modalDetail">
     <div class="modal-inner">
@@ -242,38 +517,117 @@
   <input type="file" id="fileInput" accept=".xls,.xlsx,.csv" style="display:none" />
 
   <script>
-    // 示例数据结构按新表头设计
-    let rows = [
+    // 收款明细测试数据 - 60条不同支付渠道和认领状态的数据
+    const receivingLedgerData = [
+      // PayPal 数据 (10条)
       { id:1, platform:'PayPal', alias:'PayPal-NA#1', txId:'PP-987654', time:'2025-08-30 12:10', ccy:'USD', amount:1200.50, fee:23.1, payer:'john@example.com', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'INV-20250830' },
-      { id:2, platform:'Wise', alias:'Wise-EU#1', txId:'UTR00921', time:'2025-08-28 20:00', ccy:'EUR', amount:3000.00, fee:0, payer:'IBAN **** 1234', source:'手动', uploader:'bob', claim:'已认领', claimMerchant:'US003', claimBusiness:'Advertising', claimAccount:'US003-ADV', remark:'Supplier payout' },
-      { id:3, platform:'Airwallex', alias:'AWX-HK#1', txId:'AWX-7788', time:'2025-08-29 16:30', ccy:'USD', amount:520.00, fee:7.2, payer:'HSBC **** 9988', source:'API', uploader:'', claim:'认领锁定', claimMerchant:'US002', claimBusiness:'Fulfillment', claimAccount:'US002-FUL', remark:'订单#8891' },
-      { id:4, platform:'Stripe', alias:'Stripe-US#2', txId:'ch_1ABCD', time:'2025-08-29 08:20', ccy:'USD', amount:520.00, fee:15.7, payer:'visa **** 4242', source:'API', uploader:'alice', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'Order#8891' },
-      { id:5, platform:'Payoneer', alias:'Payo-EU#1', txId:'PNR-665544', time:'2025-08-27 10:05', ccy:'USD', amount:980.00, fee:3.5, payer:'jack@acme.com', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'INV-1001' },
-      { id:6, platform:'PingPong', alias:'PPG-CN#1', txId:'PPG-998877', time:'2025-08-26 14:33', ccy:'USD', amount:1500.00, fee:5.0, payer:'ppg **** 3322', source:'手动', uploader:'carol', claim:'已认领', claimMerchant:'US001', claimBusiness:'Advertising', claimAccount:'US001-ADV', remark:'Settlement' },
-      { id:7, platform:'Wise', alias:'Wise-UK#2', txId:'UTR00999', time:'2025-08-25 09:10', ccy:'GBP', amount:700.00, fee:0, payer:'IBAN **** 5678', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'REF-700' },
-      { id:8, platform:'Worldfirst', alias:'WF-HK#1', txId:'WF-332211', time:'2025-08-24 19:45', ccy:'USD', amount:250.00, fee:1.2, payer:'HSBC **** 7788', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'-' },
-      { id:9, platform:'Airwallex', alias:'AWX-AU#2', txId:'AWX-5522', time:'2025-08-24 07:30', ccy:'USD', amount:2100.00, fee:8.4, payer:'CBA **** 6677', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'PO-20250824' },
-      { id:10, platform:'Stripe', alias:'Stripe-UK#1', txId:'ch_1ZZZZ', time:'2025-08-23 18:20', ccy:'GBP', amount:320.00, fee:9.6, payer:'visa **** 1111', source:'API', uploader:'', claim:'认领锁定', claimMerchant:'US004', claimBusiness:'Fulfillment', claimAccount:'US004-FUL', remark:'Hold for review' },
-      { id:11, platform:'PayPal', alias:'PayPal-SG#2', txId:'PP-123123', time:'2025-08-22 11:11', ccy:'USD', amount:88.00, fee:0.9, payer:'buyer@shop.com', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'Gift' },
-      { id:12, platform:'Payoneer', alias:'Payo-US#2', txId:'PNR-111222', time:'2025-08-21 09:00', ccy:'USD', amount:600.00, fee:2.5, payer:'john.doe', source:'手动', uploader:'dave', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'Invoice AUG' },
-      { id:13, platform:'Wise', alias:'Wise-EU#3', txId:'UTR00111', time:'2025-08-20 10:10', ccy:'EUR', amount:120.00, fee:0, payer:'IBAN **** 0001', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'-' },
-      { id:14, platform:'Airwallex', alias:'AWX-US#2', txId:'AWX-0099', time:'2025-08-19 15:00', ccy:'USD', amount:950.00, fee:4.2, payer:'CHASE **** 9988', source:'API', uploader:'', claim:'已认领', claimMerchant:'US005', claimBusiness:'Advertising', claimAccount:'US005-ADV', remark:'Campaign' },
-      { id:15, platform:'PayPal', alias:'PayPal-NA#2', txId:'PP-888777', time:'2025-08-18 08:08', ccy:'USD', amount:45.60, fee:0.3, payer:'foo@bar.com', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'-' },
-      { id:16, platform:'Worldfirst', alias:'WF-UK#2', txId:'WF-778899', time:'2025-08-17 20:20', ccy:'GBP', amount:1500.00, fee:6.0, payer:'Barclays **** 2323', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'PO-778899' },
-      { id:17, platform:'PingPong', alias:'PPG-US#2', txId:'PPG-556677', time:'2025-08-16 12:12', ccy:'USD', amount:2300.00, fee:7.0, payer:'ppg **** 5566', source:'手动', uploader:'mike', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'refund adj' },
-      { id:18, platform:'Stripe', alias:'Stripe-EU#3', txId:'ch_1TEST', time:'2025-08-15 14:30', ccy:'EUR', amount:75.00, fee:2.2, payer:'mc **** 5555', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'test charge' },
-      { id:19, platform:'Payoneer', alias:'Payo-UK#3', txId:'PNR-333444', time:'2025-08-14 09:45', ccy:'USD', amount:420.00, fee:1.9, payer:'acme ltd', source:'API', uploader:'', claim:'认领锁定', claimMerchant:'US006', claimBusiness:'Fulfillment', claimAccount:'US006-FUL', remark:'Locking' },
-      { id:20, platform:'Wise', alias:'Wise-SG#4', txId:'UTR00444', time:'2025-08-13 22:20', ccy:'CHF', amount:1300.00, fee:0, payer:'IBAN **** 2222', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'Swiss pay' }
+      { id:2, platform:'PayPal', alias:'PayPal-SG#2', txId:'PP-123123', time:'2025-08-22 11:11', ccy:'USD', amount:88.00, fee:0.9, payer:'buyer@shop.com', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'Gift' },
+      { id:3, platform:'PayPal', alias:'PayPal-NA#2', txId:'PP-888777', time:'2025-08-18 08:08', ccy:'USD', amount:45.60, fee:0.3, payer:'foo@bar.com', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'-' },
+      { id:4, platform:'PayPal', alias:'PayPal-EU#1', txId:'PP-555666', time:'2025-08-15 14:25', ccy:'EUR', amount:850.00, fee:12.5, payer:'europe@client.com', source:'手动', uploader:'alice', claim:'已认领', claimMerchant:'US007', claimBusiness:'Advertising', claimAccount:'US007-ADV', remark:'EU Campaign' },
+      { id:5, platform:'PayPal', alias:'PayPal-UK#1', txId:'PP-777888', time:'2025-08-12 16:40', ccy:'GBP', amount:320.00, fee:8.2, payer:'uk@merchant.co.uk', source:'API', uploader:'', claim:'认领锁定', claimMerchant:'US008', claimBusiness:'Fulfillment', claimAccount:'US008-FUL', remark:'UK Order' },
+      { id:6, platform:'PayPal', alias:'PayPal-AU#1', txId:'PP-999000', time:'2025-08-10 09:15', ccy:'USD', amount:1500.00, fee:18.5, payer:'australia@supplier.com', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'AU Payment' },
+      { id:7, platform:'PayPal', alias:'PayPal-CA#1', txId:'PP-111222', time:'2025-08-08 13:30', ccy:'USD', amount:750.00, fee:9.8, payer:'canada@partner.ca', source:'手动', uploader:'bob', claim:'已认领', claimMerchant:'US009', claimBusiness:'Advertising', claimAccount:'US009-ADV', remark:'CA Partnership' },
+      { id:8, platform:'PayPal', alias:'PayPal-JP#1', txId:'PP-333444', time:'2025-08-06 11:20', ccy:'USD', amount:2200.00, fee:28.5, payer:'japan@client.jp', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'JP Market' },
+      { id:9, platform:'PayPal', alias:'PayPal-MX#1', txId:'PP-555777', time:'2025-08-04 15:45', ccy:'USD', amount:450.00, fee:6.2, payer:'mexico@vendor.mx', source:'API', uploader:'', claim:'认领锁定', claimMerchant:'US010', claimBusiness:'Fulfillment', claimAccount:'US010-FUL', remark:'MX Fulfillment' },
+      { id:10, platform:'PayPal', alias:'PayPal-IN#1', txId:'PP-888999', time:'2025-08-02 08:10', ccy:'USD', amount:1800.00, fee:22.5, payer:'india@service.in', source:'手动', uploader:'carol', claim:'已认领', claimMerchant:'US011', claimBusiness:'Advertising', claimAccount:'US011-ADV', remark:'IN Development' },
+
+      // Stripe 数据 (10条)
+      { id:11, platform:'Stripe', alias:'Stripe-US#2', txId:'ch_1ABCD', time:'2025-08-29 08:20', ccy:'USD', amount:520.00, fee:15.7, payer:'visa **** 4242', source:'API', uploader:'alice', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'Order#8891' },
+      { id:12, platform:'Stripe', alias:'Stripe-UK#1', txId:'ch_1ZZZZ', time:'2025-08-23 18:20', ccy:'GBP', amount:320.00, fee:9.6, payer:'visa **** 1111', source:'API', uploader:'', claim:'认领锁定', claimMerchant:'US004', claimBusiness:'Fulfillment', claimAccount:'US004-FUL', remark:'Hold for review' },
+      { id:13, platform:'Stripe', alias:'Stripe-EU#3', txId:'ch_1TEST', time:'2025-08-15 14:30', ccy:'EUR', amount:75.00, fee:2.2, payer:'mc **** 5555', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'test charge' },
+      { id:14, platform:'Stripe', alias:'Stripe-CA#1', txId:'ch_1CANADA', time:'2025-08-13 10:15', ccy:'USD', amount:950.00, fee:28.5, payer:'visa **** 9999', source:'API', uploader:'', claim:'已认领', claimMerchant:'US012', claimBusiness:'Advertising', claimAccount:'US012-ADV', remark:'CA Campaign' },
+      { id:15, platform:'Stripe', alias:'Stripe-AU#1', txId:'ch_1AUSTRALIA', time:'2025-08-11 16:30', ccy:'USD', amount:680.00, fee:20.4, payer:'mastercard **** 8888', source:'手动', uploader:'dave', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'AU Subscription' },
+      { id:16, platform:'Stripe', alias:'Stripe-SG#1', txId:'ch_1SINGAPORE', time:'2025-08-09 12:45', ccy:'USD', amount:1200.00, fee:36.0, payer:'amex **** 7777', source:'API', uploader:'', claim:'认领锁定', claimMerchant:'US013', claimBusiness:'Fulfillment', claimAccount:'US013-FUL', remark:'SG Warehouse' },
+      { id:17, platform:'Stripe', alias:'Stripe-DE#1', txId:'ch_1GERMANY', time:'2025-08-07 14:20', ccy:'EUR', amount:450.00, fee:13.5, payer:'visa **** 6666', source:'API', uploader:'', claim:'已认领', claimMerchant:'US014', claimBusiness:'Advertising', claimAccount:'US14-ADV', remark:'DE Market' },
+      { id:18, platform:'Stripe', alias:'Stripe-FR#1', txId:'ch_1FRANCE', time:'2025-08-05 11:10', ccy:'EUR', amount:780.00, fee:23.4, payer:'mastercard **** 5555', source:'手动', uploader:'eve', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'FR Expansion' },
+      { id:19, platform:'Stripe', alias:'Stripe-NL#1', txId:'ch_1NETHERLANDS', time:'2025-08-03 09:30', ccy:'EUR', amount:320.00, fee:9.6, payer:'visa **** 4444', source:'API', uploader:'', claim:'认领锁定', claimMerchant:'US015', claimBusiness:'Fulfillment', claimAccount:'US015-FUL', remark:'NL Hub' },
+      { id:20, platform:'Stripe', alias:'Stripe-IT#1', txId:'ch_1ITALY', time:'2025-08-01 15:50', ccy:'EUR', amount:650.00, fee:19.5, payer:'mastercard **** 3333', source:'API', uploader:'', claim:'已认领', claimMerchant:'US016', claimBusiness:'Advertising', claimAccount:'US016-ADV', remark:'IT Launch' },
+
+      // Wise 数据 (10条)
+      { id:21, platform:'Wise', alias:'Wise-EU#1', txId:'UTR00921', time:'2025-08-28 20:00', ccy:'EUR', amount:3000.00, fee:0, payer:'IBAN **** 1234', source:'手动', uploader:'bob', claim:'已认领', claimMerchant:'US003', claimBusiness:'Advertising', claimAccount:'US003-ADV', remark:'Supplier payout' },
+      { id:22, platform:'Wise', alias:'Wise-UK#2', txId:'UTR00999', time:'2025-08-25 09:10', ccy:'GBP', amount:700.00, fee:0, payer:'IBAN **** 5678', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'REF-700' },
+      { id:23, platform:'Wise', alias:'Wise-EU#3', txId:'UTR00111', time:'2025-08-20 10:10', ccy:'EUR', amount:120.00, fee:0, payer:'IBAN **** 0001', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'-' },
+      { id:24, platform:'Wise', alias:'Wise-SG#4', txId:'UTR00444', time:'2025-08-13 22:20', ccy:'CHF', amount:1300.00, fee:0, payer:'IBAN **** 2222', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'Swiss pay' },
+      { id:25, platform:'Wise', alias:'Wise-US#1', txId:'UTR00555', time:'2025-08-11 14:35', ccy:'USD', amount:2500.00, fee:0, payer:'ACH **** 9876', source:'API', uploader:'', claim:'已认领', claimMerchant:'US017', claimBusiness:'Fulfillment', claimAccount:'US017-FUL', remark:'US Operations' },
+      { id:26, platform:'Wise', alias:'Wise-CA#1', txId:'UTR00666', time:'2025-08-09 16:20', ccy:'USD', amount:1800.00, fee:0, payer:'CAD **** 5432', source:'手动', uploader:'frank', claim:'认领锁定', claimMerchant:'US018', claimBusiness:'Advertising', claimAccount:'US018-ADV', remark:'CA Partnership' },
+      { id:27, platform:'Wise', alias:'Wise-AU#1', txId:'UTR00777', time:'2025-08-07 08:45', ccy:'USD', amount:3200.00, fee:0, payer:'AUD **** 1098', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'AU Expansion' },
+      { id:28, platform:'Wise', alias:'Wise-JP#1', txId:'UTR00888', time:'2025-08-05 12:15', ccy:'USD', amount:950.00, fee:0, payer:'JPY **** 7654', source:'API', uploader:'', claim:'已认领', claimMerchant:'US019', claimBusiness:'Fulfillment', claimAccount:'US019-FUL', remark:'JP Market Entry' },
+      { id:29, platform:'Wise', alias:'Wise-MX#1', txId:'UTR00999', time:'2025-08-03 18:30', ccy:'USD', amount:750.00, fee:0, payer:'MXN **** 3210', source:'手动', uploader:'grace', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'MX Operations' },
+      { id:30, platform:'Wise', alias:'Wise-IN#1', txId:'UTR01000', time:'2025-08-01 10:00', ccy:'USD', amount:1200.00, fee:0, payer:'INR **** 9876', source:'API', uploader:'', claim:'认领锁定', claimMerchant:'US020', claimBusiness:'Advertising', claimAccount:'US020-ADV', remark:'IN Development' },
+
+      // Airwallex 数据 (10条)
+      { id:31, platform:'Airwallex', alias:'AWX-HK#1', txId:'AWX-7788', time:'2025-08-29 16:30', ccy:'USD', amount:520.00, fee:7.2, payer:'HSBC **** 9988', source:'API', uploader:'', claim:'认领锁定', claimMerchant:'US002', claimBusiness:'Fulfillment', claimAccount:'US002-FUL', remark:'订单#8891' },
+      { id:32, platform:'Airwallex', alias:'AWX-AU#2', txId:'AWX-5522', time:'2025-08-24 07:30', ccy:'USD', amount:2100.00, fee:8.4, payer:'CBA **** 6677', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'PO-20250824' },
+      { id:33, platform:'Airwallex', alias:'AWX-US#2', txId:'AWX-0099', time:'2025-08-19 15:00', ccy:'USD', amount:950.00, fee:4.2, payer:'CHASE **** 9988', source:'API', uploader:'', claim:'已认领', claimMerchant:'US005', claimBusiness:'Advertising', claimAccount:'US005-ADV', remark:'Campaign' },
+      { id:34, platform:'Airwallex', alias:'AWX-SG#1', txId:'AWX-1111', time:'2025-08-17 13:20', ccy:'USD', amount:1800.00, fee:12.6, payer:'DBS **** 1234', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'SG Hub' },
+      { id:35, platform:'Airwallex', alias:'AWX-UK#1', txId:'AWX-2222', time:'2025-08-15 11:45', ccy:'GBP', amount:650.00, fee:4.5, payer:'Barclays **** 5678', source:'手动', uploader:'henry', claim:'已认领', claimMerchant:'US021', claimBusiness:'Fulfillment', claimAccount:'US021-FUL', remark:'UK Warehouse' },
+      { id:36, platform:'Airwallex', alias:'AWX-EU#1', txId:'AWX-3333', time:'2025-08-13 09:30', ccy:'EUR', amount:1200.00, fee:8.4, payer:'Deutsche **** 9012', source:'API', uploader:'', claim:'认领锁定', claimMerchant:'US022', claimBusiness:'Advertising', claimAccount:'US022-ADV', remark:'EU Campaign' },
+      { id:37, platform:'Airwallex', alias:'AWX-CA#1', txId:'AWX-4444', time:'2025-08-11 16:15', ccy:'USD', amount:850.00, fee:5.9, payer:'RBC **** 3456', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'CA Market' },
+      { id:38, platform:'Airwallex', alias:'AWX-JP#1', txId:'AWX-5555', time:'2025-08-09 14:00', ccy:'USD', amount:2200.00, fee:15.4, payer:'MUFG **** 7890', source:'手动', uploader:'ivy', claim:'已认领', claimMerchant:'US023', claimBusiness:'Fulfillment', claimAccount:'US023-FUL', remark:'JP Launch' },
+      { id:39, platform:'Airwallex', alias:'AWX-MX#1', txId:'AWX-6666', time:'2025-08-07 12:30', ccy:'USD', amount:450.00, fee:3.1, payer:'BBVA **** 2345', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'MX Expansion' },
+      { id:40, platform:'Airwallex', alias:'AWX-IN#1', txId:'AWX-7777', time:'2025-08-05 10:45', ccy:'USD', amount:1500.00, fee:10.5, payer:'HDFC **** 6789', source:'API', uploader:'', claim:'认领锁定', claimMerchant:'US024', claimBusiness:'Advertising', claimAccount:'US024-ADV', remark:'IN Development' },
+
+      // Payoneer 数据 (10条)
+      { id:41, platform:'Payoneer', alias:'Payo-EU#1', txId:'PNR-665544', time:'2025-08-27 10:05', ccy:'USD', amount:980.00, fee:3.5, payer:'jack@acme.com', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'INV-1001' },
+      { id:42, platform:'Payoneer', alias:'Payo-US#2', txId:'PNR-111222', time:'2025-08-21 09:00', ccy:'USD', amount:600.00, fee:2.5, payer:'john.doe', source:'手动', uploader:'dave', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'Invoice AUG' },
+      { id:43, platform:'Payoneer', alias:'Payo-UK#3', txId:'PNR-333444', time:'2025-08-14 09:45', ccy:'USD', amount:420.00, fee:1.9, payer:'acme ltd', source:'API', uploader:'', claim:'认领锁定', claimMerchant:'US006', claimBusiness:'Fulfillment', claimAccount:'US006-FUL', remark:'Locking' },
+      { id:44, platform:'Payoneer', alias:'Payo-CA#1', txId:'PNR-555666', time:'2025-08-12 14:20', ccy:'USD', amount:750.00, fee:2.6, payer:'canada@freelancer.ca', source:'API', uploader:'', claim:'已认领', claimMerchant:'US025', claimBusiness:'Advertising', claimAccount:'US025-ADV', remark:'CA Freelancer' },
+      { id:45, platform:'Payoneer', alias:'Payo-AU#1', txId:'PNR-777888', time:'2025-08-10 11:30', ccy:'USD', amount:1200.00, fee:4.2, payer:'australia@contractor.au', source:'手动', uploader:'jack', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'AU Contractor' },
+      { id:46, platform:'Payoneer', alias:'Payo-SG#1', txId:'PNR-999000', time:'2025-08-08 16:45', ccy:'USD', amount:850.00, fee:3.0, payer:'singapore@agency.sg', source:'API', uploader:'', claim:'认领锁定', claimMerchant:'US026', claimBusiness:'Fulfillment', claimAccount:'US026-FUL', remark:'SG Agency' },
+      { id:47, platform:'Payoneer', alias:'Payo-DE#1', txId:'PNR-111333', time:'2025-08-06 13:15', ccy:'USD', amount:650.00, fee:2.3, payer:'germany@designer.de', source:'API', uploader:'', claim:'已认领', claimMerchant:'US027', claimBusiness:'Advertising', claimAccount:'US027-ADV', remark:'DE Designer' },
+      { id:48, platform:'Payoneer', alias:'Payo-FR#1', txId:'PNR-222444', time:'2025-08-04 15:30', ccy:'USD', amount:500.00, fee:1.8, payer:'france@writer.fr', source:'手动', uploader:'kate', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'FR Writer' },
+      { id:49, platform:'Payoneer', alias:'Payo-NL#1', txId:'PNR-333555', time:'2025-08-02 12:00', ccy:'USD', amount:900.00, fee:3.2, payer:'netherlands@developer.nl', source:'API', uploader:'', claim:'认领锁定', claimMerchant:'US028', claimBusiness:'Fulfillment', claimAccount:'US028-FUL', remark:'NL Developer' },
+      { id:50, platform:'Payoneer', alias:'Payo-IT#1', txId:'PNR-444666', time:'2025-07-31 10:20', ccy:'USD', amount:1100.00, fee:3.9, payer:'italy@consultant.it', source:'API', uploader:'', claim:'已认领', claimMerchant:'US029', claimBusiness:'Advertising', claimAccount:'US029-ADV', remark:'IT Consultant' },
+
+      // PingPong 数据 (10条)
+      { id:51, platform:'PingPong', alias:'PPG-CN#1', txId:'PPG-998877', time:'2025-08-26 14:33', ccy:'USD', amount:1500.00, fee:5.0, payer:'ppg **** 3322', source:'手动', uploader:'carol', claim:'已认领', claimMerchant:'US001', claimBusiness:'Advertising', claimAccount:'US001-ADV', remark:'Settlement' },
+      { id:52, platform:'PingPong', alias:'PPG-US#2', txId:'PPG-556677', time:'2025-08-16 12:12', ccy:'USD', amount:2300.00, fee:7.0, payer:'ppg **** 5566', source:'手动', uploader:'mike', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'refund adj' },
+      { id:53, platform:'PingPong', alias:'PPG-EU#1', txId:'PPG-112233', time:'2025-08-14 16:20', ccy:'USD', amount:1800.00, fee:5.4, payer:'ppg **** 7788', source:'API', uploader:'', claim:'已认领', claimMerchant:'US030', claimBusiness:'Fulfillment', claimAccount:'US030-FUL', remark:'EU Settlement' },
+      { id:54, platform:'PingPong', alias:'PPG-UK#1', txId:'PPG-445566', time:'2025-08-12 11:40', ccy:'USD', amount:950.00, fee:2.9, payer:'ppg **** 9900', source:'手动', uploader:'nancy', claim:'认领锁定', claimMerchant:'US031', claimBusiness:'Advertising', claimAccount:'US031-ADV', remark:'UK Campaign' },
+      { id:55, platform:'PingPong', alias:'PPG-AU#1', txId:'PPG-778899', time:'2025-08-10 09:25', ccy:'USD', amount:2200.00, fee:6.6, payer:'ppg **** 1122', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'AU Market' },
+      { id:56, platform:'PingPong', alias:'PPG-CA#1', txId:'PPG-990011', time:'2025-08-08 14:15', ccy:'USD', amount:750.00, fee:2.3, payer:'ppg **** 3344', source:'API', uploader:'', claim:'已认领', claimMerchant:'US032', claimBusiness:'Fulfillment', claimAccount:'US032-FUL', remark:'CA Operations' },
+      { id:57, platform:'PingPong', alias:'PPG-SG#1', txId:'PPG-223344', time:'2025-08-06 17:50', ccy:'USD', amount:1200.00, fee:3.6, payer:'ppg **** 5566', source:'手动', uploader:'oliver', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'SG Hub' },
+      { id:58, platform:'PingPong', alias:'PPG-JP#1', txId:'PPG-556677', time:'2025-08-04 13:30', ccy:'USD', amount:1800.00, fee:5.4, payer:'ppg **** 7788', source:'API', uploader:'', claim:'认领锁定', claimMerchant:'US033', claimBusiness:'Advertising', claimAccount:'US033-ADV', remark:'JP Launch' },
+      { id:59, platform:'PingPong', alias:'PPG-MX#1', txId:'PPG-889900', time:'2025-08-02 15:45', ccy:'USD', amount:650.00, fee:2.0, payer:'ppg **** 9900', source:'API', uploader:'', claim:'已认领', claimMerchant:'US034', claimBusiness:'Fulfillment', claimAccount:'US034-FUL', remark:'MX Expansion' },
+      { id:60, platform:'PingPong', alias:'PPG-IN#1', txId:'PPG-334455', time:'2025-07-31 12:10', ccy:'USD', amount:1400.00, fee:4.2, payer:'ppg **** 1122', source:'手动', uploader:'peter', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'IN Development' }
     ];
 
-    // 从 localStorage 加载，如无则初始化并保存
-    (function initStorage(){
+    // 使用外部数据文件中的数据
+    let rows = [];
+
+    // 从 localStorage 加载，如无则使用外部数据初始化并保存
+    function initStorage(){
       try{
         const cached = localStorage.getItem('receivingLedgerRows');
-        if(cached){ rows = JSON.parse(cached); }
-        else { localStorage.setItem('receivingLedgerRows', JSON.stringify(rows)); }
-      }catch(err){ /* ignore storage errors */ }
-    })();
+        if(cached){ 
+          rows = JSON.parse(cached); 
+          console.log('从localStorage加载数据:', rows.length, '条');
+        } else { 
+          // 使用外部数据文件中的数据
+          if (typeof receivingLedgerData !== 'undefined') {
+            rows = [...receivingLedgerData];
+            console.log('从外部数据文件加载数据:', rows.length, '条');
+          } else {
+            // 如果外部数据未加载，使用默认数据
+            rows = [
+              { id:1, platform:'PayPal', alias:'PayPal-NA#1', txId:'PP-987654', time:'2025-08-30 12:10', ccy:'USD', amount:1200.50, fee:23.1, payer:'john@example.com', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'INV-20250830' },
+              { id:2, platform:'Wise', alias:'Wise-EU#1', txId:'UTR00921', time:'2025-08-28 20:00', ccy:'EUR', amount:3000.00, fee:0, payer:'IBAN **** 1234', source:'手动', uploader:'bob', claim:'已认领', claimMerchant:'US003', claimBusiness:'Advertising', claimAccount:'US003-ADV', remark:'Supplier payout' },
+              { id:3, platform:'Airwallex', alias:'AWX-HK#1', txId:'AWX-7788', time:'2025-08-29 16:30', ccy:'USD', amount:520.00, fee:7.2, payer:'HSBC **** 9988', source:'API', uploader:'', claim:'认领锁定', claimMerchant:'US002', claimBusiness:'Fulfillment', claimAccount:'US002-FUL', remark:'订单#8891' },
+              { id:4, platform:'Stripe', alias:'Stripe-US#2', txId:'ch_1ABCD', time:'2025-08-29 08:20', ccy:'USD', amount:520.00, fee:15.7, payer:'visa **** 4242', source:'API', uploader:'alice', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'Order#8891' }
+            ];
+            console.log('使用默认数据:', rows.length, '条');
+          }
+          localStorage.setItem('receivingLedgerRows', JSON.stringify(rows)); 
+        }
+      }catch(err){ 
+        console.error('数据加载失败:', err);
+        // 如果所有方法都失败，使用默认数据
+        rows = [
+          { id:1, platform:'PayPal', alias:'PayPal-NA#1', txId:'PP-987654', time:'2025-08-30 12:10', ccy:'USD', amount:1200.50, fee:23.1, payer:'john@example.com', source:'API', uploader:'', claim:'待认领', claimMerchant:'-', claimBusiness:'-', claimAccount:'-', remark:'INV-20250830' }
+        ];
+        console.log('使用fallback数据:', rows.length, '条');
+      }
+    }
 
     // 页面滚动锁定工具
     const pageScroll = {
@@ -281,9 +635,118 @@
       unlock(){ document.documentElement.style.overflow=''; document.body.style.overflow=''; }
     };
 
+    // 支付平台选择相关变量
+    let currentAction = ''; // 'download' 或 'upload'
+    const platformModal = document.getElementById('platformModal');
+    const fileInput = document.getElementById('fileInput');
+
+    // 打开支付平台选择弹窗
+    function openPlatformModal(action) {
+      currentAction = action;
+      platformModal.style.display = 'flex';
+      pageScroll.lock();
+      
+      // 重置选择
+      const radios = document.querySelectorAll('input[name="platform"]');
+      radios.forEach(radio => radio.checked = false);
+      
+      // 更新确认按钮文本
+      const confirmBtn = document.getElementById('confirmPlatformBtn');
+      confirmBtn.textContent = action === 'download' ? '下载模版' : '选择文件';
+    }
+
+    // 关闭支付平台选择弹窗
+    function closePlatformModal() {
+      platformModal.style.display = 'none';
+      pageScroll.unlock();
+    }
+
+    // 确认支付平台选择
+    function confirmPlatform() {
+      const selectedPlatform = document.querySelector('input[name="platform"]:checked');
+      if (!selectedPlatform) {
+        alert('请先选择支付平台');
+        return;
+      }
+
+      const platform = selectedPlatform.value;
+      closePlatformModal();
+
+      if (currentAction === 'download') {
+        downloadTemplate(platform);
+      } else if (currentAction === 'upload') {
+        openFileSelector(platform);
+      }
+    }
+
+    // 下载Excel模版
+    function downloadTemplate(platform) {
+      // 根据平台生成不同的模版文件名
+      const templateNames = {
+        'PayPal': 'PayPal收款明细模版.xlsx',
+        'Wise': 'Wise收款明细模版.xlsx',
+        'Airwallex': 'Airwallex收款明细模版.xlsx',
+        'Worldfirst': 'Worldfirst收款明细模版.xlsx',
+        'Payoneer': 'Payoneer收款明细模版.xlsx',
+        'PingPong': 'PingPong收款明细模版.xlsx'
+      };
+
+      const fileName = templateNames[platform] || '收款明细模版.xlsx';
+      
+      // 创建下载链接
+      const link = document.createElement('a');
+      link.href = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,UEsDBBQAAAAIAA=='; // 空Excel文件的base64
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      console.log(`下载${platform}模版: ${fileName}`);
+    }
+
+    // 打开文件选择器
+    function openFileSelector(platform) {
+      fileInput.onchange = function(event) {
+        const file = event.target.files[0];
+        if (file) {
+          handleFileUpload(file, platform);
+        }
+      };
+      fileInput.click();
+    }
+
+    // 处理文件上传
+    function handleFileUpload(file, platform) {
+      console.log(`上传${platform}文件:`, file.name);
+      
+      // 文件类型验证
+      const allowedTypes = ['.xlsx', '.xls', '.csv'];
+      const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+      
+      if (!allowedTypes.includes(fileExtension)) {
+        alert('请选择Excel文件（.xlsx、.xls或.csv格式）');
+        return;
+      }
+
+      // 文件大小验证（10MB限制）
+      const maxSize = 10 * 1024 * 1024;
+      if (file.size > maxSize) {
+        alert('文件大小超过10MB限制');
+        return;
+      }
+
+      // 将选择的平台信息存储到全局变量中，供预览功能使用
+      window.selectedPlatform = platform;
+      
+      // 调用原有的文件处理逻辑，显示预览弹窗
+      const event = { target: { files: [file] } };
+      onFileSelected(event);
+    }
+
     const tbody = document.querySelector('#tbl tbody');
     function fmt(n){ return Number(n).toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2}); }
     function render(){
+      console.log('开始渲染，数据条数:', rows.length);
       tbody.innerHTML = '';
       rows.forEach(r=>{
         const tr = document.createElement('tr');
@@ -305,17 +768,10 @@
           <td>${r.remark||'-'}</td>`;
         tbody.appendChild(tr);
       });
+      console.log('渲染完成，表格行数:', tbody.children.length);
       try{ localStorage.setItem('receivingLedgerRows', JSON.stringify(rows)); }catch(err){}
     }
 
-    // 点击行查看明细（示例：点击第三列交易ID）
-    tbody.addEventListener('click', (e)=>{
-      const cell = e.target.closest('td'); if(!cell) return;
-      const tr = e.target.closest('tr');
-      const idx = Array.from(tr.parentNode.children).indexOf(tr);
-      const row = rows[idx];
-      if(cell.cellIndex===2){ openDetail(row); }
-    });
 
     function openDetail(row){
       document.getElementById('dPlatform').textContent = row.platform;
@@ -331,13 +787,65 @@
       pageScroll.lock();
     }
 
+    // 绑定按钮事件
+    document.getElementById('btnDownloadTpl').addEventListener('click', () => {
+      openPlatformModal('download');
+    });
+
+    document.getElementById('btnUpload').addEventListener('click', () => {
+      openPlatformModal('upload');
+    });
+
+    document.getElementById('btnExport').addEventListener('click', () => {
+      // 导出当前结果
+      const data = rows.map(r => ({
+        支付平台: r.platform,
+        账户别名: r.alias,
+        交易ID: r.txId,
+        交易时间: r.time,
+        收款币种: r.ccy,
+        收款金额: r.amount,
+        手续费: r.fee || 0,
+        付款方信息: r.payer || '',
+        数据来源: r.source,
+        上传人员: r.uploader || '',
+        认领状态: r.claim,
+        认领商户: r.claimMerchant || '',
+        认领业务: r.claimBusiness || '',
+        认领资金账户: r.claimAccount || '',
+        备注: r.remark || ''
+      }));
+      
+      const csv = convertToCSV(data);
+      downloadCSV(csv, '收款明细导出.csv');
+    });
+
+    // CSV转换和下载工具函数
+    function convertToCSV(data) {
+      if (data.length === 0) return '';
+      
+      const headers = Object.keys(data[0]);
+      const csvContent = [
+        headers.join(','),
+        ...data.map(row => headers.map(header => `"${row[header] || ''}"`).join(','))
+      ].join('\n');
+      
+      return csvContent;
+    }
+
+    function downloadCSV(csv, filename) {
+      const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
     const modal = document.getElementById('modalDetail');
     modal.addEventListener('click', (e)=>{ if(e.target===modal){ modal.style.display='none'; pageScroll.unlock(); } });
 
-    document.getElementById('btnUpload').addEventListener('click', ()=>document.getElementById('fileInput').click());
-    document.getElementById('fileInput').addEventListener('change', onFileSelected);
-    document.getElementById('btnDownloadTpl').addEventListener('click', ()=>{ window.location.href = 'shangchuanmuban.xlsx'; });
-    document.getElementById('btnExport').addEventListener('click', ()=>{ alert('导出当前筛选结果（示例）'); });
 
     // 平台代码映射：将上传文档中的数字代码翻译为平台名称
     // 示例：2 → Stripe
@@ -431,6 +939,10 @@
     }
 
     function trimSafe(v){ return (v||'').trim(); }
+    
+    function joinReason(current, newReason) {
+      return current ? `${current}; ${newReason}` : newReason;
+    }
 
     // 期望列（模板）：platformCode, alias, txId, time, ccy, amount, fee, payer
     function buildPreview(dataRows){
@@ -455,9 +967,22 @@
         let reason = '';
 
         // 基础校验
+        const selectedPlatform = window.selectedPlatform || '';
+        let platformName, platformCodeFinal;
+        
+        if(selectedPlatform) {
+          // 如果选择了特定平台，使用该平台名称
+          platformName = selectedPlatform;
+          platformCodeFinal = selectedPlatform;
+        } else {
+          // 原有逻辑：验证平台代码
         if(!platformCode || !(platformCode in platformCodes)){
           status = 'err'; reason = '支付平台代码无效（示例：2→Stripe）';
+          }
+          platformName = platformCodes[platformCode] || platformCode;
+          platformCodeFinal = platformCode;
         }
+        
         if(!txId){ status='err'; reason = joinReason(reason,'交易ID为空'); }
         // 去空格已处理
         if(ccy && !validCurrencies.includes(ccy.toUpperCase())){
@@ -467,7 +992,6 @@
         if(fee!==0 && isNaN(fee)){ status='err'; reason = joinReason(reason,'手续费无效'); }
 
         // 同平台同交易ID重复（与现有/本次）
-        const platformName = platformCodes[platformCode] || platformCode;
         const key = `${platformName}||${txId.toUpperCase()}`;
         if(status==='ok'){
           if(existingKey.has(key) || batchKey.has(key)){
@@ -479,12 +1003,12 @@
         else if(status==='dup'){ dup++; }
         else { err++; }
 
-        previewData.push({ platformCode, platformName, alias, txId, time, ccy: ccy.toUpperCase(), amount, fee, payer, status, reason });
+        previewData.push({ platformCode: platformCodeFinal, platformName, alias, txId, time, ccy: ccy.toUpperCase(), amount, fee, payer, status, reason });
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${idx+2}</td>
-          <td>${platformCode}</td>
+          <td>${platformCodeFinal}</td>
           <td>${alias||'-'}</td>
           <td>${txId||'-'}</td>
           <td>${time||'-'}</td>
@@ -542,7 +1066,26 @@
       pageScroll.unlock();
     }
 
+    // 等待DOM加载完成后再渲染
+    document.addEventListener('DOMContentLoaded', function() {
+      // 初始化数据存储
+      initStorage();
+      
+      // 渲染数据
     render();
+      
+      // 页面加载动画
+      const rows = document.querySelectorAll('tbody tr');
+      rows.forEach((row, index) => {
+        row.style.opacity = '0';
+        row.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+          row.style.transition = 'all 0.3s ease';
+          row.style.opacity = '1';
+          row.style.transform = 'translateY(0)';
+        }, index * 100);
+      });
+    });
   </script>
 </body>
 </html>
