@@ -1194,11 +1194,25 @@
         else { alert('无附件'); }
       };
 
-      // 从 localStorage 读取收款明细（只显示同支付平台的）
+      // 从 localStorage 读取收款明细；若为空则尝试回填默认数据
       let ledger = [];
       try{ ledger = JSON.parse(localStorage.getItem('receivingLedgerRows')||'[]'); }catch(err){ ledger = []; }
       const currentPlatform = cells[7].textContent.trim();
-      ledger = ledger.filter(x => x.platform === currentPlatform);
+      // 若不存在数据，尝试从回退数据源初始化（与收款明细页保持一致的key）
+      if(!Array.isArray(ledger) || ledger.length===0){
+        // 若页面预先注入了 receivingLedgerData（可选），则写入本地缓存
+        if(Array.isArray(window.receivingLedgerData) && window.receivingLedgerData.length>0){
+          try{
+            localStorage.setItem('receivingLedgerRows', JSON.stringify(window.receivingLedgerData));
+            ledger = [...window.receivingLedgerData];
+            console.log('[转账审核] 已从 window.receivingLedgerData 回填收款明细，条数:', ledger.length);
+          }catch(err){ ledger = []; }
+        }
+      }
+
+      // 标准化平台名称后再过滤（避免空格/大小写导致的不一致）
+      const norm = (v)=>String(v||'').trim();
+      ledger = (ledger||[]).filter(x => norm(x.platform) === norm(currentPlatform));
 
       document.getElementById('m-memo').value = '';
       document.getElementById('matchModal').classList.add('show');
@@ -1208,6 +1222,12 @@
       let pickedRow = null;
       function renderTable(list){
         tbody.innerHTML = '';
+        if(!list || list.length===0){
+          const tr = document.createElement('tr');
+          tr.innerHTML = '<td colspan="10" style="color:#64748b;">未找到可匹配的收款记录，请先在“收款明细”页加载数据或调整筛选条件</td>';
+          tbody.appendChild(tr);
+          return;
+        }
         list.forEach(c=>{
           const tr = document.createElement('tr');
           const disabled = c.claim !== '待认领';
