@@ -220,7 +220,7 @@
 
     .transfer-table {
       width: 100%;
-      min-width: 2200px;
+      min-width: 2000px;
       border-collapse: collapse;
       position: relative;
     }
@@ -294,10 +294,9 @@
     }
 
     .status-pending { background: #fef3c7; color: #92400e; }
+    .status-confirm { background: #dbeafe; color: #1e40af; }
     .status-approved { background: #dcfce7; color: #166534; }
     .status-rejected { background: #fee2e2; color: #991b1b; }
-    .status-unmatched { background: #fef3c7; color: #92400e; }
-    .status-matched { background: #dbeafe; color: #1e40af; }
 
     .amount-large {
       font-weight: 600;
@@ -570,17 +569,10 @@
           <label>审核状态</label>
           <select class="search-input">
             <option value="">全部状态</option>
-            <option value="pending">待审核</option>
+            <option value="pending">待匹配</option>
+            <option value="confirm">待确认</option>
             <option value="approved">审核通过</option>
-            <option value="rejected">审核拒绝</option>
-          </select>
-        </div>
-        <div class="search-group">
-          <label>匹配状态</label>
-          <select class="search-input">
-            <option value="">全部状态</option>
-            <option value="unmatched">待匹配</option>
-            <option value="matched">已匹配</option>
+            <option value="rejected">审核失败</option>
           </select>
         </div>
         <div class="search-group">
@@ -612,7 +604,6 @@
               <th width="120px">商户名称</th>
               <th width="120px">提交时间</th>
               <th width="80px">审核状态</th>
-              <th width="80px">匹配状态</th>
               <th width="100px">子业务</th>
               <th width="100px">转账平台</th>
               <th width="120px">转账凭证号</th>
@@ -629,14 +620,13 @@
             </tr>
           </thead>
           <tbody>
-            <tr data-status="待审核">
+            <tr data-status="待匹配">
               <td><input type="checkbox" class="row-select"></td>
               <td>US001</td>
               <td>contact@apple.com</td>
               <td>Apple Inc.</td>
               <td>2024-01-15 14:30</td>
-              <td><span class="status-badge status-pending">待审核</span></td>
-              <td><span class="status-badge status-unmatched">待匹配</span></td>
+              <td><span class="status-badge status-pending">待匹配</span></td>
               <td><span class="business-tag">Advertising</span></td>
               <td><span class="platform-tag">Wise</span></td>
               <td>WS202401150001</td>
@@ -655,14 +645,13 @@
                 </div>
               </td>
             </tr>
-            <tr data-status="待审核">
+            <tr data-status="待确认">
               <td><input type="checkbox" class="row-select"></td>
               <td>US002</td>
               <td>service@microsoft.com</td>
               <td>Microsoft Corporation</td>
               <td>2024-01-15 16:45</td>
-              <td><span class="status-badge status-pending">待审核</span></td>
-              <td><span class="status-badge status-matched">已匹配</span></td>
+              <td><span class="status-badge status-confirm">待确认</span></td>
               <td><span class="business-tag">Fulfillment</span></td>
               <td><span class="platform-tag">PayPal</span></td>
               <td>PP202401150002</td>
@@ -688,7 +677,6 @@
               <td>Google LLC</td>
               <td>2024-01-14 09:20</td>
               <td><span class="status-badge status-approved">审核通过</span></td>
-              <td><span class="status-badge status-matched">已匹配</span></td>
               <td><span class="business-tag">Advertising</span></td>
               <td><span class="platform-tag">Bank Transfer</span></td>
               <td>BT202401140001</td>
@@ -703,18 +691,16 @@
               <td class="audit-remark">客户信用良好，业务稳定，同意入账</td>
               <td>
                 <div class="action-buttons">
-                  <button class="btn btn-secondary btn-small" onclick="openDetail('detail', this)">查看</button>
                 </div>
               </td>
             </tr>
-            <tr data-status="审核拒绝">
+            <tr data-status="审核失败">
               <td><input type="checkbox" class="row-select" disabled></td>
               <td>US001</td>
               <td>contact@apple.com</td>
               <td>Apple Inc.</td>
               <td>2024-01-13 11:15</td>
-              <td><span class="status-badge status-rejected">审核拒绝</span></td>
-              <td><span class="status-badge status-unmatched">待匹配</span></td>
+              <td><span class="status-badge status-rejected">审核失败</span></td>
               <td><span class="business-tag">Fulfillment</span></td>
               <td><span class="platform-tag">Wise</span></td>
               <td>WS202401130001</td>
@@ -729,7 +715,6 @@
               <td class="audit-remark">转账截图不清晰，无法确认真实性</td>
               <td>
                 <div class="action-buttons">
-                  <button class="btn btn-secondary btn-small" onclick="openDetail('detail', this)">查看</button>
                 </div>
               </td>
             </tr>
@@ -1270,10 +1255,10 @@
         if(!pickedRow){ alert('请选择一条收款信息'); return; }
         const memo = document.getElementById('m-memo').value.trim();
         
-        // 更新匹配状态为已匹配
+        // 更新审核状态为待确认
         const statusBadges = row.querySelectorAll('.status-badge');
-        statusBadges[1].textContent = '已匹配';
-        statusBadges[1].className = 'status-badge status-matched';
+        statusBadges[0].textContent = '待确认';
+        statusBadges[0].className = 'status-badge status-confirm';
         const tds = row.querySelectorAll('td');
         tds[10].textContent = new Date().toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(/\//g,'-');
         tds[11].textContent = '当前用户';
@@ -1287,7 +1272,7 @@
       
       document.getElementById('m-return').onclick = ()=>{
         const statusBadges = row.querySelectorAll('.status-badge');
-        statusBadges[0].textContent = '审核拒绝';
+        statusBadges[0].textContent = '审核失败';
         statusBadges[0].className = 'status-badge status-rejected';
         const tds = row.querySelectorAll('td');
         tds[13].textContent = new Date().toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(/\//g,'-');
@@ -1357,7 +1342,7 @@
       
       document.getElementById('c-reject').onclick = ()=>{
         const statusBadges = row.querySelectorAll('.status-badge');
-        statusBadges[0].textContent = '审核拒绝';
+        statusBadges[0].textContent = '审核失败';
         statusBadges[0].className = 'status-badge status-rejected';
         const tds = row.querySelectorAll('td');
         tds[13].textContent = new Date().toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(/\//g,'-');
@@ -1470,7 +1455,7 @@
       };
       document.getElementById('p-reject').onclick = ()=>{
         const statusBadges = row.querySelectorAll('.status-badge');
-        statusBadges[0].textContent = '审核拒绝';
+        statusBadges[0].textContent = '审核失败';
         statusBadges[0].className = 'status-badge status-rejected';
         const tds = row.querySelectorAll('td');
         tds[10].textContent = new Date().toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(/\//g,'-');
@@ -1511,7 +1496,7 @@
       }
     }
 
-    // 全选功能（只选择待审核的）
+    // 全选功能（只选择待匹配和待确认的）
     document.getElementById('selectAll').addEventListener('change', function() {
       const checkboxes = document.querySelectorAll('.row-select:not(:disabled)');
       checkboxes.forEach(checkbox => {
