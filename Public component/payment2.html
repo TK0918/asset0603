@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title data-zh="支付组件 - 资金中台" data-en="Payment Component - Capital Middle Office">支付组件 - 资金中台</title>
+  <title data-zh="支付组件(三列) - 资金中台" data-en="Payment Component (3-Column) - Capital Middle Office">支付组件(三列) - 资金中台</title>
   <style>
     :root {
       --primary: #2563eb;
@@ -19,11 +19,7 @@
       --border-light: #f1f5f9;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -40,631 +36,125 @@
 
     .payment-layout {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: 24px;
       background: var(--card);
       border-radius: 16px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       overflow: hidden;
+      padding: 0 24px 24px 24px;
     }
 
     /* 左侧选择区域 */
     .payment-selection {
       background: #fafbfc;
-      padding: 32px;
+      padding: 32px 0 0 0;
       border-right: 1px solid var(--border-light);
-    }
-
-    /* 顶部大卡片容器：承载业务类型与默认币种 */
-    .top-config-card {
-      background: #ffffff;
-      border: 1px solid var(--border-light);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 24px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-    }
-    .top-config-card .top-config-title {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .top-config-card .top-config-title::before {
-      content: '';
-      width: 4px;
-      height: 18px;
-      background: var(--primary);
-      border-radius: 2px;
-    }
-    .top-config-card .top-config-body {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-    @media (max-width: 768px) {
-      .top-config-card .top-config-body { grid-template-columns: 1fr; }
     }
 
     .section-title {
       font-size: 18px;
       font-weight: 600;
       color: var(--text);
-      margin-bottom: 20px;
+      margin: 24px 0 20px 0;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .section-title::before {
-      content: '';
-      width: 4px;
-      height: 20px;
-      background: var(--primary);
-      border-radius: 2px;
-    }
+    .section-title::before { content: ''; width: 4px; height: 20px; background: var(--primary); border-radius: 2px; }
 
-    .entity-selector {
-      margin-bottom: 32px;
-    }
+    .entity-selector { margin-bottom: 32px; }
 
     /* 通用卡片选择样式（业务类型/默认币种） */
-    .card-group {
-      margin-bottom: 24px;
-    }
-    .card-title {
-      display: block;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 12px;
-    }
-    .card-options {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 12px;
-    }
-    .select-card {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px 16px;
-      border: 2px solid var(--border);
-      border-radius: 10px;
-      background: var(--card);
-      color: var(--text);
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease-in-out;
-      user-select: none;
-    }
-    .select-card:hover {
-      border-color: var(--primary);
-      background: rgba(37, 99, 235, 0.05);
-    }
-    .select-card.active {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
-    }
+    .card-group { margin-bottom: 24px; }
+    .card-title { display: block; font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 12px; }
+    .card-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+    .select-card { display: flex; align-items: center; justify-content: center; padding: 12px 16px; border: 2px solid var(--border); border-radius: 10px; background: var(--card); color: var(--text); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease-in-out; user-select: none; }
+    .select-card:hover { border-color: var(--primary); background: rgba(37, 99, 235, 0.05); }
+    .select-card.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15); }
 
-    .entity-selector label {
-      display: block;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
+    .payment-methods { margin-bottom: 24px; }
+    .payment-methods h4 { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 16px; }
+    .method-group { margin-bottom: 24px; }
+    .method-group h5 { font-size: 14px; font-weight: 500; color: var(--muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .method-buttons { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .method-btn { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border: 2px solid var(--border); border-radius: 8px; background: var(--card); color: var(--text); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; text-align: left; }
+    .method-btn:hover { border-color: var(--primary); background: rgba(37, 99, 235, 0.05); }
+    .method-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+    .method-btn .check-icon { margin-left: auto; font-size: 16px; }
+    .method-logo { width: 20px; height: 20px; object-fit: contain; }
 
-    .entity-selector select {
-      width: 100%;
-      padding: 12px 16px;
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      background: var(--card);
-      font-size: 14px;
-      transition: border-color 0.3s ease;
-    }
+    /* 中间操作区域 */
+    .payment-actions { padding: 32px 0 0 0; background: var(--card); }
+    .action-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 20px; }
+    .account-details { background: #f8fafc; border: 1px solid var(--border-light); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+    .account-details h4 { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 16px; }
+    .detail-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-light); }
+    .detail-item:last-child { border-bottom: none; }
+    .detail-label { font-size: 14px; color: var(--muted); font-weight: 500; }
+    .detail-value { font-size: 14px; color: var(--text); font-weight: 600; font-family: 'Monaco', 'Menlo', monospace; }
+    .copy-btn { margin-left: 8px; padding: 4px 8px; background: var(--primary); color: white; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; transition: background 0.3s ease; }
+    .copy-btn:hover { background: var(--primary-hover); }
+    .amount-input { margin-bottom: 24px; }
+    .amount-input label { display: block; font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 8px; }
+    .amount-input input { width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 8px; font-size: 16px; font-weight: 600; transition: border-color 0.3s ease; }
+    .amount-input input:focus { outline: none; border-color: var(--primary); }
+    .action-buttons { display: flex; gap: 12px; margin-bottom: 24px; }
+    .btn { flex: 1; padding: 14px 24px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-align: center; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-secondary { background: var(--muted); color: white; }
+    .btn-secondary:hover { background: #4b5563; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .warning-message { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 12px 16px; margin-bottom: 24px; }
+    .warning-message .warning-text { color: var(--danger); font-size: 14px; font-weight: 500; }
 
-    .entity-selector select:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
+    /* 右侧温馨提示常驻 */
+    .payment-tips { padding: 32px 0 0 0; }
+    .tips-section { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 16px; }
+    .tips-section h5 { font-size: 14px; font-weight: 600; color: var(--primary); margin-bottom: 12px; }
+    .tips-list { list-style: none; padding: 0; }
+    .tips-list li { font-size: 13px; color: var(--text); margin-bottom: 8px; padding-left: 16px; position: relative; }
+    .tips-list li::before { content: '•'; position: absolute; left: 0; color: var(--primary); font-weight: bold; }
+    .tips-list li:last-child { margin-bottom: 0; }
 
-    .currency-selector {
-      margin-bottom: 32px;
-    }
+    .upload-section { display: none; background: #f8fafc; border: 2px dashed var(--border); border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 24px; }
+    .upload-section.active { display: block; }
+    .upload-icon { font-size: 48px; color: var(--muted); margin-bottom: 16px; }
+    .upload-text { font-size: 14px; color: var(--muted); margin-bottom: 16px; }
+    .file-input { display: none; }
+    .upload-btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; }
+    .upload-btn:hover { background: var(--primary-hover); }
 
-    .currency-selector label {
-      display: block;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 12px;
-    }
-
-    .currency-buttons {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .currency-btn {
-      padding: 8px 16px;
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      background: var(--card);
-      color: var(--text);
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .currency-btn:hover {
-      border-color: var(--primary);
-      background: rgba(37, 99, 235, 0.05);
-    }
-
-    .currency-btn.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-
-    .payment-methods {
-      margin-bottom: 24px;
-    }
-
-    .payment-methods h4 {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 16px;
-    }
-
-    .method-group {
-      margin-bottom: 24px;
-    }
-
-    .method-group h5 {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--muted);
-      margin-bottom: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .method-buttons {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-    }
-
-    .method-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 16px;
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      background: var(--card);
-      color: var(--text);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-align: left;
-    }
-
-    .method-btn:hover {
-      border-color: var(--primary);
-      background: rgba(37, 99, 235, 0.05);
-    }
-
-    .method-btn.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-
-    .method-btn .check-icon {
-      margin-left: auto;
-      font-size: 16px;
-    }
-
-    .method-logo {
-      width: 20px;
-      height: 20px;
-      object-fit: contain;
-    }
-
-    /* 右侧操作区域 */
-    .payment-actions {
-      padding: 32px;
-      background: var(--card);
-    }
-
-    .action-title {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 20px;
-    }
-
-    .account-details {
-      background: #f8fafc;
-      border: 1px solid var(--border-light);
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 24px;
-    }
-
-    .account-details h4 {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 16px;
-    }
-
-    .detail-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 0;
-      border-bottom: 1px solid var(--border-light);
-    }
-
-    .detail-item:last-child {
-      border-bottom: none;
-    }
-
-    .detail-label {
-      font-size: 14px;
-      color: var(--muted);
-      font-weight: 500;
-    }
-
-    .detail-value {
-      font-size: 14px;
-      color: var(--text);
-      font-weight: 600;
-      font-family: 'Monaco', 'Menlo', monospace;
-    }
-
-    .copy-btn {
-      margin-left: 8px;
-      padding: 4px 8px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 12px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .copy-btn:hover {
-      background: var(--primary-hover);
-    }
-
-    .amount-input {
-      margin-bottom: 24px;
-    }
-
-    .amount-input label {
-      display: block;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
-
-    .amount-input input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      transition: border-color 0.3s ease;
-    }
-
-    .amount-input input:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-
-    .action-buttons {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .btn {
-      flex: 1;
-      padding: 14px 24px;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-align: center;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: var(--primary-hover);
-    }
-
-    .btn-secondary {
-      background: var(--muted);
-      color: white;
-    }
-
-    .btn-secondary:hover {
-      background: #4b5563;
-    }
-
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .warning-message {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      border-radius: 8px;
-      padding: 12px 16px;
-      margin-bottom: 24px;
-    }
-
-    .warning-message .warning-text {
-      color: var(--danger);
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .tips-section {
-      background: #f0f9ff;
-      border: 1px solid #bae6fd;
-      border-radius: 8px;
-      padding: 16px;
-    }
-
-    .tips-section h5 {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 12px;
-    }
-
-    .tips-list {
-      list-style: none;
-      padding: 0;
-    }
-
-    .tips-list li {
-      font-size: 13px;
-      color: var(--text);
-      margin-bottom: 8px;
-      padding-left: 16px;
-      position: relative;
-    }
-
-    .tips-list li::before {
-      content: '•';
-      position: absolute;
-      left: 0;
-      color: var(--primary);
-      font-weight: bold;
-    }
-
-    .tips-list li:last-child {
-      margin-bottom: 0;
-    }
-
-    .upload-section {
-      display: none;
-      background: #f8fafc;
-      border: 2px dashed var(--border);
-      border-radius: 12px;
-      padding: 24px;
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    .upload-section.active {
-      display: block;
-    }
-
-    .upload-icon {
-      font-size: 48px;
-      color: var(--muted);
-      margin-bottom: 16px;
-    }
-
-    .upload-text {
-      font-size: 14px;
-      color: var(--muted);
-      margin-bottom: 16px;
-    }
-
-    .file-input {
-      display: none;
-    }
-
-    .upload-btn {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .upload-btn:hover {
-      background: var(--primary-hover);
-    }
-
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
-
-    .form-group input,
-    .form-group textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 14px;
-      transition: border-color 0.3s ease;
-    }
-
-    .form-group input:focus,
-    .form-group textarea:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-
-    .form-group textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 8px; }
+    .form-group input, .form-group textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; transition: border-color 0.3s ease; }
+    .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); }
+    .form-group textarea { resize: vertical; min-height: 80px; }
 
     /* 响应式设计 */
-    @media (max-width: 768px) {
-      .payment-layout {
-        grid-template-columns: 1fr;
-        gap: 0;
-      }
+    @media (max-width: 992px) { .payment-layout { grid-template-columns: 1fr; gap: 0; } .payment-selection { border-right: none; border-bottom: 1px solid var(--border-light); } }
 
-      .payment-selection {
-        border-right: none;
-        border-bottom: 1px solid var(--border-light);
-      }
+    /* 加载/成功状态与语言切换、返回按钮复用 */
+    .loading { display: inline-block; width: 16px; height: 16px; border: 2px solid #f3f3f3; border-top: 2px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .success-message { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin-bottom: 24px; text-align: center; }
+    .success-message .success-text { color: var(--success); font-size: 14px; font-weight: 500; }
+    .language-switcher { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; gap: 8px; background: var(--card); padding: 8px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }
+    .lang-btn { padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--card); color: var(--text); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; }
+    .lang-btn:hover { border-color: var(--primary); background: rgba(37, 99, 235, 0.05); }
+    .lang-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+    .back-btn { display: none; padding: 8px 16px; border: 1px solid var(--border); border-radius: 6px; background: var(--card); color: var(--text); font-size: 14px; cursor: pointer; transition: all 0.3s ease; margin-bottom: 16px; }
+    .back-btn:hover { border-color: var(--primary); background: rgba(37, 99, 235, 0.05); }
+    .back-btn.show { display: inline-block; }
 
-      .currency-buttons {
-        justify-content: center;
-      }
-
-      .method-buttons {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    /* 加载状态 */
-    .loading {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid #f3f3f3;
-      border-top: 2px solid var(--primary);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* 成功状态 */
-    .success-message {
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 24px;
-      text-align: center;
-    }
-
-    .success-message .success-text {
-      color: var(--success);
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    /* 语言切换按钮 */
-    .language-switcher {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 1000;
-      display: flex;
-      gap: 8px;
-      background: var(--card);
-      padding: 8px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .lang-btn {
-      padding: 6px 12px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      background: var(--card);
-      color: var(--text);
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .lang-btn:hover {
-      border-color: var(--primary);
-      background: rgba(37, 99, 235, 0.05);
-    }
-
-    .lang-btn.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-
-    /* 返回按钮 */
-    .back-btn {
-      display: none;
-      padding: 8px 16px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      background: var(--card);
-      color: var(--text);
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin-bottom: 16px;
-    }
-
-    .back-btn:hover {
-      border-color: var(--primary);
-      background: rgba(37, 99, 235, 0.05);
-    }
-
-    .back-btn.show {
-      display: inline-block;
-    }
+    /* 顶部大卡片容器：承载业务类型与默认币种 */
+    .top-config-card { background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 16px; margin-bottom: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+    .top-config-card .top-config-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .top-config-card .top-config-title::before { content: ''; width: 4px; height: 18px; background: var(--primary); border-radius: 2px; }
+    .top-config-card .top-config-body { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 768px) { .top-config-card .top-config-body { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -702,11 +192,9 @@
     </div>
 
     <div class="payment-layout">
-      <!-- 左侧选择区域 -->
+      <!-- 左：支付方式选择 -->
       <div class="payment-selection">
         <div class="section-title" data-zh="选择支付方式" data-en="Select Payment Method">选择支付方式</div>
-        
-        
 
         <!-- 到账主体展示（只读） -->
         <div class="entity-selector">
@@ -723,11 +211,11 @@
         <!-- 支付方式选择 -->
         <div class="payment-methods">
           <h4 data-zh="支付方式" data-en="Payment Methods">支付方式</h4>
-          
+
           <!-- 在线支付 -->
           <div class="method-group">
             <h5 data-zh="在线支付" data-en="Online Payment">在线支付</h5>
-          <div class="method-buttons" id="onlineMethods">
+            <div class="method-buttons" id="onlineMethods">
               <button class="method-btn" data-method="paypal" data-type="online">
                 <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiByeD0iNCIgZmlsbD0iIzAwNkZGRiIvPgo8L3N2Zz4K" alt="PayPal" class="method-logo">
                 <span data-zh="PayPal支付" data-en="PayPal Payment">PayPal支付</span>
@@ -742,8 +230,8 @@
           <!-- 银行转账 -->
           <div class="method-group">
             <h5 data-zh="银行转账" data-en="Bank Transfer">银行转账</h5>
-          <div class="method-buttons" id="offlineMethods">
-            <button class="method-btn" data-method="hsbc-usd" data-type="offline">
+            <div class="method-buttons" id="offlineMethods">
+              <button class="method-btn" data-method="hsbc-usd" data-type="offline">
                 <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiByeD0iNCIgZmlsbD0iIzAwNkZGRiIvPgo8L3N2Zz4K" alt="HSBC" class="method-logo">
                 <span data-zh="HSBC USD (Swift)" data-en="HSBC USD (Swift)">HSBC USD (Swift)</span>
               </button>
@@ -780,17 +268,15 @@
         </div>
       </div>
 
-      <!-- 右侧操作区域 -->
+      <!-- 中：账户信息与转账/上传 -->
       <div class="payment-actions">
         <button class="back-btn" id="backBtn" onclick="showAccountDetails()" data-zh="← 返回查看账户信息" data-en="← Back to Account Details">← 返回查看账户信息</button>
         <div class="action-title" data-zh="请向以下账户转账" data-en="Please transfer to the following account">请向以下账户转账</div>
-        
+
         <!-- 账户详情 -->
         <div class="account-details" id="accountDetails">
           <h4 data-zh="账户信息" data-en="Account Information">账户信息</h4>
-          <div id="accountInfoContent">
-            <!-- 动态内容将在这里显示 -->
-          </div>
+          <div id="accountInfoContent"></div>
         </div>
 
         <!-- 在线支付金额输入 -->
@@ -810,7 +296,37 @@
           <div class="warning-text" data-zh="转账后务必提交银行流水单,否则无法及时审核到账" data-en="Please submit bank statement after transfer, otherwise payment cannot be reviewed in time">转账后务必提交银行流水单,否则无法及时审核到账</div>
         </div>
 
-        <!-- 温馨提示 -->
+        <!-- 上传凭证区域 -->
+        <div class="upload-section" id="uploadSection">
+          <div class="upload-icon">📄</div>
+          <div class="upload-text" data-zh="请上传银行转账凭证" data-en="Please upload bank transfer receipt">请上传银行转账凭证</div>
+          <input type="file" id="fileInput" class="file-input" accept="image/*,.pdf" onchange="handleFileUpload(this)">
+          <button class="upload-btn" onclick="document.getElementById('fileInput').click()" data-zh="选择文件" data-en="Select File">选择文件</button>
+
+          <div class="form-group" style="margin-top: 20px;">
+            <label for="transferTime" data-zh="转账时间" data-en="Transfer Time">转账时间</label>
+            <input type="datetime-local" id="transferTime" required>
+          </div>
+
+          <div class="form-group">
+            <label for="transferAmount" data-zh="转账金额" data-en="Transfer Amount">转账金额</label>
+            <input type="number" id="transferAmount" placeholder="请输入实际转账金额" step="0.01" min="0" required>
+          </div>
+
+          <div class="form-group">
+            <label for="transferNote" data-zh="备注信息" data-en="Remarks">备注信息</label>
+            <textarea id="transferNote" placeholder="请输入备注信息（可选）"></textarea>
+          </div>
+
+          <div class="action-buttons" style="margin-top: 20px;">
+            <button class="btn btn-primary" onclick="submitTransfer()" data-zh="提交审核" data-en="Submit for Review">提交审核</button>
+            <button class="btn btn-secondary" onclick="cancelUpload()" data-zh="取消" data-en="Cancel">取消</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右：温馨提示（常驻） -->
+      <div class="payment-tips">
         <div class="tips-section">
           <h5 data-zh="温馨提示" data-en="Warm Reminder">温馨提示</h5>
           <ul class="tips-list">
@@ -821,34 +337,6 @@
             <li data-zh="Airwallex支付收取0.02%手续费。" data-en="Airwallex payment charges 0.02% handling fee.">Airwallex支付收取0.02%手续费。</li>
             <li data-zh="预付费充值收取1%平台技术服务费，详见《费用规则》。" data-en="Prepaid top-up charges 1% platform technical service fee, see Fee Rules.">预付费充值收取1%平台技术服务费，详见《费用规则》。</li>
           </ul>
-        </div>
-
-        <!-- 上传凭证区域 -->
-        <div class="upload-section" id="uploadSection">
-          <div class="upload-icon">📄</div>
-          <div class="upload-text" data-zh="请上传银行转账凭证" data-en="Please upload bank transfer receipt">请上传银行转账凭证</div>
-          <input type="file" id="fileInput" class="file-input" accept="image/*,.pdf" onchange="handleFileUpload(this)">
-          <button class="upload-btn" onclick="document.getElementById('fileInput').click()" data-zh="选择文件" data-en="Select File">选择文件</button>
-          
-          <div class="form-group" style="margin-top: 20px;">
-            <label for="transferTime" data-zh="转账时间" data-en="Transfer Time">转账时间</label>
-            <input type="datetime-local" id="transferTime" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="transferAmount" data-zh="转账金额" data-en="Transfer Amount">转账金额</label>
-            <input type="number" id="transferAmount" placeholder="请输入实际转账金额" step="0.01" min="0" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="transferNote" data-zh="备注信息" data-en="Remarks">备注信息</label>
-            <textarea id="transferNote" placeholder="请输入备注信息（可选）"></textarea>
-          </div>
-          
-          <div class="action-buttons" style="margin-top: 20px;">
-            <button class="btn btn-primary" onclick="submitTransfer()" data-zh="提交审核" data-en="Submit for Review">提交审核</button>
-            <button class="btn btn-secondary" onclick="cancelUpload()" data-zh="取消" data-en="Cancel">取消</button>
-          </div>
         </div>
       </div>
     </div>
@@ -863,125 +351,18 @@
     let currentBizType = 'fulfillment'; // 默认履约
     let currentLanguage = 'zh';
 
-    // 支付方式配置数据
+    // 支付方式配置数据（与源文件一致）
     const paymentMethods = {
-      // 在线支付
-      paypal: {
-        name: { zh: 'PayPal支付', en: 'PayPal Payment' },
-        type: 'online',
-        logo: 'paypal-logo.png'
-      },
-      stripe: {
-        name: { zh: 'Stripe支付', en: 'Stripe Payment' },
-        type: 'online',
-        logo: 'stripe-logo.png'
-      },
-      // 银行转账
-      'hsbc-usd': {
-        name: { zh: 'HSBC USD (Swift)', en: 'HSBC USD (Swift)' },
-        type: 'offline',
-        account: {
-          bankName: { zh: '汇丰银行', en: 'HSBC' },
-          accountHolder: 'MUXUE TRADE LIMITED',
-          accountNumber: '909100109055',
-          swiftCode: 'HSBCCNSHGZF',
-          bankCode: '004',
-          bankAddress: 'UNIT 101 GF CHENGCHUANG BLDG, NO.10 GUI CHENG DENG HU EAST ROAD, NANHAI, FOSHAN, GUANGDONG, CHINA',
-          beneficiaryAddress: 'Office Unit B ON 9/F Thomson Commercial Building 8 Thomson Road. Hong Kong',
-          postalCode: '999077',
-          branchName: 'HSBC BANK (CHINA) COMPANY LIMITED FOSHAN BRANCH'
-        }
-      },
-      'wise-eur': {
-        name: { zh: 'Bank Wise EUR (SEPA)', en: 'Bank Wise EUR (SEPA)' },
-        type: 'offline',
-        account: {
-          bankName: { zh: 'Wise', en: 'Wise' },
-          accountHolder: 'BESTADS LIMITED',
-          accountNumber: 'BE81905548992624',
-          swiftCode: 'TRWIBEB1XXX',
-          bankCode: '001',
-          bankAddress: 'Rue du Trône 100, 3rd floor, Brussels, 1050, Belgium'
-        }
-      },
-      'wise-gbp': {
-        name: { zh: 'Bank Wise GBP (domestic)', en: 'Bank Wise GBP (domestic)' },
-        type: 'offline',
-        account: {
-          bankName: { zh: 'Wise Payments Limited', en: 'Wise Payments Limited' },
-          accountHolder: 'BESTADS LIMITED',
-          accountNumber: '54330067',
-          sortCode: '23-08-01',
-          iban: 'GB32TRWI23080154330067',
-          swiftCode: 'TRWIGB2LXXX',
-          bankCode: '002',
-          bankAddress: '1st Floor, Worship Square, 65 Clifton Street, London, EC2A 4JE, United Kingdom'
-        }
-      },
-      'wise-usd': {
-        name: { zh: 'Bank Wise USD (Swift)', en: 'Bank Wise USD (Swift)' },
-        type: 'offline',
-        account: {
-          bankName: { zh: 'Wise Payments Limited', en: 'Wise Payments Limited' },
-          accountHolder: 'BESTADS LIMITED',
-          accountNumber: '54330067',
-          sortCode: '23-08-01',
-          iban: 'GB32TRWI23080154330067',
-          swiftCode: 'TRWIGB2LXXX',
-          bankCode: '003',
-          bankAddress: '1st Floor, Worship Square, 65 Clifton Street, London, EC2A 4JE, United Kingdom'
-        }
-      },
-      payoneer: {
-        name: { zh: 'Payoneer', en: 'Payoneer' },
-        type: 'offline',
-        account: {
-          bankName: { zh: 'Payoneer', en: 'Payoneer' },
-          accountHolder: 'BESTFULFILL INTERNATIONAL LIMITED',
-          accountNumber: 'bestfulfill@163.com',
-          swiftCode: 'PAYONEER',
-          bankCode: '004',
-          bankAddress: 'Payoneer Address'
-        }
-      },
-      airwallex: {
-        name: { zh: 'Airwallex', en: 'Airwallex' },
-        type: 'offline',
-        account: {
-          bankName: { zh: 'Airwallex Pay', en: 'Airwallex Pay' },
-          accountHolder: '牧雪貿易有限公司 (Muxue Trade Co., Ltd.)',
-          accountNumber: '1011106829132869',
-          swiftCode: 'AIRWALLEX',
-          bankCode: '005',
-          bankAddress: 'Airwallex Address',
-          alternativeName: 'MUXUE TRADE LIMITED',
-          note: { zh: '请使用确切的账户名称，否则存款可能被拒绝', en: 'Please use exact account name or your deposit may be rejected' }
-        }
-      },
-      worldfirst: {
-        name: { zh: 'Worldfirst', en: 'Worldfirst' },
-        type: 'offline',
-        account: {
-          bankName: { zh: 'WorldFirst', en: 'WorldFirst' },
-          accountHolder: 'MUXUE TRADE LIMITED',
-          accountNumber: 'WF-281024151920307013261793',
-          swiftCode: 'WORLDFIRST',
-          bankCode: '006',
-          bankAddress: 'WorldFirst Address'
-        }
-      },
-      pingpong: {
-        name: { zh: 'PingPong', en: 'PingPong' },
-        type: 'offline',
-        account: {
-          bankName: { zh: 'PingPong', en: 'PingPong' },
-          accountHolder: 'BESTFULFILL INTERNATIONAL LIMITED',
-          accountNumber: 'bestfulfill_intl@163.com',
-          swiftCode: 'PINGPONG',
-          bankCode: '007',
-          bankAddress: 'PingPong Address'
-        }
-      }
+      paypal: { name: { zh: 'PayPal支付', en: 'PayPal Payment' }, type: 'online', logo: 'paypal-logo.png' },
+      stripe: { name: { zh: 'Stripe支付', en: 'Stripe Payment' }, type: 'online', logo: 'stripe-logo.png' },
+      'hsbc-usd': { name: { zh: 'HSBC USD (Swift)', en: 'HSBC USD (Swift)' }, type: 'offline', account: { bankName: { zh: '汇丰银行', en: 'HSBC' }, accountHolder: 'MUXUE TRADE LIMITED', accountNumber: '909100109055', swiftCode: 'HSBCCNSHGZF', bankCode: '004', bankAddress: 'UNIT 101 GF CHENGCHUANG BLDG, NO.10 GUI CHENG DENG HU EAST ROAD, NANHAI, FOSHAN, GUANGDONG, CHINA', beneficiaryAddress: 'Office Unit B ON 9/F Thomson Commercial Building 8 Thomson Road. Hong Kong', postalCode: '999077', branchName: 'HSBC BANK (CHINA) COMPANY LIMITED FOSHAN BRANCH' } },
+      'wise-eur': { name: { zh: 'Bank Wise EUR (SEPA)', en: 'Bank Wise EUR (SEPA)' }, type: 'offline', account: { bankName: { zh: 'Wise', en: 'Wise' }, accountHolder: 'BESTADS LIMITED', accountNumber: 'BE81905548992624', swiftCode: 'TRWIBEB1XXX', bankCode: '001', bankAddress: 'Rue du Trône 100, 3rd floor, Brussels, 1050, Belgium' } },
+      'wise-gbp': { name: { zh: 'Bank Wise GBP (domestic)', en: 'Bank Wise GBP (domestic)' }, type: 'offline', account: { bankName: { zh: 'Wise Payments Limited', en: 'Wise Payments Limited' }, accountHolder: 'BESTADS LIMITED', accountNumber: '54330067', sortCode: '23-08-01', iban: 'GB32TRWI23080154330067', swiftCode: 'TRWIGB2LXXX', bankCode: '002', bankAddress: '1st Floor, Worship Square, 65 Clifton Street, London, EC2A 4JE, United Kingdom' } },
+      'wise-usd': { name: { zh: 'Bank Wise USD (Swift)', en: 'Bank Wise USD (Swift)' }, type: 'offline', account: { bankName: { zh: 'Wise Payments Limited', en: 'Wise Payments Limited' }, accountHolder: 'BESTADS LIMITED', accountNumber: '54330067', sortCode: '23-08-01', iban: 'GB32TRWI23080154330067', swiftCode: 'TRWIGB2LXXX', bankCode: '003', bankAddress: '1st Floor, Worship Square, 65 Clifton Street, London, EC2A 4JE, United Kingdom' } },
+      payoneer: { name: { zh: 'Payoneer', en: 'Payoneer' }, type: 'offline', account: { bankName: { zh: 'Payoneer', en: 'Payoneer' }, accountHolder: 'BESTFULFILL INTERNATIONAL LIMITED', accountNumber: 'bestfulfill@163.com', swiftCode: 'PAYONEER', bankCode: '004', bankAddress: 'Payoneer Address' } },
+      airwallex: { name: { zh: 'Airwallex', en: 'Airwallex' }, type: 'offline', account: { bankName: { zh: 'Airwallex Pay', en: 'Airwallex Pay' }, accountHolder: '牧雪貿易有限公司 (Muxue Trade Co., Ltd.)', accountNumber: '1011106829132869', swiftCode: 'AIRWALLEX', bankCode: '005', bankAddress: 'Airwallex Address', alternativeName: 'MUXUE TRADE LIMITED', note: { zh: '请使用确切的账户名称，否则存款可能被拒绝', en: 'Please use exact account name or your deposit may be rejected' } },
+      worldfirst: { name: { zh: 'Worldfirst', en: 'Worldfirst' }, type: 'offline', account: { bankName: { zh: 'WorldFirst', en: 'WorldFirst' }, accountHolder: 'MUXUE TRADE LIMITED', accountNumber: 'WF-281024151920307013261793', swiftCode: 'WORLDFIRST', bankCode: '006', bankAddress: 'WorldFirst Address' } },
+      pingpong: { name: { zh: 'PingPong', en: 'PingPong' }, type: 'offline', account: { bankName: { zh: 'PingPong', en: 'PingPong' }, accountHolder: 'BESTFULFILL INTERNATIONAL LIMITED', accountNumber: 'bestfulfill_intl@163.com', swiftCode: 'PINGPONG', bankCode: '007', bankAddress: 'PingPong Address' } }
     };
 
     // 初始化
@@ -1007,49 +388,60 @@
         });
       });
 
-      // 业务类型卡片
-      document.querySelectorAll('.biz-card').forEach(card => {
-        card.addEventListener('click', function() {
+      // 业务类型卡片（事件委托）
+      const bizContainer = document.querySelector('#bizTypeGroup .card-options');
+      if (bizContainer) {
+        bizContainer.addEventListener('click', function(e) {
+          const card = e.target.closest('.biz-card');
+          if (!card) return;
           document.querySelectorAll('.biz-card').forEach(c => c.classList.remove('active'));
-          this.classList.add('active');
-          currentBizType = this.dataset.biz; // fulfillment | ads
+          card.classList.add('active');
+          currentBizType = card.dataset.biz; // fulfillment | ads
           currentEntity = currentBizType === 'fulfillment' ? 'bestfulfill' : 'muxue';
           updateEntityDisplay();
         });
-      });
+      }
 
-      // 默认币种卡片
-      document.querySelectorAll('.defcur-card').forEach(card => {
-        card.addEventListener('click', function() {
+      // 默认币种卡片（事件委托）
+      const currencyContainer = document.querySelector('#defaultCurrencyGroup .card-options');
+      if (currencyContainer) {
+        currencyContainer.addEventListener('click', function(e) {
+          const card = e.target.closest('.defcur-card');
+          if (!card) return;
           document.querySelectorAll('.defcur-card').forEach(c => c.classList.remove('active'));
-          this.classList.add('active');
-          currentCurrency = this.dataset.currency;
+          card.classList.add('active');
+          currentCurrency = card.dataset.currency;
           updatePaymentCurrencyDisplay();
           applyFiltersByDefaultCurrency();
           autoSelectFirstAvailableMethod();
           updateAccountDetails();
           updateActionArea();
         });
-      });
+      }
 
-      // 支付方式选择
-      document.querySelectorAll('.method-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-          const method = this.dataset.method;
-          const type = this.dataset.type;
-          
-          // 更新按钮状态
+      // 支付方式选择（事件委托，提升健壮性）
+      ['onlineMethods','offlineMethods'].forEach(cid => {
+        const container = document.getElementById(cid);
+        if (!container) return;
+        container.addEventListener('click', function(e) {
+          const btn = e.target.closest('.method-btn');
+          if (!btn || btn.style.display === 'none') return;
+          const method = btn.dataset.method;
+          const type = btn.dataset.type;
+
           document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
-          this.classList.add('active');
-          
+          btn.classList.add('active');
+
           currentMethod = method;
           currentType = type;
-          
+
           updateAccountDetails();
           updateActionArea();
+          if (currentType === 'offline') {
+            showAccountDetails();
+          }
         });
       });
-
     }
 
     // 更新语言
@@ -1070,14 +462,15 @@
     // 更新账户详情
     function updateAccountDetails() {
       const method = paymentMethods[currentMethod];
-      if (!method || !method.account) return;
+      const accountInfoContent = document.getElementById('accountInfoContent');
+      if (!method || !method.account) {
+        if (accountInfoContent) accountInfoContent.innerHTML = '';
+        return;
+      }
 
       const account = method.account;
-      const accountInfoContent = document.getElementById('accountInfoContent');
-      
       let accountInfo = '';
-      
-      // 根据不同的支付方式显示不同的账户信息
+
       if (currentMethod === 'hsbc-usd') {
         accountInfo = `
           <div class="detail-item">
@@ -1111,8 +504,7 @@
           <div class="detail-item">
             <span class="detail-label" data-zh="银行地址" data-en="Bank Address">银行地址</span>
             <span class="detail-value">${account.bankAddress}</span>
-          </div>
-        `;
+          </div>`;
       } else if (currentMethod.includes('wise-eur')) {
         accountInfo = `
           <div class="detail-item">
@@ -1134,8 +526,7 @@
           <div class="detail-item">
             <span class="detail-label" data-zh="银行地址" data-en="Bank address">银行地址</span>
             <span class="detail-value">${account.bankAddress}</span>
-          </div>
-        `;
+          </div>`;
       } else if (currentMethod.includes('wise-gbp') || currentMethod.includes('wise-usd')) {
         accountInfo = `
           <div class="detail-item">
@@ -1165,15 +556,13 @@
           <div class="detail-item">
             <span class="detail-label" data-zh="银行地址" data-en="Bank address">银行地址</span>
             <span class="detail-value">${account.bankAddress}</span>
-          </div>
-        `;
+          </div>`;
       } else if (currentMethod === 'payoneer') {
         accountInfo = `
           <div class="detail-item">
             <span class="detail-label" data-zh="Payoneer账户" data-en="Payoneer Account">Payoneer账户</span>
             <span class="detail-value">${account.accountNumber} <button class="copy-btn" onclick="copyToClipboard('${account.accountNumber}')" data-zh="复制" data-en="Copy">复制</button></span>
-          </div>
-        `;
+          </div>`;
       } else if (currentMethod === 'airwallex') {
         accountInfo = `
           <div class="detail-item">
@@ -1195,8 +584,7 @@
           <div class="detail-item">
             <span class="detail-label" data-zh="备注" data-en="Note">备注</span>
             <span class="detail-value">${account.note[currentLanguage] || account.note}</span>
-          </div>
-        `;
+          </div>`;
       } else if (currentMethod === 'worldfirst') {
         accountInfo = `
           <div class="detail-item">
@@ -1206,8 +594,7 @@
           <div class="detail-item">
             <span class="detail-label" data-zh="账户名称" data-en="Account name">账户名称</span>
             <span class="detail-value">${account.accountHolder}</span>
-          </div>
-        `;
+          </div>`;
       } else if (currentMethod === 'pingpong') {
         accountInfo = `
           <div class="detail-item">
@@ -1217,54 +604,35 @@
           <div class="detail-item">
             <span class="detail-label" data-zh="账户名称" data-en="Account name">账户名称</span>
             <span class="detail-value">${account.accountHolder}</span>
-          </div>
-        `;
+          </div>`;
       }
-      
+
       accountInfoContent.innerHTML = accountInfo;
-      updateLanguage(); // 更新语言显示
+      updateLanguage();
     }
 
-    // 根据默认币种过滤支付方式显示
+    // 根据默认币种过滤支付方式显示（保持与源文件一致）
     function applyFiltersByDefaultCurrency() {
       const onlineContainer = document.getElementById('onlineMethods');
       const offlineContainer = document.getElementById('offlineMethods');
 
-      // 先全显再按规则隐藏
       onlineContainer.querySelectorAll('.method-btn').forEach(b => b.style.display = 'flex');
       offlineContainer.querySelectorAll('.method-btn').forEach(b => b.style.display = 'flex');
 
       if (currentCurrency === 'USD') {
-        // 在线: PayPal, Stripe; 线下: Payoneer/Airwallex/Worldfirst/PingPong/HSBC USD(Swift)
-        onlineContainer.querySelectorAll('.method-btn').forEach(b => {
-          const m = b.dataset.method;
-          b.style.display = (m === 'paypal' || m === 'stripe') ? 'flex' : 'none';
-        });
-        offlineContainer.querySelectorAll('.method-btn').forEach(b => {
-          const m = b.dataset.method;
-          b.style.display = (m === 'payoneer' || m === 'airwallex' || m === 'worldfirst' || m === 'pingpong' || m === 'hsbc-usd') ? 'flex' : 'none';
-        });
+        onlineContainer.querySelectorAll('.method-btn').forEach(b => { const m = b.dataset.method; b.style.display = (m === 'paypal' || m === 'stripe') ? 'flex' : 'none'; });
+        offlineContainer.querySelectorAll('.method-btn').forEach(b => { const m = b.dataset.method; b.style.display = (m === 'payoneer' || m === 'airwallex' || m === 'worldfirst' || m === 'pingpong' || m === 'hsbc-usd') ? 'flex' : 'none'; });
       } else if (currentCurrency === 'EUR') {
-        // 在线无; 线下: Wise EUR(SEPA)
         onlineContainer.querySelectorAll('.method-btn').forEach(b => b.style.display = 'none');
-        offlineContainer.querySelectorAll('.method-btn').forEach(b => {
-          const m = b.dataset.method;
-          b.style.display = (m === 'wise-eur') ? 'flex' : 'none';
-        });
+        offlineContainer.querySelectorAll('.method-btn').forEach(b => { const m = b.dataset.method; b.style.display = (m === 'wise-eur') ? 'flex' : 'none'; });
       } else if (currentCurrency === 'GBP') {
-        // 在线无; 线下: Wise GBP(domestic)
         onlineContainer.querySelectorAll('.method-btn').forEach(b => b.style.display = 'none');
-        offlineContainer.querySelectorAll('.method-btn').forEach(b => {
-          const m = b.dataset.method;
-          b.style.display = (m === 'wise-gbp') ? 'flex' : 'none';
-        });
+        offlineContainer.querySelectorAll('.method-btn').forEach(b => { const m = b.dataset.method; b.style.display = (m === 'wise-gbp') ? 'flex' : 'none'; });
       } else if (currentCurrency === 'CHF') {
-        // 未指定规则，默认全部隐藏在线、线下全部隐藏
         onlineContainer.querySelectorAll('.method-btn').forEach(b => b.style.display = 'none');
         offlineContainer.querySelectorAll('.method-btn').forEach(b => b.style.display = 'none');
       }
 
-      // 清除已选active
       document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
     }
 
@@ -1298,20 +666,20 @@
       const onlineAmountInput = document.getElementById('onlineAmountInput');
       const payButton = document.getElementById('payButton');
       const uploadSection = document.getElementById('uploadSection');
-      
+
       if (currentType === 'online') {
-        // 在线支付
         onlineAmountInput.style.display = 'block';
         payButton.textContent = '立即支付';
         payButton.onclick = handleOnlinePayment;
         uploadSection.classList.remove('active');
       } else {
-        // 线下转账
         onlineAmountInput.style.display = 'none';
         payButton.textContent = '确认转账信息';
         payButton.onclick = handleOfflinePayment;
         uploadSection.classList.remove('active');
       }
+      // 依据当前语言刷新所有带 data-zh/data-en 的文案（确保按钮文案与语言一致）
+      updateLanguage();
     }
 
     // 处理在线支付
@@ -1322,58 +690,41 @@
         return;
       }
 
-      // 显示加载状态
       const button = document.getElementById('payButton');
       const originalText = button.textContent;
       button.innerHTML = `<span class="loading"></span> ${currentLanguage === 'zh' ? '处理中...' : 'Processing...'}`;
       button.disabled = true;
 
-      // 模拟跳转到支付平台
       setTimeout(() => {
-        // 这里应该跳转到实际的支付平台
         const methodName = paymentMethods[currentMethod].name[currentLanguage] || paymentMethods[currentMethod].name;
-        alert(currentLanguage === 'zh' 
-          ? `正在跳转到${methodName}支付页面，金额：${currentCurrency} ${amount}`
-          : `Redirecting to ${methodName} payment page, amount: ${currentCurrency} ${amount}`);
-        
-        // 恢复按钮状态
+        alert(currentLanguage === 'zh' ? `正在跳转到${methodName}支付页面，金额：${currentCurrency} ${amount}` : `Redirecting to ${methodName} payment page, amount: ${currentCurrency} ${amount}`);
         button.textContent = originalText;
         button.disabled = false;
       }, 2000);
     }
 
-    // 处理线下转账
+    // 处理线下转账（中列切换为上传区，右列温馨提示常驻不隐藏）
     function handleOfflinePayment() {
-      // 显示上传凭证区域
       document.getElementById('uploadSection').classList.add('active');
-      
-      // 隐藏账户详情、提示文案和温馨提示，显示返回按钮
       document.getElementById('accountDetails').style.display = 'none';
       document.querySelector('.action-title').style.display = 'none';
       document.querySelector('.warning-message').style.display = 'none';
-      document.querySelector('.tips-section').style.display = 'none';
       document.getElementById('backBtn').classList.add('show');
-      
-      // 更新按钮
+
       const payButton = document.getElementById('payButton');
       const cancelButton = document.getElementById('cancelButton');
       payButton.style.display = 'none';
       cancelButton.style.display = 'block';
     }
 
-    // 显示账户详情
+    // 显示账户详情（右侧温馨提示保持可见）
     function showAccountDetails() {
-      // 隐藏上传凭证区域
       document.getElementById('uploadSection').classList.remove('active');
-      
-      // 显示账户详情、提示文案和温馨提示，隐藏返回按钮
       document.getElementById('accountDetails').style.display = 'block';
       document.querySelector('.action-title').style.display = 'block';
       document.querySelector('.warning-message').style.display = 'block';
-      document.querySelector('.tips-section').style.display = 'block';
       document.getElementById('backBtn').classList.remove('show');
-      
-      // 更新按钮
+
       const payButton = document.getElementById('payButton');
       const cancelButton = document.getElementById('cancelButton');
       payButton.style.display = 'block';
@@ -1395,43 +746,21 @@
       const transferTime = document.getElementById('transferTime').value;
       const transferAmount = document.getElementById('transferAmount').value;
       const fileInput = document.getElementById('fileInput');
-      
-      if (!transferTime) {
-        alert(currentLanguage === 'zh' ? '请选择转账时间' : 'Please select transfer time');
-        return;
-      }
-      
-      if (!transferAmount || transferAmount <= 0) {
-        alert(currentLanguage === 'zh' ? '请输入有效的转账金额' : 'Please enter a valid transfer amount');
-        return;
-      }
-      
-      if (!fileInput.files[0]) {
-        alert(currentLanguage === 'zh' ? '请上传银行转账凭证' : 'Please upload bank transfer receipt');
-        return;
-      }
+      if (!transferTime) { alert(currentLanguage === 'zh' ? '请选择转账时间' : 'Please select transfer time'); return; }
+      if (!transferAmount || transferAmount <= 0) { alert(currentLanguage === 'zh' ? '请输入有效的转账金额' : 'Please enter a valid transfer amount'); return; }
+      if (!fileInput.files[0]) { alert(currentLanguage === 'zh' ? '请上传银行转账凭证' : 'Please upload bank transfer receipt'); return; }
 
-      // 显示加载状态
       const button = event.target;
       const originalText = button.textContent;
-      button.innerHTML = `<span class="loading"></span> ${currentLanguage === 'zh' ? '提交中...' : 'Submitting...'}`;
+      button.innerHTML = `<span class=\"loading\"></span> ${currentLanguage === 'zh' ? '提交中...' : 'Submitting...'}`;
       button.disabled = true;
 
-      // 模拟提交
       setTimeout(() => {
-        // 显示成功消息
         const successMessage = document.createElement('div');
         successMessage.className = 'success-message';
-        successMessage.innerHTML = `<div class="success-text">${currentLanguage === 'zh' 
-          ? '转账申请提交成功！我们将在1-2个工作日内审核您的申请。'
-          : 'Transfer application submitted successfully! We will review your application within 1-2 business days.'}</div>`;
-        
-        document.querySelector('.payment-actions').insertBefore(successMessage, document.querySelector('.tips-section'));
-        
-        // 重置表单
+        successMessage.innerHTML = `<div class="success-text">${currentLanguage === 'zh' ? '转账申请提交成功！我们将在1-2个工作日内审核您的申请。' : 'Transfer application submitted successfully! We will review your application within 1-2 business days.'}</div>`;
+        document.querySelector('.payment-actions').insertBefore(successMessage, document.getElementById('accountDetails'));
         resetPayment();
-        
-        // 恢复按钮状态
         button.textContent = originalText;
         button.disabled = false;
       }, 2000);
@@ -1439,9 +768,7 @@
 
     // 取消上传
     function cancelUpload() {
-      showAccountDetails(); // 使用统一的显示账户详情函数
-      
-      // 重置表单
+      showAccountDetails();
       document.getElementById('fileInput').value = '';
       document.getElementById('transferTime').value = '';
       document.getElementById('transferAmount').value = '';
@@ -1452,35 +779,24 @@
 
     // 重置支付
     function resetPayment() {
-      showAccountDetails(); // 使用统一的显示账户详情函数
-      document.getElementById('amountInput').value = '';
-      
-      // 确保所有内容都显示
+      showAccountDetails();
+      const amountInput = document.getElementById('amountInput');
+      if (amountInput) amountInput.value = '';
       document.getElementById('accountDetails').style.display = 'block';
       document.querySelector('.action-title').style.display = 'block';
       document.querySelector('.warning-message').style.display = 'block';
-      document.querySelector('.tips-section').style.display = 'block';
-      
-      // 移除成功消息
       const successMessage = document.querySelector('.success-message');
-      if (successMessage) {
-        successMessage.remove();
-      }
+      if (successMessage) successMessage.remove();
     }
 
     // 复制到剪贴板
     function copyToClipboard(text) {
       navigator.clipboard.writeText(text).then(() => {
-        // 显示复制成功提示
         const button = event.target;
         const originalText = button.textContent;
         button.textContent = currentLanguage === 'zh' ? '已复制' : 'Copied';
         button.style.background = '#059669';
-        
-        setTimeout(() => {
-          button.textContent = originalText;
-          button.style.background = '';
-        }, 2000);
+        setTimeout(() => { button.textContent = originalText; button.style.background = ''; }, 2000);
       }).catch(err => {
         console.error('复制失败:', err);
         alert(currentLanguage === 'zh' ? '复制失败，请手动复制' : 'Copy failed, please copy manually');
@@ -1488,13 +804,9 @@
     }
 
     // 处理支付
-    function handlePayment() {
-      if (currentType === 'online') {
-        handleOnlinePayment();
-      } else {
-        handleOfflinePayment();
-      }
-    }
+    function handlePayment() { if (currentType === 'online') { handleOnlinePayment(); } else { handleOfflinePayment(); } }
   </script>
 </body>
 </html>
+
+

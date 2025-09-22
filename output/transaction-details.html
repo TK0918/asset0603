@@ -53,6 +53,10 @@
       gap: 30px;
     }
 
+    .nav-menu li {
+      position: relative;
+    }
+
     .nav-menu li a {
       text-decoration: none;
       color: #64748b;
@@ -60,12 +64,48 @@
       transition: color 0.3s ease;
       padding: 10px 15px;
       border-radius: 8px;
+      display: block;
     }
 
     .nav-menu li a:hover,
     .nav-menu li a.active {
       color: #2563eb;
       background: rgba(37, 99, 235, 0.1);
+    }
+
+    /* 下拉菜单样式 */
+    .dropdown {
+      position: relative;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: white;
+      min-width: 200px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+      z-index: 1000;
+      padding: 8px 0;
+      border: 1px solid #e2e8f0;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .dropdown-content a {
+      padding: 12px 20px;
+      display: block;
+      border-radius: 0;
+      font-size: 14px;
+    }
+
+    .dropdown-content a:hover {
+      background: rgba(37, 99, 235, 0.1);
+      color: #2563eb;
     }
 
     .page-header {
@@ -539,20 +579,62 @@
       <nav>
         <ul class="nav-menu">
           <li><a href="index.html">首页</a></li>
-          <li><a href="customer-management.html">账户管理</a></li>
-          <li><a href="transfer-audit.html">转账审核</a></li>
-          <li><a href="account-config.html">收款账户</a></li>
-          <li><a href="receiving-ledger.html">收款明细</a></li>
-          <li><a href="transaction-details.html" class="active">交易明细</a></li>
-          <li><a href="online-recharge.html">在线充值</a></li>
-          <li><a href="credit-audit.html">信用额度</a></li>
-          <li><a href="credit-bill.html">额度账单</a></li>
+          <li class="dropdown">
+            <a href="customer-management.html">账户管理</a>
+            <div class="dropdown-content">
+              <a href="customer-management.html">账户管理</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="online-recharge.html">转账和收款</a>
+            <div class="dropdown-content">
+              <a href="online-recharge.html">在线充值</a>
+              <a href="transfer-audit.html">转账审核</a>
+              <a href="account-config.html">收款账户</a>
+              <a href="receiving-ledger.html">收款明细</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="transaction-details.html">交易管理</a>
+            <div class="dropdown-content">
+              <a href="transaction-details.html" class="active">交易明细</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="credit-audit.html">额度管理</a>
+            <div class="dropdown-content">
+              <a href="credit-audit.html">信用额度</a>
+              <a href="credit-bill.html">额度账单</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="../Public component/button.html" target="_blank">公共组件</a>
+            <div class="dropdown-content">
+              <a href="../Public component/button.html" target="_blank">充值转账组件</a>
+              <a href="../Public component/payment.html" target="_blank">支付组件</a>
+              <a href="../Public component/payment2.html" target="_blank">支付组件(三列)</a>
+              <a href="../Public component/view.html" target="_blank">钱包余额组件</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="exchange-rate-detail.html">汇率管理</a>
+            <div class="dropdown-content">
+              <a href="exchange-rate-detail.html">汇率明细</a>
+              <a href="exchange-rate-config.html">汇率浮动配置</a>
+            </div>
+          </li>
         </ul>
       </nav>
     </div>
   </header>
 
   <main class="container">
+    <!-- 页面标题和描述 -->
+    <div class="page-header">
+      <h1 class="page-title">交易明细</h1>
+      <p class="page-description">查看和分析所有客户的交易记录，包括钱包变动、资金流向和交易详情</p>
+    </div>
+
     <div class="search-section">
       <div class="search-row">
         <div class="search-group">

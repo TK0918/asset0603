@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>汇率明细</title>
+  <style>
+    :root { --primary:#2563eb; --bg:#f8fafc; --card:#ffffff; --text:#111827; --muted:#6b7280; --border:#e5e7eb; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Helvetica Neue",sans-serif; background:var(--bg); color:var(--text); }
+    header { background: white; box-shadow: 0 2px 10px rgba(0,0,0,.1); position: sticky; top:0; z-index:1000; }
+    .header-content { display:flex; justify-content:space-between; align-items:center; padding:15px 30px; }
+    .logo { font-size:24px; font-weight:700; color:#2563eb; text-decoration:none; }
+    .nav-menu { display:flex; list-style:none; gap:30px; }
+    .nav-menu li { position:relative; }
+    .nav-menu li a { text-decoration:none; color:#64748b; font-weight:500; padding:10px 15px; border-radius:8px; display:block; }
+    .nav-menu li a:hover, .nav-menu li a.active { color:#2563eb; background:rgba(37,99,235,.1); }
+    /* 下拉菜单样式 */
+    .dropdown { position:relative; }
+    .dropdown-content { display:none; position:absolute; top:100%; left:0; background:white; min-width:200px; box-shadow:0 4px 12px rgba(0,0,0,.15); border-radius:8px; z-index:1000; padding:8px 0; border:1px solid #e2e8f0; }
+    .dropdown:hover .dropdown-content { display:block; }
+    .dropdown-content a { padding:12px 20px; display:block; border-radius:0; font-size:14px; }
+    .dropdown-content a:hover { background:rgba(37,99,235,.1); color:#2563eb; }
+
+    /* Page Header */
+    .page-header {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 30px;
+      border-left: 4px solid #2563eb;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 10px;
+    }
+
+    .page-description {
+      color: #64748b;
+      font-size: 16px;
+    }
+
+    /* 与现有页面一致的容器与控件样式 */
+    .container { max-width:1600px; margin:24px auto; padding:0 16px; }
+    .btn { padding:12px 24px; border:none; border-radius:8px; font-weight:500; cursor:pointer; transition:all .3s ease; font-size:14px; text-decoration:none; display:inline-block; text-align:center; }
+    .btn-sm { padding:6px 10px; font-size:12px; border-radius:6px; }
+    .btn-sm.ghost { background:#fff; color:var(--primary); border:1px solid var(--primary); }
+    .btn-sm.secondary { background:#6b7280; color:#fff; border:none; }
+    .btn.primary { background:var(--primary); color:#fff; border: none; }
+    .btn.ghost { background:#fff; color:var(--primary); border:1px solid var(--primary); }
+    .btn.secondary { background:#6b7280; color:#fff; }
+
+    .search-section { background:#fff; padding:25px; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.05); margin-bottom:25px; border:1px solid var(--border); }
+    .search-row {
+      display: flex;
+      gap: 20px;
+      align-items: end;
+      flex-wrap: wrap;
+    }
+
+    .search-group {
+      flex: 1;
+      min-width: 180px;
+    }
+    .search-group label { display:block; margin-bottom:8px; font-weight:500; color:#374151; }
+    .search-input { width:100%; padding:12px 16px; border:1px solid var(--border); border-radius:8px; font-size:14px; transition:border-color .3s ease; }
+    .search-input:focus { outline:none; border-color:var(--primary); }
+
+    .table-container { background:#fff; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.05); overflow:hidden; border:1px solid var(--border); }
+    .table-header { display:flex; justify-content:space-between; align-items:center; padding:25px; border-bottom:1px solid var(--border); }
+    .table-title { font-size:20px; font-weight:600; color:#1e293b; }
+    .table-actions { display:flex; gap:10px; }
+    .table-wrapper { overflow-x:auto; position:relative; }
+    .transfer-table { width:100%; min-width:1000px; border-collapse:collapse; position:relative; }
+    .transfer-table th, .transfer-table td { padding:12px 10px; text-align:left; border-bottom:1px solid var(--border); font-size:12px; white-space:nowrap; color:#374151; }
+    .transfer-table th { background:#f8fafc; font-weight:600; color:#374151; position:sticky; top:0; z-index:2; }
+    .transfer-table tr:hover { background:#f8fafc; }
+    
+
+    .toast { position:fixed; top:24px; left:50%; transform:translateX(-50%); background:#111827; color:#fff; padding:10px 14px; border-radius:8px; box-shadow:0 6px 16px rgba(0,0,0,.2); opacity:0; pointer-events:none; transition:opacity .3s ease; z-index:3000; }
+    .spin { display:inline-block; width:14px; height:14px; border:2px solid #cbd5e1; border-top-color:#2563eb; border-radius:50%; animation:sp 0.8s linear infinite; vertical-align:-2px; }
+    @keyframes sp{ to{ transform:rotate(360deg); } }
+
+    .refresh-btn { position: relative; }
+    .refresh-btn .spin { margin-right: 8px; }
+
+    @media (max-width: 900px){ 
+      .search-row{ flex-direction: column; gap:15px; }
+      .table-actions{ flex-direction: column; gap:8px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <a href="index.html" class="logo">资金中台</a>
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="index.html">首页</a></li>
+          <li class="dropdown">
+            <a href="customer-management.html">账户管理</a>
+            <div class="dropdown-content">
+              <a href="customer-management.html">账户管理</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="online-recharge.html">转账和收款</a>
+            <div class="dropdown-content">
+              <a href="online-recharge.html">在线充值</a>
+              <a href="transfer-audit.html">转账审核</a>
+              <a href="account-config.html">收款账户</a>
+              <a href="receiving-ledger.html">收款明细</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="transaction-details.html">交易管理</a>
+            <div class="dropdown-content">
+              <a href="transaction-details.html">交易明细</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="credit-audit.html">额度管理</a>
+            <div class="dropdown-content">
+              <a href="credit-audit.html">信用额度</a>
+              <a href="credit-bill.html">额度账单</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="../Public component/button.html" target="_blank">公共组件</a>
+            <div class="dropdown-content">
+              <a href="../Public component/button.html" target="_blank">充值转账组件</a>
+              <a href="../Public component/payment.html" target="_blank">支付组件</a>
+              <a href="../Public component/payment2.html" target="_blank">支付组件(三列)</a>
+              <a href="../Public component/view.html" target="_blank">钱包余额组件</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="exchange-rate-detail.html" class="active">汇率管理</a>
+            <div class="dropdown-content">
+              <a href="exchange-rate-detail.html">汇率明细</a>
+              <a href="exchange-rate-config.html">汇率浮动配置</a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <div class="container">
+    <!-- 页面标题和描述 -->
+    <div class="page-header">
+      <h1 class="page-title">汇率明细</h1>
+      <p class="page-description">查看各币种实时汇率信息，支持按日期筛选，显示汇率变化趋势和更新时间</p>
+    </div>
+
+    <div class="search-section">
+      <div class="search-row">
+        <div class="search-group">
+          <label>基准币种</label>
+          <select class="search-input" id="fBaseCurrency">
+            <option value="USD">美元 (USD)</option>
+            <option value="CNY">人民币 (CNY)</option>
+            <option value="EUR">欧元 (EUR)</option>
+            <option value="GBP">英镑 (GBP)</option>
+            <option value="JPY">日元 (JPY)</option>
+          </select>
+        </div>
+        <div class="search-group">
+          <label>目标币种</label>
+          <select class="search-input" id="fTargetCurrency">
+            <option value="">全部</option>
+            <option value="USD">美元 (USD)</option>
+            <option value="CNY">人民币 (CNY)</option>
+            <option value="EUR">欧元 (EUR)</option>
+            <option value="GBP">英镑 (GBP)</option>
+            <option value="JPY">日元 (JPY)</option>
+            <option value="HKD">港币 (HKD)</option>
+            <option value="AUD">澳元 (AUD)</option>
+            <option value="CAD">加元 (CAD)</option>
+          </select>
+        </div>
+        <div class="search-group">
+          <label>查询日期</label>
+          <input type="date" class="search-input" id="fDate" />
+        </div>
+        <div class="search-group">
+          <label>版本</label>
+          <select class="search-input" id="fVersion">
+            <option value="">全部</option>
+            <option value="1">版本1</option>
+            <option value="2">版本2</option>
+            <option value="3">版本3</option>
+            <option value="4">版本4</option>
+            <option value="5">版本5</option>
+          </select>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn primary" id="btnSearch">搜索</button>
+          <button class="btn secondary" id="btnReset">重置</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <div class="table-header">
+        <h3 class="table-title">汇率明细列表</h3>
+        <div class="table-actions">
+          <button class="btn primary refresh-btn" id="btnRefresh">
+            <span class="refresh-icon">🔄</span>
+            刷新汇率
+          </button>
+          <button class="btn secondary" id="btnExport">导出数据</button>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table id="tblRates" class="transfer-table">
+          <thead>
+            <tr>
+              <th>基准币种</th>
+              <th>目标币种</th>
+              <th>汇率</th>
+              <th>版本</th>
+              <th>更新时间</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">操作完成</div>
+
+  <script>
+    // 模拟汇率数据 - 每5分钟更新一次，每天有多个版本
+    const exchangeRates = [
+      { id: 1, baseCurrency: 'USD', targetCurrency: 'CNY', rate: 7.2856, version: 1, updateTime: '2024-01-15 09:00:00' },
+      { id: 2, baseCurrency: 'USD', targetCurrency: 'CNY', rate: 7.2862, version: 2, updateTime: '2024-01-15 09:05:00' },
+      { id: 3, baseCurrency: 'USD', targetCurrency: 'CNY', rate: 7.2858, version: 3, updateTime: '2024-01-15 09:10:00' },
+      { id: 4, baseCurrency: 'USD', targetCurrency: 'EUR', rate: 0.9234, version: 1, updateTime: '2024-01-15 09:00:00' },
+      { id: 5, baseCurrency: 'USD', targetCurrency: 'EUR', rate: 0.9238, version: 2, updateTime: '2024-01-15 09:05:00' },
+      { id: 6, baseCurrency: 'USD', targetCurrency: 'EUR', rate: 0.9231, version: 3, updateTime: '2024-01-15 09:10:00' },
+      { id: 7, baseCurrency: 'USD', targetCurrency: 'GBP', rate: 0.7892, version: 1, updateTime: '2024-01-15 09:00:00' },
+      { id: 8, baseCurrency: 'USD', targetCurrency: 'GBP', rate: 0.7895, version: 2, updateTime: '2024-01-15 09:05:00' },
+      { id: 9, baseCurrency: 'USD', targetCurrency: 'GBP', rate: 0.7890, version: 3, updateTime: '2024-01-15 09:10:00' },
+      { id: 10, baseCurrency: 'USD', targetCurrency: 'JPY', rate: 148.45, version: 1, updateTime: '2024-01-15 09:00:00' },
+      { id: 11, baseCurrency: 'USD', targetCurrency: 'JPY', rate: 148.52, version: 2, updateTime: '2024-01-15 09:05:00' },
+      { id: 12, baseCurrency: 'USD', targetCurrency: 'JPY', rate: 148.38, version: 3, updateTime: '2024-01-15 09:10:00' },
+      { id: 13, baseCurrency: 'USD', targetCurrency: 'HKD', rate: 7.8234, version: 1, updateTime: '2024-01-15 09:00:00' },
+      { id: 14, baseCurrency: 'USD', targetCurrency: 'HKD', rate: 7.8238, version: 2, updateTime: '2024-01-15 09:05:00' },
+      { id: 15, baseCurrency: 'USD', targetCurrency: 'HKD', rate: 7.8231, version: 3, updateTime: '2024-01-15 09:10:00' },
+      { id: 16, baseCurrency: 'EUR', targetCurrency: 'USD', rate: 1.0829, version: 1, updateTime: '2024-01-15 09:00:00' },
+      { id: 17, baseCurrency: 'EUR', targetCurrency: 'USD', rate: 1.0832, version: 2, updateTime: '2024-01-15 09:05:00' },
+      { id: 18, baseCurrency: 'EUR', targetCurrency: 'USD', rate: 1.0826, version: 3, updateTime: '2024-01-15 09:10:00' },
+      { id: 19, baseCurrency: 'EUR', targetCurrency: 'CNY', rate: 7.8845, version: 1, updateTime: '2024-01-15 09:00:00' },
+      { id: 20, baseCurrency: 'EUR', targetCurrency: 'CNY', rate: 7.8851, version: 2, updateTime: '2024-01-15 09:05:00' },
+      { id: 21, baseCurrency: 'EUR', targetCurrency: 'CNY', rate: 7.8839, version: 3, updateTime: '2024-01-15 09:10:00' },
+      { id: 22, baseCurrency: 'CNY', targetCurrency: 'USD', rate: 0.1373, version: 1, updateTime: '2024-01-15 09:00:00' },
+      { id: 23, baseCurrency: 'CNY', targetCurrency: 'USD', rate: 0.1372, version: 2, updateTime: '2024-01-15 09:05:00' },
+      { id: 24, baseCurrency: 'CNY', targetCurrency: 'USD', rate: 0.1374, version: 3, updateTime: '2024-01-15 09:10:00' },
+      { id: 25, baseCurrency: 'GBP', targetCurrency: 'USD', rate: 1.2671, version: 1, updateTime: '2024-01-15 09:00:00' },
+      { id: 26, baseCurrency: 'GBP', targetCurrency: 'USD', rate: 1.2674, version: 2, updateTime: '2024-01-15 09:05:00' },
+      { id: 27, baseCurrency: 'GBP', targetCurrency: 'USD', rate: 1.2668, version: 3, updateTime: '2024-01-15 09:10:00' },
+      { id: 28, baseCurrency: 'JPY', targetCurrency: 'USD', rate: 0.0067, version: 1, updateTime: '2024-01-15 09:00:00' },
+      { id: 29, baseCurrency: 'JPY', targetCurrency: 'USD', rate: 0.0067, version: 2, updateTime: '2024-01-15 09:05:00' },
+      { id: 30, baseCurrency: 'JPY', targetCurrency: 'USD', rate: 0.0067, version: 3, updateTime: '2024-01-15 09:10:00' }
+    ];
+
+    const tbody = document.querySelector('#tblRates tbody');
+
+    function formatRate(rate) {
+      return rate.toFixed(4);
+    }
+
+    function formatVersion(version) {
+      return `版本${version}`;
+    }
+
+    function render() {
+      tbody.innerHTML = '';
+      
+      const baseCurrency = document.getElementById('fBaseCurrency').value;
+      const targetCurrency = document.getElementById('fTargetCurrency').value;
+      const date = document.getElementById('fDate').value;
+      const version = document.getElementById('fVersion').value;
+
+      // 过滤数据
+      const filteredData = exchangeRates.filter(rate => {
+        if (baseCurrency && rate.baseCurrency !== baseCurrency) return false;
+        if (targetCurrency && rate.targetCurrency !== targetCurrency) return false;
+        if (date && !rate.updateTime.startsWith(date)) return false;
+        if (version && rate.version.toString() !== version) return false;
+        return true;
+      });
+
+      filteredData.forEach(rate => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${rate.baseCurrency}</td>
+          <td>${rate.targetCurrency}</td>
+          <td>${formatRate(rate.rate)}</td>
+          <td>${formatVersion(rate.version)}</td>
+          <td>${rate.updateTime}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function showToast(text) {
+      const toast = document.getElementById('toast');
+      toast.textContent = text || '操作完成';
+      toast.style.opacity = '1';
+      setTimeout(() => { toast.style.opacity = '0'; }, 2000);
+    }
+
+    function refreshRates() {
+      const refreshBtn = document.getElementById('btnRefresh');
+      const refreshIcon = refreshBtn.querySelector('.refresh-icon');
+      
+      refreshIcon.innerHTML = '<span class="spin"></span>';
+      refreshBtn.disabled = true;
+      
+      // 模拟API调用
+      setTimeout(() => {
+        // 生成新的版本数据
+        const newVersion = Math.max(...exchangeRates.map(r => r.version)) + 1;
+        const currentTime = new Date();
+        const timeStr = currentTime.toLocaleString('zh-CN', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        }).replace(/\//g, '-');
+        
+        // 为每个币种对生成新版本
+        const currencyPairs = [...new Set(exchangeRates.map(r => `${r.baseCurrency}-${r.targetCurrency}`))];
+        currencyPairs.forEach(pair => {
+          const [base, target] = pair.split('-');
+          const existingRate = exchangeRates.find(r => r.baseCurrency === base && r.targetCurrency === target);
+          if (existingRate) {
+            const randomChange = (Math.random() - 0.5) * 0.01;
+            const newRate = existingRate.rate + randomChange;
+            exchangeRates.push({
+              id: exchangeRates.length + 1,
+              baseCurrency: base,
+              targetCurrency: target,
+              rate: newRate,
+              version: newVersion,
+              updateTime: timeStr
+            });
+          }
+        });
+        
+        refreshIcon.innerHTML = '🔄';
+        refreshBtn.disabled = false;
+        render();
+        showToast('汇率数据已刷新');
+      }, 1500);
+    }
+
+    // 事件监听
+    document.getElementById('fBaseCurrency').addEventListener('change', render);
+    document.getElementById('fTargetCurrency').addEventListener('change', render);
+    document.getElementById('fDate').addEventListener('change', render);
+    document.getElementById('fVersion').addEventListener('change', render);
+
+    document.getElementById('btnSearch').addEventListener('click', render);
+    document.getElementById('btnReset').addEventListener('click', () => {
+      document.getElementById('fBaseCurrency').value = 'USD';
+      document.getElementById('fTargetCurrency').value = '';
+      document.getElementById('fDate').value = '';
+      document.getElementById('fVersion').value = '';
+      render();
+    });
+
+    document.getElementById('btnRefresh').addEventListener('click', refreshRates);
+    document.getElementById('btnExport').addEventListener('click', () => {
+      showToast('导出功能开发中...');
+    });
+
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', () => {
+      // 设置默认日期为今天
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('fDate').value = today;
+      
+      render();
+    });
+  </script>
+</body>
+</html>
