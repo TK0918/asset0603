@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>汇率明细</title>
+  <title>中国人民银行汇率信息</title>
   <style>
     :root { --primary:#2563eb; --bg:#f8fafc; --card:#ffffff; --text:#111827; --muted:#6b7280; --border:#e5e7eb; }
     body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Helvetica Neue",sans-serif; background:var(--bg); color:var(--text); }
@@ -140,7 +140,7 @@
           <li class="dropdown">
             <a href="exchange-rate-detail.html" class="active">汇率管理</a>
             <div class="dropdown-content">
-              <a href="exchange-rate-detail.html">汇率明细</a>
+              <a href="exchange-rate-detail.html">中国人民银行汇率</a>
               <a href="exchange-rate-config.html">汇率浮动配置</a>
             </div>
           </li>
@@ -151,50 +151,53 @@
   <div class="container">
     <!-- 页面标题和描述 -->
     <div class="page-header">
-      <h1 class="page-title">汇率明细</h1>
-      <p class="page-description">查看各币种实时汇率信息，支持按日期筛选，显示汇率变化趋势和更新时间</p>
+      <h1 class="page-title">中国人民银行汇率信息</h1>
+      <p class="page-description">
+        数据来源：<a href="http://www.pbc.gov.cn/zhengcehuobisi/125207/125217/125925/index.html" target="_blank" style="color: #2563eb; text-decoration: none;">中国人民银行官网</a><br>
+        同步时间：每天北京时间上午10点自动同步人行发布的人民币汇率中间价信息
+      </p>
     </div>
 
     <div class="search-section">
       <div class="search-row">
         <div class="search-group">
-          <label>基准币种</label>
-          <select class="search-input" id="fBaseCurrency">
-            <option value="USD">美元 (USD)</option>
-            <option value="CNY">人民币 (CNY)</option>
-            <option value="EUR">欧元 (EUR)</option>
-            <option value="GBP">英镑 (GBP)</option>
-            <option value="JPY">日元 (JPY)</option>
-          </select>
-        </div>
-        <div class="search-group">
           <label>目标币种</label>
           <select class="search-input" id="fTargetCurrency">
             <option value="">全部</option>
             <option value="USD">美元 (USD)</option>
-            <option value="CNY">人民币 (CNY)</option>
             <option value="EUR">欧元 (EUR)</option>
-            <option value="GBP">英镑 (GBP)</option>
             <option value="JPY">日元 (JPY)</option>
             <option value="HKD">港币 (HKD)</option>
-            <option value="AUD">澳元 (AUD)</option>
-            <option value="CAD">加元 (CAD)</option>
+            <option value="GBP">英镑 (GBP)</option>
+            <option value="AUD">澳大利亚元 (AUD)</option>
+            <option value="NZD">新西兰元 (NZD)</option>
+            <option value="SGD">新加坡元 (SGD)</option>
+            <option value="CHF">瑞士法郎 (CHF)</option>
+            <option value="CAD">加拿大元 (CAD)</option>
+            <option value="MOP">澳门元 (MOP)</option>
+            <option value="MYR">林吉特 (MYR)</option>
+            <option value="RUB">俄罗斯卢布 (RUB)</option>
+            <option value="ZAR">南非兰特 (ZAR)</option>
+            <option value="KRW">韩元 (KRW)</option>
+            <option value="AED">阿联酋迪拉姆 (AED)</option>
+            <option value="SAR">沙特里亚尔 (SAR)</option>
+            <option value="HUF">匈牙利福林 (HUF)</option>
+            <option value="PLN">波兰兹罗提 (PLN)</option>
+            <option value="DKK">丹麦克朗 (DKK)</option>
+            <option value="SEK">瑞典克朗 (SEK)</option>
+            <option value="NOK">挪威克朗 (NOK)</option>
+            <option value="TRY">土耳其里拉 (TRY)</option>
+            <option value="MXN">墨西哥比索 (MXN)</option>
+            <option value="THB">泰铢 (THB)</option>
           </select>
         </div>
         <div class="search-group">
-          <label>查询日期</label>
+          <label>同步时间</label>
           <input type="date" class="search-input" id="fDate" />
         </div>
         <div class="search-group">
-          <label>版本</label>
-          <select class="search-input" id="fVersion">
-            <option value="">全部</option>
-            <option value="1">版本1</option>
-            <option value="2">版本2</option>
-            <option value="3">版本3</option>
-            <option value="4">版本4</option>
-            <option value="5">版本5</option>
-          </select>
+          <label>发布日期</label>
+          <input type="date" class="search-input" id="fVersion" />
         </div>
         <div style="display: flex; gap: 10px;">
           <button class="btn primary" id="btnSearch">搜索</button>
@@ -205,7 +208,7 @@
 
     <div class="table-container">
       <div class="table-header">
-        <h3 class="table-title">汇率明细列表</h3>
+        <h3 class="table-title">人行汇率信息列表</h3>
         <div class="table-actions">
           <button class="btn primary refresh-btn" id="btnRefresh">
             <span class="refresh-icon">🔄</span>
@@ -218,11 +221,10 @@
         <table id="tblRates" class="transfer-table">
           <thead>
             <tr>
-              <th>基准币种</th>
               <th>目标币种</th>
               <th>汇率</th>
-              <th>版本</th>
-              <th>更新时间</th>
+              <th>发布日期</th>
+              <th>同步时间</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -234,38 +236,33 @@
   <div class="toast" id="toast">操作完成</div>
 
   <script>
-    // 模拟汇率数据 - 每5分钟更新一次，每天有多个版本
+    // 中国人民银行汇率数据 - 每天上午10点同步（以人民币为基准）
     const exchangeRates = [
-      { id: 1, baseCurrency: 'USD', targetCurrency: 'CNY', rate: 7.2856, version: 1, updateTime: '2024-01-15 09:00:00' },
-      { id: 2, baseCurrency: 'USD', targetCurrency: 'CNY', rate: 7.2862, version: 2, updateTime: '2024-01-15 09:05:00' },
-      { id: 3, baseCurrency: 'USD', targetCurrency: 'CNY', rate: 7.2858, version: 3, updateTime: '2024-01-15 09:10:00' },
-      { id: 4, baseCurrency: 'USD', targetCurrency: 'EUR', rate: 0.9234, version: 1, updateTime: '2024-01-15 09:00:00' },
-      { id: 5, baseCurrency: 'USD', targetCurrency: 'EUR', rate: 0.9238, version: 2, updateTime: '2024-01-15 09:05:00' },
-      { id: 6, baseCurrency: 'USD', targetCurrency: 'EUR', rate: 0.9231, version: 3, updateTime: '2024-01-15 09:10:00' },
-      { id: 7, baseCurrency: 'USD', targetCurrency: 'GBP', rate: 0.7892, version: 1, updateTime: '2024-01-15 09:00:00' },
-      { id: 8, baseCurrency: 'USD', targetCurrency: 'GBP', rate: 0.7895, version: 2, updateTime: '2024-01-15 09:05:00' },
-      { id: 9, baseCurrency: 'USD', targetCurrency: 'GBP', rate: 0.7890, version: 3, updateTime: '2024-01-15 09:10:00' },
-      { id: 10, baseCurrency: 'USD', targetCurrency: 'JPY', rate: 148.45, version: 1, updateTime: '2024-01-15 09:00:00' },
-      { id: 11, baseCurrency: 'USD', targetCurrency: 'JPY', rate: 148.52, version: 2, updateTime: '2024-01-15 09:05:00' },
-      { id: 12, baseCurrency: 'USD', targetCurrency: 'JPY', rate: 148.38, version: 3, updateTime: '2024-01-15 09:10:00' },
-      { id: 13, baseCurrency: 'USD', targetCurrency: 'HKD', rate: 7.8234, version: 1, updateTime: '2024-01-15 09:00:00' },
-      { id: 14, baseCurrency: 'USD', targetCurrency: 'HKD', rate: 7.8238, version: 2, updateTime: '2024-01-15 09:05:00' },
-      { id: 15, baseCurrency: 'USD', targetCurrency: 'HKD', rate: 7.8231, version: 3, updateTime: '2024-01-15 09:10:00' },
-      { id: 16, baseCurrency: 'EUR', targetCurrency: 'USD', rate: 1.0829, version: 1, updateTime: '2024-01-15 09:00:00' },
-      { id: 17, baseCurrency: 'EUR', targetCurrency: 'USD', rate: 1.0832, version: 2, updateTime: '2024-01-15 09:05:00' },
-      { id: 18, baseCurrency: 'EUR', targetCurrency: 'USD', rate: 1.0826, version: 3, updateTime: '2024-01-15 09:10:00' },
-      { id: 19, baseCurrency: 'EUR', targetCurrency: 'CNY', rate: 7.8845, version: 1, updateTime: '2024-01-15 09:00:00' },
-      { id: 20, baseCurrency: 'EUR', targetCurrency: 'CNY', rate: 7.8851, version: 2, updateTime: '2024-01-15 09:05:00' },
-      { id: 21, baseCurrency: 'EUR', targetCurrency: 'CNY', rate: 7.8839, version: 3, updateTime: '2024-01-15 09:10:00' },
-      { id: 22, baseCurrency: 'CNY', targetCurrency: 'USD', rate: 0.1373, version: 1, updateTime: '2024-01-15 09:00:00' },
-      { id: 23, baseCurrency: 'CNY', targetCurrency: 'USD', rate: 0.1372, version: 2, updateTime: '2024-01-15 09:05:00' },
-      { id: 24, baseCurrency: 'CNY', targetCurrency: 'USD', rate: 0.1374, version: 3, updateTime: '2024-01-15 09:10:00' },
-      { id: 25, baseCurrency: 'GBP', targetCurrency: 'USD', rate: 1.2671, version: 1, updateTime: '2024-01-15 09:00:00' },
-      { id: 26, baseCurrency: 'GBP', targetCurrency: 'USD', rate: 1.2674, version: 2, updateTime: '2024-01-15 09:05:00' },
-      { id: 27, baseCurrency: 'GBP', targetCurrency: 'USD', rate: 1.2668, version: 3, updateTime: '2024-01-15 09:10:00' },
-      { id: 28, baseCurrency: 'JPY', targetCurrency: 'USD', rate: 0.0067, version: 1, updateTime: '2024-01-15 09:00:00' },
-      { id: 29, baseCurrency: 'JPY', targetCurrency: 'USD', rate: 0.0067, version: 2, updateTime: '2024-01-15 09:05:00' },
-      { id: 30, baseCurrency: 'JPY', targetCurrency: 'USD', rate: 0.0067, version: 3, updateTime: '2024-01-15 09:10:00' }
+      { id: 1, targetCurrency: 'USD', rate: 7.1077, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 2, targetCurrency: 'EUR', rate: 8.3939, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 3, targetCurrency: 'JPY', rate: 0.048147, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 4, targetCurrency: 'HKD', rate: 0.91429, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 5, targetCurrency: 'GBP', rate: 9.6106, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 6, targetCurrency: 'AUD', rate: 4.6894, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 7, targetCurrency: 'NZD', rate: 4.1630, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 8, targetCurrency: 'SGD', rate: 5.5387, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 9, targetCurrency: 'CHF', rate: 8.9791, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 10, targetCurrency: 'CAD', rate: 5.1363, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 11, targetCurrency: 'MOP', rate: 1.1271, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 12, targetCurrency: 'MYR', rate: 0.59046, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 13, targetCurrency: 'RUB', rate: 11.7567, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 14, targetCurrency: 'ZAR', rate: 2.4267, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 15, targetCurrency: 'KRW', rate: 196.05, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 16, targetCurrency: 'AED', rate: 0.51675, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 17, targetCurrency: 'SAR', rate: 0.52772, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 18, targetCurrency: 'HUF', rate: 46.4425, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 19, targetCurrency: 'PLN', rate: 0.50718, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 20, targetCurrency: 'DKK', rate: 0.8891, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 21, targetCurrency: 'SEK', rate: 1.3135, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 22, targetCurrency: 'NOK', rate: 1.3908, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 23, targetCurrency: 'TRY', rate: 5.82693, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 24, targetCurrency: 'MXN', rate: 2.5818, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' },
+      { id: 25, targetCurrency: 'THB', rate: 4.4827, publishDate: '2024-09-22', syncTime: '2024-09-22 10:00:15' }
     ];
 
     const tbody = document.querySelector('#tblRates tbody');
@@ -274,35 +271,32 @@
       return rate.toFixed(4);
     }
 
-    function formatVersion(version) {
-      return `版本${version}`;
+    function formatPublishDate(publishDate) {
+      return publishDate;
     }
 
     function render() {
       tbody.innerHTML = '';
       
-      const baseCurrency = document.getElementById('fBaseCurrency').value;
       const targetCurrency = document.getElementById('fTargetCurrency').value;
       const date = document.getElementById('fDate').value;
-      const version = document.getElementById('fVersion').value;
+      const publishDate = document.getElementById('fVersion').value;
 
       // 过滤数据
       const filteredData = exchangeRates.filter(rate => {
-        if (baseCurrency && rate.baseCurrency !== baseCurrency) return false;
         if (targetCurrency && rate.targetCurrency !== targetCurrency) return false;
-        if (date && !rate.updateTime.startsWith(date)) return false;
-        if (version && rate.version.toString() !== version) return false;
+        if (date && !rate.syncTime.startsWith(date)) return false;
+        if (publishDate && rate.publishDate !== publishDate) return false;
         return true;
       });
 
       filteredData.forEach(rate => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${rate.baseCurrency}</td>
           <td>${rate.targetCurrency}</td>
           <td>${formatRate(rate.rate)}</td>
-          <td>${formatVersion(rate.version)}</td>
-          <td>${rate.updateTime}</td>
+          <td>${formatPublishDate(rate.publishDate)}</td>
+          <td>${rate.syncTime}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -324,9 +318,9 @@
       
       // 模拟API调用
       setTimeout(() => {
-        // 生成新的版本数据
-        const newVersion = Math.max(...exchangeRates.map(r => r.version)) + 1;
+        // 生成新的人行汇率数据
         const currentTime = new Date();
+        const today = currentTime.toISOString().split('T')[0];
         const timeStr = currentTime.toLocaleString('zh-CN', {
           year: 'numeric',
           month: '2-digit',
@@ -336,21 +330,19 @@
           second: '2-digit'
         }).replace(/\//g, '-');
         
-        // 为每个币种对生成新版本
-        const currencyPairs = [...new Set(exchangeRates.map(r => `${r.baseCurrency}-${r.targetCurrency}`))];
-        currencyPairs.forEach(pair => {
-          const [base, target] = pair.split('-');
-          const existingRate = exchangeRates.find(r => r.baseCurrency === base && r.targetCurrency === target);
+        // 为每个币种生成新的人行汇率数据
+        const currencies = [...new Set(exchangeRates.map(r => r.targetCurrency))];
+        currencies.forEach(currency => {
+          const existingRate = exchangeRates.find(r => r.targetCurrency === currency);
           if (existingRate) {
             const randomChange = (Math.random() - 0.5) * 0.01;
             const newRate = existingRate.rate + randomChange;
             exchangeRates.push({
               id: exchangeRates.length + 1,
-              baseCurrency: base,
-              targetCurrency: target,
+              targetCurrency: currency,
               rate: newRate,
-              version: newVersion,
-              updateTime: timeStr
+              publishDate: today,
+              syncTime: timeStr
             });
           }
         });
@@ -358,19 +350,17 @@
         refreshIcon.innerHTML = '🔄';
         refreshBtn.disabled = false;
         render();
-        showToast('汇率数据已刷新');
+        showToast('人行汇率数据已同步');
       }, 1500);
     }
 
     // 事件监听
-    document.getElementById('fBaseCurrency').addEventListener('change', render);
     document.getElementById('fTargetCurrency').addEventListener('change', render);
     document.getElementById('fDate').addEventListener('change', render);
     document.getElementById('fVersion').addEventListener('change', render);
 
     document.getElementById('btnSearch').addEventListener('click', render);
     document.getElementById('btnReset').addEventListener('click', () => {
-      document.getElementById('fBaseCurrency').value = 'USD';
       document.getElementById('fTargetCurrency').value = '';
       document.getElementById('fDate').value = '';
       document.getElementById('fVersion').value = '';
@@ -379,7 +369,7 @@
 
     document.getElementById('btnRefresh').addEventListener('click', refreshRates);
     document.getElementById('btnExport').addEventListener('click', () => {
-      showToast('导出功能开发中...');
+      showToast('导出人行汇率数据功能开发中...');
     });
 
     // 初始化页面

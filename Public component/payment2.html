@@ -36,7 +36,7 @@
 
     .payment-layout {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1.6fr 0.4fr;
       gap: 24px;
       background: var(--card);
       border-radius: 16px;
@@ -343,6 +343,30 @@
   </div>
 
   <script>
+    // 全局错误捕获与安全调用工具
+    (function() {
+      if (!window.__payment2ErrorGuardInstalled) {
+        window.__payment2ErrorGuardInstalled = true;
+        window.addEventListener('error', function(e) { try { console.error('[payment2] window error:', e.error || e.message); } catch (_) {} });
+        window.addEventListener('unhandledrejection', function(e) { try { console.error('[payment2] unhandledrejection:', e.reason || e); } catch (_) {} });
+      }
+      if (!Element.prototype.closest) {
+        Element.prototype.closest = function(s) {
+          var el = this;
+          if (!document.documentElement) return null;
+          do { if (el.matches && el.matches(s)) return el; el = el.parentElement || el.parentNode; } while (el !== null && el.nodeType === 1);
+          return null;
+        };
+      }
+      if (!Element.prototype.matches) {
+        Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector || function(selector) {
+          var matches = (this.document || this.ownerDocument).querySelectorAll(selector), i = matches.length;
+          while (--i >= 0 && matches.item(i) !== this) {}
+          return i > -1;
+        };
+      }
+      window.__safeInvoke = function(label, fn) { try { fn && fn(); } catch (err) { try { console.error('[payment2] init step failed:', label, err); } catch (_) {} } };
+    })();
     // 当前选择的支付方式
     let currentMethod = '';
     let currentType = '';
@@ -365,15 +389,15 @@
       pingpong: { name: { zh: 'PingPong', en: 'PingPong' }, type: 'offline', account: { bankName: { zh: 'PingPong', en: 'PingPong' }, accountHolder: 'BESTFULFILL INTERNATIONAL LIMITED', accountNumber: 'bestfulfill_intl@163.com', swiftCode: 'PINGPONG', bankCode: '007', bankAddress: 'PingPong Address' } }
     };
 
-    // 初始化
+    // 初始化（分步安全执行，避免单点报错导致整体中断）
     document.addEventListener('DOMContentLoaded', function() {
-      initializeEventListeners();
-      applyFiltersByDefaultCurrency();
-      autoSelectFirstAvailableMethod();
-      updateAccountDetails();
-      updateLanguage();
-      updateEntityDisplay();
-      updatePaymentCurrencyDisplay();
+      __safeInvoke('initializeEventListeners', initializeEventListeners);
+      __safeInvoke('applyFiltersByDefaultCurrency', applyFiltersByDefaultCurrency);
+      __safeInvoke('autoSelectFirstAvailableMethod', autoSelectFirstAvailableMethod);
+      __safeInvoke('updateAccountDetails', updateAccountDetails);
+      __safeInvoke('updateLanguage', updateLanguage);
+      __safeInvoke('updateEntityDisplay', updateEntityDisplay);
+      __safeInvoke('updatePaymentCurrencyDisplay', updatePaymentCurrencyDisplay);
     });
 
     // 初始化事件监听器
@@ -444,10 +468,14 @@
       });
     }
 
-    // 更新语言
+    // 更新语言（避免覆盖运行时动态文案，如支付按钮、返回按钮、上传按钮等）
     function updateLanguage() {
       const elements = document.querySelectorAll('[data-zh][data-en]');
       elements.forEach(element => {
+        // 跳过动态文案元素
+        if (element.id === 'payButton' || element.id === 'cancelButton' || element.id === 'backBtn' || element.classList.contains('upload-btn')) {
+          return;
+        }
         const text = element.dataset[currentLanguage];
         if (text) {
           if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
@@ -678,8 +706,7 @@
         payButton.onclick = handleOfflinePayment;
         uploadSection.classList.remove('active');
       }
-      // 依据当前语言刷新所有带 data-zh/data-en 的文案（确保按钮文案与语言一致）
-      updateLanguage();
+      // 不在此处全局刷新语言，避免刚设置的运行时文案被覆盖
     }
 
     // 处理在线支付

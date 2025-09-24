@@ -997,6 +997,44 @@
 
 # 资金中台管理系统开发日志
 
+### [修复] payment2 初始化全局错误捕获与安全执行 - 2025-09-22
+**修改内容：**
+- 在 `Public component/payment2.html` 顶部脚本内新增全局错误捕获（window error/unhandledrejection）。
+- 为 `Element.prototype.matches/closest` 添加兼容性 polyfill，确保事件委托在非现代环境可用。
+- 引入 `__safeInvoke(label, fn)` 工具，`DOMContentLoaded` 初始化阶段分步安全调用：
+  - `initializeEventListeners`
+  - `applyFiltersByDefaultCurrency`
+  - `autoSelectFirstAvailableMethod`
+  - `updateAccountDetails`
+  - `updateLanguage`
+  - `updateEntityDisplay`
+  - `updatePaymentCurrencyDisplay`
+- 目的：避免初始化任意一步抛错导致后续事件绑定与语言切换全部失效，解决“业务类型/默认币种/在线支付/银行转账/语言切换无法点击”的现象。
+
+**受影响文件：** `Public component/payment2.html`
+
+**结果：** 初始化阶段具备容错能力。如仍出现无法点击，我将继续根据语言覆盖策略、事件委托兼容和样式遮挡等后续原因进行修复。
+
+### [优化] payment2 语言更新策略与按钮文案冲突 - 2025-09-22
+**问题：** 切换在线/线下时运行时动态设置了按钮文案（如“立即支付/确认转账信息”），随后全局`updateLanguage()`又用`data-zh/data-en`覆盖，造成视觉上“没有变化/无法点击”的误判。
+
+**修复：**
+- `updateLanguage()`跳过对`#payButton`、`#cancelButton`、`#backBtn`与`.upload-btn`的textContent覆盖，仅处理占位和静态文案。
+- 移除`updateActionArea()`末尾的全局`updateLanguage()`调用，避免刚设置的动态文案被复写。
+
+**受影响文件：** `Public component/payment2.html`
+
+**结果：** 运行时按钮文案不再被语言切换覆盖，交互视觉状态与真实状态一致。
+
+### [样式] payment2 三列比例调整以扩大中间区域 - 2025-09-22
+**需求：** 缩小右侧温馨提示宽度，扩大中间账户/上传操作区域宽度。
+
+**调整：**
+- 将 `.payment-layout` 的 `grid-template-columns` 从 `1fr 1fr 1fr` 改为 `1fr 1.6fr 0.4fr`。
+- 视觉效果：右侧提示更窄，中间操作区域更宽；左侧保持不变。
+
+**受影响文件：** `Public component/payment2.html`
+
 ## 项目概述
 本项目为海外业务资金中台管理系统，旨在统一管理各子业务客户资金，提供高效的资金管理和审核服务。系统采用纯前端实现，使用HTML+CSS+JavaScript技术栈，支持响应式设计。
 
@@ -2660,3 +2698,68 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 **受影响文件：**
 - `output/exchange-rate-detail.html`
+
+### [重构] exchange-rate-detail 页面调整为中国人民银行汇率展示 - 2025-09-22
+**需求：** 将汇率明细页面重新定义为展示中国人民银行汇率信息，明确数据来源和同步机制。
+
+**调整内容：**
+- 页面标题改为"中国人民银行汇率信息"
+- 页面描述添加数据来源链接（人行官网）和同步时间说明（每天北京时间上午10点）
+- 搜索条件"版本"改为"发布日期"，对应人行官网发布汇率信息的日期
+- 表格列标题"版本"改为"发布日期"，"更新时间"改为"同步时间"
+- 数据结构调整：`version`字段改为`publishDate`，`updateTime`改为`syncTime`
+- 刷新功能提示改为"人行汇率数据已同步"
+- 导出功能提示改为"导出人行汇率数据功能开发中..."
+
+**受影响文件：** `output/exchange-rate-detail.html`
+
+**结果：** 页面明确展示数据来源于中国人民银行官网，用户可清楚了解同步机制和数据含义。
+
+### [优化] exchange-rate-detail 页面适配人行汇率结构 - 2025-09-22
+**需求：** 根据人行汇率特点，移除基准币种筛选项，添加真实的人行汇率数据。
+
+**调整内容：**
+- 移除"基准币种"筛选项，因为人行汇率都以人民币为基准
+- 更新"目标币种"筛选项，包含25种外币：USD、EUR、JPY、HKD、GBP、AUD、NZD、SGD、CHF、CAD、MOP、MYR、RUB、ZAR、KRW、AED、SAR、HUF、PLN、DKK、SEK、NOK、TRY、MXN、THB
+- 表格列调整为：目标币种、汇率、发布日期、同步时间（移除基准币种列）
+- 添加真实的人行汇率数据（2024-09-22），包含25种外币对人民币的汇率
+- 更新JavaScript逻辑，适配新的数据结构（移除baseCurrency字段）
+- 刷新功能调整为按币种生成新数据
+
+**数据特点：**
+- 汇率数据来源：中国人民银行官网2024-09-22发布
+- 币种覆盖：25种主要外币对人民币汇率
+- 汇率精度：保留4位小数
+- 同步时间：2024-09-22 10:00:15
+
+**受影响文件：** `output/exchange-rate-detail.html`
+
+**结果：** 页面完全适配人行汇率结构，展示真实的人行汇率数据，提供准确的汇率查询功能。
+
+### [优化] exchange-rate-detail 发布日期筛选改为日期输入 - 2025-09-24
+**需求：** 将“发布日期”筛选项由下拉列表替换为日期输入，便于按任意发布日期筛选。
+
+**调整：**
+- 将 `<select id="fVersion">` 改为 `<input type="date" id="fVersion">`
+- 事件监听与过滤逻辑保持不变（按 `publishDate` 字符串精确匹配）。
+
+**受影响文件：** `output/exchange-rate-detail.html`
+
+**结果：** 支持直接选择任意发布日期进行筛选，交互更直观。
+
+### [导航] 全站菜单“汇率明细”更名为“中国人民银行汇率” - 2025-09-24
+**调整：** 将所有页面导航下拉中的“汇率明细”链接文案统一修改为“中国人民银行汇率”。
+
+**受影响文件：**
+- `output/index.html`
+- `output/customer-management.html`
+- `output/online-recharge.html`
+- `output/transfer-audit.html`
+- `output/credit-audit.html`
+- `output/transaction-details.html`
+- `output/credit-bill.html`
+- `output/receiving-ledger.html`
+- `output/exchange-rate-detail.html`
+- `output/exchange-rate-config.html`
+
+**结果：** 全站导航命名一致，指向不变（仍为 `exchange-rate-detail.html`）。

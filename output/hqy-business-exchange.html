@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>灏仟亿业务汇率</title>
+  <style>
+    :root { --primary:#2563eb; --bg:#f8fafc; --card:#ffffff; --text:#111827; --muted:#6b7280; --border:#e5e7eb; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Helvetica Neue",sans-serif; background:var(--bg); color:var(--text); }
+    header { background: white; box-shadow: 0 2px 10px rgba(0,0,0,.1); position: sticky; top:0; z-index:1000; }
+    .header-content { display:flex; justify-content:space-between; align-items:center; padding:15px 30px; }
+    .logo { font-size:24px; font-weight:700; color:#2563eb; text-decoration:none; }
+    .nav-menu { display:flex; list-style:none; gap:30px; }
+    .nav-menu li { position:relative; }
+    .nav-menu li a { text-decoration:none; color:#64748b; font-weight:500; padding:10px 15px; border-radius:8px; display:block; }
+    .nav-menu li a:hover, .nav-menu li a.active { color:#2563eb; background:rgba(37,99,235,.1); }
+    .dropdown { position:relative; }
+    .dropdown-content { display:none; position:absolute; top:100%; left:0; background:white; min-width:200px; box-shadow:0 4px 12px rgba(0,0,0,.15); border-radius:8px; z-index:1000; padding:8px 0; border:1px solid #e2e8f0; }
+    .dropdown:hover .dropdown-content { display:block; }
+    .dropdown-content a { padding:12px 20px; display:block; border-radius:0; font-size:14px; }
+    .dropdown-content a:hover { background:rgba(37,99,235,.1); color:#2563eb; }
+
+    .container { max-width:1600px; margin:24px auto; padding:0 16px; }
+    .btn { padding:12px 24px; border:none; border-radius:8px; font-weight:500; cursor:pointer; transition:all .3s ease; font-size:14px; text-decoration:none; display:inline-block; text-align:center; }
+    .btn.primary { background:var(--primary); color:#fff; }
+    .btn.secondary { background:#6b7280; color:#fff; }
+
+    .search-section { background:#fff; padding:25px; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.05); margin-bottom:25px; border:1px solid var(--border); }
+    .search-row { display:flex; gap:20px; align-items:end; flex-wrap:wrap; }
+    .search-group { flex:1; min-width:180px; }
+    .search-group label { display:block; margin-bottom:8px; font-weight:500; color:#374151; }
+    .search-input { width:100%; padding:12px 16px; border:1px solid var(--border); border-radius:8px; font-size:14px; }
+
+    .table-container { background:#fff; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.05); overflow:hidden; border:1px solid var(--border); }
+    .table-header { display:flex; justify-content:space-between; align-items:center; padding:25px; border-bottom:1px solid var(--border); }
+    .table-title { font-size:20px; font-weight:600; color:#1e293b; }
+    .table-actions { display:flex; gap:10px; }
+    .table-wrapper { overflow-x:auto; position:relative; }
+    .transfer-table { width:100%; min-width:1000px; border-collapse:collapse; position:relative; }
+    .transfer-table th, .transfer-table td { padding:12px 10px; text-align:left; border-bottom:1px solid var(--border); font-size:12px; white-space:nowrap; color:#374151; }
+    .transfer-table th { background:#f8fafc; font-weight:600; color:#374151; position:sticky; top:0; z-index:2; }
+
+    .page-header { background:#fff; padding:30px; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.05); margin-bottom:30px; border-left:4px solid #2563eb; }
+    .page-title { font-size:28px; font-weight:700; color:#1e293b; margin-bottom:10px; }
+    .page-description { color:#64748b; font-size:16px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <a href="index.html" class="logo">资金中台</a>
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="index.html">首页</a></li>
+          <li class="dropdown">
+            <a href="customer-management.html">账户管理</a>
+            <div class="dropdown-content">
+              <a href="customer-management.html">账户管理</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="online-recharge.html">转账和收款</a>
+            <div class="dropdown-content">
+              <a href="online-recharge.html">在线充值</a>
+              <a href="transfer-audit.html">转账审核</a>
+              <a href="account-config.html">收款账户</a>
+              <a href="receiving-ledger.html">收款明细</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="transaction-details.html">交易管理</a>
+            <div class="dropdown-content">
+              <a href="transaction-details.html">交易明细</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="credit-audit.html">额度管理</a>
+            <div class="dropdown-content">
+              <a href="credit-audit.html">信用额度</a>
+              <a href="credit-bill.html">额度账单</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="../Public component/button.html" target="_blank">公共组件</a>
+            <div class="dropdown-content">
+              <a href="../Public component/button.html" target="_blank">充值转账组件</a>
+              <a href="../Public component/payment.html" target="_blank">支付组件</a>
+              <a href="../Public component/payment2.html" target="_blank">支付组件(三列)</a>
+              <a href="../Public component/view.html" target="_blank">钱包余额组件</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="exchange-rate-detail.html" class="active">汇率管理</a>
+            <div class="dropdown-content">
+              <a href="exchange-rate-detail.html">中国人民银行汇率</a>
+              <a href="exchange-rate-config.html">汇率浮动配置</a>
+              <a href="hqy-business-exchange.html">灏仟亿业务汇率</a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <div class="container">
+    <div class="page-header">
+      <h1 class="page-title">灏仟亿业务汇率</h1>
+      <p class="page-description">以中国人民银行人民币中间价为桥梁，计算其他币种之间的业务汇率。每半个月更新一次，取前半个月均值，版本格式：yyyymmddyyyymmdd，生成时间通常为每月15日和最后一天。</p>
+    </div>
+
+    <div class="search-section">
+      <div class="search-row">
+        <div class="search-group">
+          <label>源币种</label>
+          <select class="search-input" id="fFrom">
+            <option value="">全部</option>
+          </select>
+        </div>
+        <div class="search-group">
+          <label>目标币种</label>
+          <select class="search-input" id="fTo">
+            <option value="">全部</option>
+          </select>
+        </div>
+        <div class="search-group">
+          <label>版本（起止）</label>
+          <input type="text" class="search-input" id="fVersion" placeholder="例如：2025010120250115" />
+        </div>
+        <div class="search-group">
+          <label>生成时间</label>
+          <input type="date" class="search-input" id="fGeneratedAt" />
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn primary" id="btnSearch">搜索</button>
+          <button class="btn secondary" id="btnReset">重置</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <div class="table-header">
+        <h3 class="table-title">业务汇率列表</h3>
+        <div class="table-actions">
+          <button class="btn primary" id="btnRecalc">重新计算</button>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table id="tblRates" class="transfer-table">
+          <thead>
+            <tr>
+              <th>源币种</th>
+              <th>目标币种</th>
+              <th>业务汇率</th>
+              <th>版本</th>
+              <th>生成时间</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 示例：取若干天的人行CNY中间价（1单位外币兑人民币）用于演示半月均值
+    const supported = ["USD","EUR","JPY","GBP","HKD","AUD","NZD","SGD","CHF","CAD"];
+    const dailyRates = [
+      { date: "2025-01-01", CNY: 1, USD: 7.1000, EUR: 7.9500, JPY: 0.0483, GBP: 9.4800, HKD: 0.9100, AUD: 4.6500, NZD: 4.1000, SGD: 5.5200, CHF: 8.9100, CAD: 5.1000 },
+      { date: "2025-01-05", CNY: 1, USD: 7.1100, EUR: 7.9800, JPY: 0.0482, GBP: 9.5000, HKD: 0.9110, AUD: 4.6700, NZD: 4.1200, SGD: 5.5300, CHF: 8.9300, CAD: 5.1200 },
+      { date: "2025-01-10", CNY: 1, USD: 7.0950, EUR: 7.9650, JPY: 0.0484, GBP: 9.4700, HKD: 0.9090, AUD: 4.6400, NZD: 4.0900, SGD: 5.5100, CHF: 8.9000, CAD: 5.0900 },
+      { date: "2025-01-12", CNY: 1, USD: 7.1077, EUR: 8.0000, JPY: 0.04815, GBP: 9.6106, HKD: 0.9143, AUD: 4.6894, NZD: 4.1630, SGD: 5.5387, CHF: 8.9791, CAD: 5.1363 },
+      { date: "2025-01-15", CNY: 1, USD: 7.1200, EUR: 8.0200, JPY: 0.0481, GBP: 9.6300, HKD: 0.9150, AUD: 4.7000, NZD: 4.1700, SGD: 5.5450, CHF: 8.9900, CAD: 5.1400 }
+    ];
+
+    function getHalfMonthWindow(today = new Date()){
+      const y = today.getFullYear();
+      const m = String(today.getMonth()+1).padStart(2,'0');
+      const d = today.getDate();
+      const first = `${y}${m}01`;
+      const fifteenth = `${y}${m}15`;
+      const lastDay = new Date(y, today.getMonth()+1, 0).getDate();
+      const sixteenth = `${y}${m}16`;
+      const last = `${y}${m}${String(lastDay).padStart(2,'0')}`;
+      if (d <= 15) {
+        return { start:first, end:fifteenth, plannedGen:`${y}-${m}-15 10:00:00` };
+      } else {
+        return { start:sixteenth, end:last, plannedGen:`${y}-${m}-${String(lastDay).padStart(2,'0')} 10:00:00` };
+      }
+    }
+
+    function averageRatesWithin(startStr, endStr){
+      const start = new Date(`${startStr.slice(0,4)}-${startStr.slice(4,6)}-${startStr.slice(6,8)}`);
+      const end = new Date(`${endStr.slice(0,4)}-${endStr.slice(4,6)}-${endStr.slice(6,8)}`);
+      const span = dailyRates.filter(x=>{
+        const d = new Date(x.date);
+        return d >= start && d <= end;
+      });
+      const avg = {};
+      supported.forEach(ccy=>{
+        const arr = span.map(x=>x[ccy]).filter(v=>typeof v==='number');
+        avg[ccy] = arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : undefined;
+      });
+      return avg; // 外币→CNY 平均中间价（1单位外币兑人民币）
+    }
+
+    function buildBusinessRates(){
+      const { start, end, plannedGen } = getHalfMonthWindow(new Date());
+      const version = `${start}${end}`;
+      const avg = averageRatesWithin(start, end);
+      const rows = [];
+      // 通过人行中间价作为桥：A→B = (A→CNY) / (B→CNY)
+      for (let i=0;i<supported.length;i++){
+        for (let j=0;j<supported.length;j++){
+          if (i===j) continue;
+          const from = supported[i];
+          const to = supported[j];
+          const a = avg[from];
+          const b = avg[to];
+          if (typeof a==='number' && typeof b==='number' && b>0){
+            rows.push({ from, to, rate: a/b, version, generatedAt: plannedGen });
+          }
+        }
+      }
+      return rows;
+    }
+
+    const tbody = document.querySelector('#tblRates tbody');
+    let businessRates = [];
+
+    function fillCurrencyOptions(){
+      const fromSel = document.getElementById('fFrom');
+      const toSel = document.getElementById('fTo');
+      supported.forEach(c=>{
+        const o1 = document.createElement('option'); o1.value=c; o1.textContent=c; fromSel.appendChild(o1);
+        const o2 = document.createElement('option'); o2.value=c; o2.textContent=c; toSel.appendChild(o2);
+      });
+    }
+
+    function render(){
+      tbody.innerHTML='';
+      const fFrom = document.getElementById('fFrom').value;
+      const fTo = document.getElementById('fTo').value;
+      const fVersion = document.getElementById('fVersion').value.trim();
+      const fGen = document.getElementById('fGeneratedAt').value;
+      const list = businessRates.filter(r=>{
+        if (fFrom && r.from!==fFrom) return false;
+        if (fTo && r.to!==fTo) return false;
+        if (fVersion && r.version!==fVersion) return false;
+        if (fGen && !r.generatedAt.startsWith(fGen)) return false;
+        return true;
+      });
+      list.forEach(r=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.from}</td>
+          <td>${r.to}</td>
+          <td>${r.rate.toFixed(6)}</td>
+          <td>${r.version}</td>
+          <td>${r.generatedAt}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.getElementById('btnSearch').addEventListener('click', render);
+    document.getElementById('btnReset').addEventListener('click', ()=>{
+      document.getElementById('fFrom').value='';
+      document.getElementById('fTo').value='';
+      document.getElementById('fVersion').value='';
+      document.getElementById('fGeneratedAt').value='';
+      render();
+    });
+    document.getElementById('btnRecalc').addEventListener('click', ()=>{
+      businessRates = buildBusinessRates();
+      render();
+    });
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+      fillCurrencyOptions();
+      businessRates = buildBusinessRates();
+      render();
+    });
+  </script>
+</body>
+</html>
+
+
