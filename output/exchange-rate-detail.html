@@ -43,6 +43,23 @@
       font-size: 16px;
     }
 
+    /* 分页样式 */
+    .pagination-controls { display:flex; align-items:center; gap:8px; }
+    .page-size-select { padding:6px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px; }
+    .pagination-container { display:flex; justify-content:space-between; align-items:center; padding:20px 25px; border-top:1px solid var(--border); background:#f8fafc; }
+    .pagination-left { display:flex; align-items:center; gap:20px; }
+    .pagination-info { color:#64748b; font-size:14px; }
+    .pagination { display:flex; align-items:center; gap:8px; }
+    .pagination-btn { padding:8px 12px; border:1px solid var(--border); background:white; border-radius:6px; cursor:pointer; font-size:14px; transition:all 0.2s; }
+    .pagination-btn:hover:not(:disabled) { background:#f1f5f9; border-color:#cbd5e1; }
+    .pagination-btn:disabled { opacity:0.5; cursor:not-allowed; }
+    .pagination-btn.active { background:var(--primary); color:white; border-color:var(--primary); }
+    .page-numbers { display:flex; gap:4px; }
+    .page-jump { display:flex; align-items:center; gap:8px; margin-left:20px; }
+    .jump-input { width:60px; padding:6px 8px; border:1px solid var(--border); border-radius:4px; text-align:center; font-size:14px; }
+    .jump-btn { padding:6px 12px; border:1px solid var(--primary); background:var(--primary); color:white; border-radius:4px; cursor:pointer; font-size:14px; }
+    .jump-btn:hover { background:#1d4ed8; }
+
     /* 与现有页面一致的容器与控件样式 */
     .container { max-width:1600px; margin:24px auto; padding:0 16px; }
     .btn { padding:12px 24px; border:none; border-radius:8px; font-weight:500; cursor:pointer; transition:all .3s ease; font-size:14px; text-decoration:none; display:inline-block; text-align:center; }
@@ -142,6 +159,7 @@
             <div class="dropdown-content">
               <a href="exchange-rate-detail.html">中国人民银行汇率</a>
               <a href="exchange-rate-config.html">汇率浮动配置</a>
+              <a href="hqy-business-exchange.html">灏仟亿业务汇率</a>
             </div>
           </li>
         </ul>
@@ -230,6 +248,34 @@
           <tbody></tbody>
         </table>
       </div>
+      <div class="pagination-container">
+        <div class="pagination-left">
+          <div class="pagination-controls">
+            <span>每页显示：</span>
+            <select id="pageSize" class="page-size-select">
+              <option value="10">10条</option>
+              <option value="20">20条</option>
+              <option value="50">50条</option>
+              <option value="100">100条</option>
+            </select>
+          </div>
+          <div class="pagination-info">
+            <span id="paginationInfo">显示第 1-10 条，共 25 条记录</span>
+          </div>
+        </div>
+        <div class="pagination">
+          <button id="firstPage" class="pagination-btn">首页</button>
+          <button id="prevPage" class="pagination-btn">上一页</button>
+          <div id="pageNumbers" class="page-numbers"></div>
+          <button id="nextPage" class="pagination-btn">下一页</button>
+          <button id="lastPage" class="pagination-btn">末页</button>
+          <div class="page-jump">
+            <span>跳转到</span>
+            <input type="number" id="jumpToPage" class="jump-input" min="1" placeholder="页码">
+            <button id="jumpBtn" class="jump-btn">跳转</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -266,6 +312,9 @@
     ];
 
     const tbody = document.querySelector('#tblRates tbody');
+    let currentPage = 1;
+    let pageSize = 10;
+    let filteredData = [];
 
     function formatRate(rate) {
       return rate.toFixed(4);
@@ -275,22 +324,28 @@
       return publishDate;
     }
 
-    function render() {
-      tbody.innerHTML = '';
-      
+    function filterData() {
       const targetCurrency = document.getElementById('fTargetCurrency').value;
       const date = document.getElementById('fDate').value;
       const publishDate = document.getElementById('fVersion').value;
 
-      // 过滤数据
-      const filteredData = exchangeRates.filter(rate => {
+      filteredData = exchangeRates.filter(rate => {
         if (targetCurrency && rate.targetCurrency !== targetCurrency) return false;
         if (date && !rate.syncTime.startsWith(date)) return false;
         if (publishDate && rate.publishDate !== publishDate) return false;
         return true;
       });
+      currentPage = 1; // 重置到第一页
+    }
 
-      filteredData.forEach(rate => {
+    function render() {
+      tbody.innerHTML = '';
+      
+      const startIndex = (currentPage - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      const pageData = filteredData.slice(startIndex, endIndex);
+      
+      pageData.forEach(rate => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${rate.targetCurrency}</td>
@@ -300,6 +355,58 @@
         `;
         tbody.appendChild(tr);
       });
+      
+      updatePagination();
+    }
+
+    function updatePagination(){
+      const totalPages = Math.ceil(filteredData.length / pageSize);
+      const startIndex = (currentPage - 1) * pageSize + 1;
+      const endIndex = Math.min(currentPage * pageSize, filteredData.length);
+      
+      // 更新分页信息
+      document.getElementById('paginationInfo').textContent = 
+        `显示第 ${startIndex}-${endIndex} 条，共 ${filteredData.length} 条记录`;
+      
+      // 更新按钮状态
+      document.getElementById('firstPage').disabled = currentPage === 1;
+      document.getElementById('prevPage').disabled = currentPage === 1;
+      document.getElementById('nextPage').disabled = currentPage === totalPages;
+      document.getElementById('lastPage').disabled = currentPage === totalPages;
+      
+      // 更新页码按钮
+      const pageNumbers = document.getElementById('pageNumbers');
+      pageNumbers.innerHTML = '';
+      
+      const maxVisiblePages = 5;
+      let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+      let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+      
+      if (endPage - startPage + 1 < maxVisiblePages) {
+        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+      }
+      
+      for (let i = startPage; i <= endPage; i++) {
+        const btn = document.createElement('button');
+        btn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
+        btn.textContent = i;
+        btn.onclick = () => goToPage(i);
+        pageNumbers.appendChild(btn);
+      }
+    }
+
+    function goToPage(page){
+      const totalPages = Math.ceil(filteredData.length / pageSize);
+      if (page >= 1 && page <= totalPages) {
+        currentPage = page;
+        render();
+      }
+    }
+
+    function changePageSize(newSize){
+      pageSize = parseInt(newSize);
+      currentPage = 1;
+      render();
     }
 
     function showToast(text) {
@@ -359,12 +466,44 @@
     document.getElementById('fDate').addEventListener('change', render);
     document.getElementById('fVersion').addEventListener('change', render);
 
-    document.getElementById('btnSearch').addEventListener('click', render);
+    document.getElementById('btnSearch').addEventListener('click', ()=>{
+      filterData();
+      render();
+    });
     document.getElementById('btnReset').addEventListener('click', () => {
       document.getElementById('fTargetCurrency').value = '';
       document.getElementById('fDate').value = '';
       document.getElementById('fVersion').value = '';
+      filterData();
       render();
+    });
+
+    // 分页事件监听
+    document.getElementById('pageSize').addEventListener('change', (e)=>{
+      changePageSize(e.target.value);
+    });
+    document.getElementById('firstPage').addEventListener('click', ()=>goToPage(1));
+    document.getElementById('prevPage').addEventListener('click', ()=>goToPage(currentPage - 1));
+    document.getElementById('nextPage').addEventListener('click', ()=>goToPage(currentPage + 1));
+    document.getElementById('lastPage').addEventListener('click', ()=>{
+      const totalPages = Math.ceil(filteredData.length / pageSize);
+      goToPage(totalPages);
+    });
+    document.getElementById('jumpBtn').addEventListener('click', ()=>{
+      const page = parseInt(document.getElementById('jumpToPage').value);
+      if (page) {
+        goToPage(page);
+        document.getElementById('jumpToPage').value = '';
+      }
+    });
+    document.getElementById('jumpToPage').addEventListener('keypress', (e)=>{
+      if (e.key === 'Enter') {
+        const page = parseInt(e.target.value);
+        if (page) {
+          goToPage(page);
+          e.target.value = '';
+        }
+      }
     });
 
     document.getElementById('btnRefresh').addEventListener('click', refreshRates);
@@ -378,6 +517,7 @@
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('fDate').value = today;
       
+      filterData();
       render();
     });
   </script>
