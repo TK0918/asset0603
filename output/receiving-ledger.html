@@ -146,6 +146,23 @@
       position: relative;
     }
 
+    /* 分页样式 */
+    .pagination-controls { display:flex; align-items:center; gap:8px; }
+    .page-size-select { padding:6px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px; }
+    .pagination-container { display:flex; justify-content:space-between; align-items:center; padding:20px 25px; border-top:1px solid var(--border); background:#f8fafc; }
+    .pagination-left { display:flex; align-items:center; gap:20px; }
+    .pagination-info { color:#64748b; font-size:14px; }
+    .pagination { display:flex; align-items:center; gap:8px; }
+    .pagination-btn { padding:8px 12px; border:1px solid var(--border); background:white; border-radius:6px; cursor:pointer; font-size:14px; transition:all 0.2s; }
+    .pagination-btn:hover:not(:disabled) { background:#f1f5f9; border-color:#cbd5e1; }
+    .pagination-btn:disabled { opacity:0.5; cursor:not-allowed; }
+    .pagination-btn.active { background:var(--primary); color:white; border-color:var(--primary); }
+    .page-numbers { display:flex; gap:4px; }
+    .page-jump { display:flex; align-items:center; gap:8px; margin-left:20px; }
+    .jump-input { width:60px; padding:6px 8px; border:1px solid var(--border); border-radius:4px; text-align:center; font-size:14px; }
+    .jump-btn { padding:6px 12px; border:1px solid var(--primary); background:var(--primary); color:white; border-radius:4px; cursor:pointer; font-size:14px; }
+    .jump-btn:hover { background:#1d4ed8; }
+
     .receiving-table {
       width: 100%;
       min-width: 2200px;
@@ -483,6 +500,34 @@
           <tbody></tbody>
         </table>
       </div>
+      <div class="pagination-container">
+        <div class="pagination-left">
+          <div class="pagination-controls">
+            <span>每页显示：</span>
+            <select id="pageSize" class="page-size-select">
+              <option value="10">10条</option>
+              <option value="20">20条</option>
+              <option value="50">50条</option>
+              <option value="100">100条</option>
+            </select>
+          </div>
+          <div class="pagination-info">
+            <span id="paginationInfo">显示第 1-10 条，共 60 条记录</span>
+          </div>
+        </div>
+        <div class="pagination">
+          <button id="firstPage" class="pagination-btn">首页</button>
+          <button id="prevPage" class="pagination-btn">上一页</button>
+          <div id="pageNumbers" class="page-numbers"></div>
+          <button id="nextPage" class="pagination-btn">下一页</button>
+          <button id="lastPage" class="pagination-btn">末页</button>
+          <div class="page-jump">
+            <span>跳转到</span>
+            <input type="number" id="jumpToPage" class="jump-input" min="1" placeholder="页码">
+            <button id="jumpBtn" class="jump-btn">跳转</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   </div>
@@ -818,10 +863,16 @@
 
     const tbody = document.querySelector('#tbl tbody');
     function fmt(n){ return Number(n).toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2}); }
+    // 分页变量
+    let currentPage = 1;
+    let pageSize = 10;
+
     function render(){
       console.log('开始渲染，数据条数:', rows.length);
       tbody.innerHTML = '';
-      rows.forEach(r=>{
+      const startIndex = (currentPage-1)*pageSize;
+      const endIndex = startIndex + pageSize;
+      rows.slice(startIndex,endIndex).forEach(r=>{
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${r.platform}</td>
@@ -843,7 +894,26 @@
       });
       console.log('渲染完成，表格行数:', tbody.children.length);
       try{ localStorage.setItem('receivingLedgerRows', JSON.stringify(rows)); }catch(err){}
+      updatePagination();
     }
+
+    function updatePagination(){
+      const total = rows.length;
+      const totalPages = Math.max(1, Math.ceil(total/pageSize));
+      if(currentPage>totalPages) currentPage=totalPages;
+      const start = total===0?0:(currentPage-1)*pageSize + 1;
+      const end = Math.min(currentPage*pageSize, total);
+      document.getElementById('paginationInfo').textContent = `显示第 ${start}-${end} 条，共 ${total} 条记录`;
+      document.getElementById('firstPage').disabled = currentPage===1;
+      document.getElementById('prevPage').disabled = currentPage===1;
+      document.getElementById('nextPage').disabled = currentPage===totalPages;
+      document.getElementById('lastPage').disabled = currentPage===totalPages;
+      const pn = document.getElementById('pageNumbers');
+      pn.innerHTML='';
+      const maxVisible = 5; let sp=Math.max(1,currentPage-Math.floor(maxVisible/2)); let ep=Math.min(totalPages, sp+maxVisible-1); if(ep-sp+1<maxVisible) sp=Math.max(1, ep-maxVisible+1);
+      for(let i=sp;i<=ep;i++){ const b=document.createElement('button'); b.className=`pagination-btn ${i===currentPage?'active':''}`; b.textContent=i; b.onclick=()=>goToPage(i); pn.appendChild(b); }
+    }
+    function goToPage(p){ const totalPages = Math.max(1, Math.ceil(rows.length/pageSize)); if(p>=1 && p<=totalPages){ currentPage=p; render(); } }
 
 
     function openDetail(row){
@@ -1145,7 +1215,15 @@
       initStorage();
       
       // 渲染数据
-    render();
+      render();
+      // 绑定分页事件
+      document.getElementById('pageSize').addEventListener('change', (e)=>{ pageSize=parseInt(e.target.value); currentPage=1; render(); });
+      document.getElementById('firstPage').addEventListener('click', ()=>goToPage(1));
+      document.getElementById('prevPage').addEventListener('click', ()=>goToPage(currentPage-1));
+      document.getElementById('nextPage').addEventListener('click', ()=>goToPage(currentPage+1));
+      document.getElementById('lastPage').addEventListener('click', ()=>{ const tp=Math.max(1, Math.ceil(rows.length/pageSize)); goToPage(tp); });
+      document.getElementById('jumpBtn').addEventListener('click', ()=>{ const v=parseInt(document.getElementById('jumpToPage').value); if(v) goToPage(v); });
+      document.getElementById('jumpToPage').addEventListener('keypress', (e)=>{ if(e.key==='Enter'){ const v=parseInt(e.target.value); if(v) goToPage(v);} });
       
       // 页面加载动画
       const rows = document.querySelectorAll('tbody tr');

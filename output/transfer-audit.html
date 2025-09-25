@@ -130,6 +130,23 @@
       font-size: 16px;
     }
 
+    /* 分页样式 */
+    .pagination-controls { display:flex; align-items:center; gap:8px; }
+    .page-size-select { padding:6px 12px; border:1px solid #e2e8f0; border-radius:6px; font-size:14px; }
+    .pagination-container { display:flex; justify-content:space-between; align-items:center; padding:20px 25px; border-top:1px solid #e2e8f0; background:#f8fafc; }
+    .pagination-left { display:flex; align-items:center; gap:20px; }
+    .pagination-info { color:#64748b; font-size:14px; }
+    .pagination { display:flex; align-items:center; gap:8px; }
+    .pagination-btn { padding:8px 12px; border:1px solid #e2e8f0; background:white; border-radius:6px; cursor:pointer; font-size:14px; transition:all 0.2s; }
+    .pagination-btn:hover:not(:disabled) { background:#f1f5f9; border-color:#cbd5e1; }
+    .pagination-btn:disabled { opacity:0.5; cursor:not-allowed; }
+    .pagination-btn.active { background:#2563eb; color:white; border-color:#2563eb; }
+    .page-numbers { display:flex; gap:4px; }
+    .page-jump { display:flex; align-items:center; gap:8px; margin-left:20px; }
+    .jump-input { width:60px; padding:6px 8px; border:1px solid #e2e8f0; border-radius:4px; text-align:center; font-size:14px; }
+    .jump-btn { padding:6px 12px; border:1px solid #2563eb; background:#2563eb; color:white; border-radius:4px; cursor:pointer; font-size:14px; }
+    .jump-btn:hover { background:#1d4ed8; }
+
     .stats-cards {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -803,6 +820,34 @@
             </tr>
           </tbody>
         </table>
+      </div>
+      <div class="pagination-container">
+        <div class="pagination-left">
+          <div class="pagination-controls">
+            <span>每页显示：</span>
+            <select id="pageSize" class="page-size-select">
+              <option value="10">10条</option>
+              <option value="20">20条</option>
+              <option value="50">50条</option>
+              <option value="100">100条</option>
+            </select>
+          </div>
+          <div class="pagination-info">
+            <span id="paginationInfo">显示第 1-4 条，共 4 条记录</span>
+          </div>
+        </div>
+        <div class="pagination">
+          <button id="firstPage" class="pagination-btn">首页</button>
+          <button id="prevPage" class="pagination-btn">上一页</button>
+          <div id="pageNumbers" class="page-numbers"></div>
+          <button id="nextPage" class="pagination-btn">下一页</button>
+          <button id="lastPage" class="pagination-btn">末页</button>
+          <div class="page-jump">
+            <span>跳转到</span>
+            <input type="number" id="jumpToPage" class="jump-input" min="1" placeholder="页码">
+            <button id="jumpBtn" class="jump-btn">跳转</button>
+          </div>
+        </div>
       </div>
     </div>
   </main>
@@ -1602,17 +1647,57 @@
 
     // 页面加载动画
     document.addEventListener('DOMContentLoaded', function() {
-      const rows = document.querySelectorAll('tbody tr');
-      rows.forEach((row, index) => {
-        row.style.opacity = '0';
-        row.style.transform = 'translateY(20px)';
-        setTimeout(() => {
-          row.style.transition = 'all 0.3s ease';
-          row.style.opacity = '1';
-          row.style.transform = 'translateY(0)';
-        }, index * 100);
-      });
+      // 初始化分页
+      initPagination();
+      animateRows();
     });
+
+    // 分页：基于现有DOM行进行分页隐藏/显示
+    let currentPage = 1;
+    let pageSize = 10;
+    let allRows = [];
+    function initPagination(){
+      const tbody = document.querySelector('.transfer-table tbody');
+      allRows = Array.from(tbody.querySelectorAll('tr'));
+      renderPage();
+      // 事件监听
+      document.getElementById('pageSize').addEventListener('change', (e)=>{ pageSize=parseInt(e.target.value); currentPage=1; renderPage(); });
+      document.getElementById('firstPage').addEventListener('click', ()=>goToPage(1));
+      document.getElementById('prevPage').addEventListener('click', ()=>goToPage(currentPage-1));
+      document.getElementById('nextPage').addEventListener('click', ()=>goToPage(currentPage+1));
+      document.getElementById('lastPage').addEventListener('click', ()=>{ const tp = Math.max(1, Math.ceil(allRows.length/pageSize)); goToPage(tp); });
+      document.getElementById('jumpBtn').addEventListener('click', ()=>{ const v=parseInt(document.getElementById('jumpToPage').value); if(v) goToPage(v); });
+      document.getElementById('jumpToPage').addEventListener('keypress', (e)=>{ if(e.key==='Enter'){ const v=parseInt(e.target.value); if(v) goToPage(v);} });
+    }
+    function renderPage(){
+      const total = allRows.length;
+      const totalPages = Math.max(1, Math.ceil(total/pageSize));
+      if(currentPage>totalPages) currentPage=totalPages;
+      const startIndex = (currentPage-1)*pageSize;
+      const endIndex = startIndex + pageSize;
+      allRows.forEach((tr,idx)=>{ tr.style.display = (idx>=startIndex && idx<endIndex) ? '' : 'none'; });
+      // 更新信息与页码
+      const start = total===0?0:startIndex+1;
+      const end = Math.min(endIndex,total);
+      const info = document.getElementById('paginationInfo'); if(info) info.textContent = `显示第 ${start}-${end} 条，共 ${total} 条记录`;
+      const fp=document.getElementById('firstPage'), pp=document.getElementById('prevPage'), np=document.getElementById('nextPage'), lp=document.getElementById('lastPage');
+      if(fp){ fp.disabled = currentPage===1; }
+      if(pp){ pp.disabled = currentPage===1; }
+      if(np){ np.disabled = currentPage===totalPages; }
+      if(lp){ lp.disabled = currentPage===totalPages; }
+      const pn = document.getElementById('pageNumbers'); if(pn){
+        pn.innerHTML='';
+        const maxVisible=5; let sp=Math.max(1,currentPage-Math.floor(maxVisible/2)); let ep=Math.min(totalPages, sp+maxVisible-1); if(ep-sp+1<maxVisible) sp=Math.max(1, ep-maxVisible+1);
+        for(let i=sp;i<=ep;i++){ const b=document.createElement('button'); b.className=`pagination-btn ${i===currentPage?'active':''}`; b.textContent=i; b.onclick=()=>goToPage(i); pn.appendChild(b);} }
+    }
+    function goToPage(p){ const tp=Math.max(1, Math.ceil(allRows.length/pageSize)); if(p>=1 && p<=tp){ currentPage=p; renderPage(); } }
+    function animateRows(){
+      const visibleRows = Array.from(document.querySelectorAll('.transfer-table tbody tr')).filter(tr=>tr.style.display!=="none");
+      visibleRows.forEach((row, index) => {
+        row.style.opacity = '0'; row.style.transform = 'translateY(20px)';
+        setTimeout(() => { row.style.transition = 'all 0.3s ease'; row.style.opacity = '1'; row.style.transform = 'translateY(0)'; }, index * 60);
+      });
+    }
   </script>
 </body>
 </html> 

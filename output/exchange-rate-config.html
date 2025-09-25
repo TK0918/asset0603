@@ -78,6 +78,22 @@
     .transfer-table th, .transfer-table td { padding:12px 10px; text-align:left; border-bottom:1px solid var(--border); font-size:12px; white-space:nowrap; color:#374151; }
     .transfer-table th { background:#f8fafc; font-weight:600; color:#374151; position:sticky; top:0; z-index:2; }
     .transfer-table tr:hover { background:#f8fafc; }
+    /* 分页样式 */
+    .pagination-controls { display:flex; align-items:center; gap:8px; }
+    .page-size-select { padding:6px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px; }
+    .pagination-container { display:flex; justify-content:space-between; align-items:center; padding:20px 25px; border-top:1px solid var(--border); background:#f8fafc; }
+    .pagination-left { display:flex; align-items:center; gap:20px; }
+    .pagination-info { color:#64748b; font-size:14px; }
+    .pagination { display:flex; align-items:center; gap:8px; }
+    .pagination-btn { padding:8px 12px; border:1px solid var(--border); background:white; border-radius:6px; cursor:pointer; font-size:14px; transition:all 0.2s; }
+    .pagination-btn:hover:not(:disabled) { background:#f1f5f9; border-color:#cbd5e1; }
+    .pagination-btn:disabled { opacity:0.5; cursor:not-allowed; }
+    .pagination-btn.active { background:var(--primary); color:white; border-color:var(--primary); }
+    .page-numbers { display:flex; gap:4px; }
+    .page-jump { display:flex; align-items:center; gap:8px; margin-left:20px; }
+    .jump-input { width:60px; padding:6px 8px; border:1px solid var(--border); border-radius:4px; text-align:center; font-size:14px; }
+    .jump-btn { padding:6px 12px; border:1px solid var(--primary); background:var(--primary); color:white; border-radius:4px; cursor:pointer; font-size:14px; }
+    .jump-btn:hover { background:#1d4ed8; }
     
     .config-type { padding:2px 8px; border-radius:999px; font-size:12px; font-weight:500; }
     .config-type.percentage { background:#e0f2fe; color:#0277bd; }
@@ -257,6 +273,34 @@
           <tbody></tbody>
         </table>
       </div>
+      <div class="pagination-container">
+        <div class="pagination-left">
+          <div class="pagination-controls">
+            <span>每页显示：</span>
+            <select id="pageSize" class="page-size-select">
+              <option value="10">10条</option>
+              <option value="20">20条</option>
+              <option value="50">50条</option>
+              <option value="100">100条</option>
+            </select>
+          </div>
+          <div class="pagination-info">
+            <span id="paginationInfo">显示第 1-4 条，共 4 条记录</span>
+          </div>
+        </div>
+        <div class="pagination">
+          <button id="firstPage" class="pagination-btn">首页</button>
+          <button id="prevPage" class="pagination-btn">上一页</button>
+          <div id="pageNumbers" class="page-numbers"></div>
+          <button id="nextPage" class="pagination-btn">下一页</button>
+          <button id="lastPage" class="pagination-btn">末页</button>
+          <div class="page-jump">
+            <span>跳转到</span>
+            <input type="number" id="jumpToPage" class="jump-input" min="1" placeholder="页码">
+            <button id="jumpBtn" class="jump-btn">跳转</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -415,44 +459,68 @@
       return status === 'active' ? '启用' : '停用';
     }
 
-    function render() {
-      tbody.innerHTML = '';
-      
+    let currentPage = 1;
+    let pageSize = 10;
+    let filteredData = [];
+
+    function applyFilter(){
       const baseCurrency = document.getElementById('fBaseCurrency').value;
       const targetCurrency = document.getElementById('fTargetCurrency').value;
       const configType = document.getElementById('fConfigType').value;
       const status = document.getElementById('fStatus').value;
-
-      // 过滤数据
-      const filteredData = rateConfigs.filter(config => {
+      filteredData = rateConfigs.filter(config => {
         if (baseCurrency && config.baseCurrency !== baseCurrency) return false;
         if (targetCurrency && config.targetCurrency !== targetCurrency) return false;
         if (configType && config.configType !== configType) return false;
         if (status && config.status !== status) return false;
         return true;
       });
+      currentPage = 1;
+    }
 
-      filteredData.forEach(config => {
+    function render() {
+      tbody.innerHTML = '';
+      const startIndex = (currentPage-1)*pageSize;
+      const endIndex = startIndex + pageSize;
+      filteredData.slice(startIndex,endIndex).forEach(config => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td><input type="checkbox" class="row-checkbox" data-id="${config.id}" /></td>
+          <td><input type=\"checkbox\" class=\"row-checkbox\" data-id=\"${config.id}\" /></td>
           <td>${config.baseCurrency}</td>
           <td>${config.targetCurrency}</td>
-          <td><span class="config-type ${getConfigTypeClass(config.configType)}">${getConfigTypeText(config.configType)}</span></td>
+          <td><span class=\"config-type ${getConfigTypeClass(config.configType)}\">${getConfigTypeText(config.configType)}</span></td>
           <td>${formatValue(config.configType, config.value)}</td>
-          <td><span class="status ${getStatusClass(config.status)}">${getStatusText(config.status)}</span></td>
+          <td><span class=\"status ${getStatusClass(config.status)}\">${getStatusText(config.status)}</span></td>
           <td>${config.updateUser || '-'}</td>
           <td>${config.createTime}</td>
           <td>${config.updateTime}</td>
           <td>
-            <button class="btn btn-sm ghost" data-act="edit" data-id="${config.id}">编辑</button>
-            <button class="btn btn-sm secondary" data-act="toggle" data-id="${config.id}">${config.status === 'active' ? '停用' : '启用'}</button>
-            <button class="btn btn-sm secondary" data-act="delete" data-id="${config.id}">删除</button>
+            <button class=\"btn btn-sm ghost\" data-act=\"edit\" data-id=\"${config.id}\">编辑</button>
+            <button class=\"btn btn-sm secondary\" data-act=\"toggle\" data-id=\"${config.id}\">${config.status === 'active' ? '停用' : '启用'}</button>
+            <button class=\"btn btn-sm secondary\" data-act=\"delete\" data-id=\"${config.id}\">删除</button>
           </td>
         `;
         tbody.appendChild(tr);
       });
+      updatePagination();
     }
+
+    function updatePagination(){
+      const total = filteredData.length;
+      const totalPages = Math.max(1, Math.ceil(total/pageSize));
+      if(currentPage>totalPages) currentPage = totalPages;
+      const start = total===0?0:(currentPage-1)*pageSize + 1;
+      const end = Math.min(currentPage*pageSize, total);
+      document.getElementById('paginationInfo').textContent = `显示第 ${start}-${end} 条，共 ${total} 条记录`;
+      document.getElementById('firstPage').disabled = currentPage===1;
+      document.getElementById('prevPage').disabled = currentPage===1;
+      document.getElementById('nextPage').disabled = currentPage===totalPages;
+      document.getElementById('lastPage').disabled = currentPage===totalPages;
+      const pn = document.getElementById('pageNumbers'); pn.innerHTML='';
+      const maxVisible=5; let sp=Math.max(1,currentPage-Math.floor(maxVisible/2)); let ep=Math.min(totalPages, sp+maxVisible-1); if(ep-sp+1<maxVisible) sp=Math.max(1, ep-maxVisible+1);
+      for(let i=sp;i<=ep;i++){ const b=document.createElement('button'); b.className=`pagination-btn ${i===currentPage?'active':''}`; b.textContent=i; b.onclick=()=>goToPage(i); pn.appendChild(b);}    
+    }
+    function goToPage(p){ const tp=Math.max(1, Math.ceil(filteredData.length/pageSize)); if(p>=1 && p<=tp){ currentPage=p; render(); } }
 
     function showToast(text) {
       const toast = document.getElementById('toast');
@@ -530,12 +598,13 @@
     document.getElementById('fConfigType').addEventListener('change', render);
     document.getElementById('fStatus').addEventListener('change', render);
 
-    document.getElementById('btnSearch').addEventListener('click', render);
+    document.getElementById('btnSearch').addEventListener('click', ()=>{ applyFilter(); render(); });
     document.getElementById('btnReset').addEventListener('click', () => {
       document.getElementById('fBaseCurrency').value = '';
       document.getElementById('fTargetCurrency').value = '';
       document.getElementById('fConfigType').value = '';
       document.getElementById('fStatus').value = '';
+      applyFilter();
       render();
     });
 
@@ -721,7 +790,16 @@
 
     // 初始化页面
     document.addEventListener('DOMContentLoaded', () => {
+      applyFilter();
       render();
+      // 分页事件
+      document.getElementById('pageSize').addEventListener('change', (e)=>{ pageSize=parseInt(e.target.value); currentPage=1; render(); });
+      document.getElementById('firstPage').addEventListener('click', ()=>goToPage(1));
+      document.getElementById('prevPage').addEventListener('click', ()=>goToPage(currentPage-1));
+      document.getElementById('nextPage').addEventListener('click', ()=>goToPage(currentPage+1));
+      document.getElementById('lastPage').addEventListener('click', ()=>{ const tp=Math.max(1, Math.ceil(filteredData.length/pageSize)); goToPage(tp); });
+      document.getElementById('jumpBtn').addEventListener('click', ()=>{ const v=parseInt(document.getElementById('jumpToPage').value); if(v) goToPage(v); });
+      document.getElementById('jumpToPage').addEventListener('keypress', (e)=>{ if(e.key==='Enter'){ const v=parseInt(e.target.value); if(v) goToPage(v);} });
     });
   </script>
 </body>

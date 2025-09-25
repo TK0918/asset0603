@@ -2822,6 +2822,10 @@ document.addEventListener('DOMContentLoaded', async function() {
 ### 修改内容
 - 将灏仟亿业务汇率页面的分页逻辑复制到其他页面
 - 已完成exchange-rate-detail.html分页功能
+- 已完成online-recharge.html分页功能
+- 已完成transfer-audit.html分页功能（基于现有DOM行分页显示）
+- 已完成receiving-ledger.html分页功能（与导出/本地存储兼容）
+- 已完成exchange-rate-config.html分页功能（与筛选联动）
 - 分页功能包括：每页显示条数选择、分页导航、跳转功能
 - 分页样式统一，支持响应式布局
 - 分页与现有筛选功能完美结合

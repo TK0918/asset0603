@@ -130,6 +130,23 @@
       font-size: 16px;
     }
 
+    /* 分页样式 */
+    .pagination-controls { display:flex; align-items:center; gap:8px; }
+    .page-size-select { padding:6px 12px; border:1px solid #e2e8f0; border-radius:6px; font-size:14px; }
+    .pagination-container { display:flex; justify-content:space-between; align-items:center; padding:20px 25px; border-top:1px solid #e2e8f0; background:#f8fafc; }
+    .pagination-left { display:flex; align-items:center; gap:20px; }
+    .pagination-info { color:#64748b; font-size:14px; }
+    .pagination { display:flex; align-items:center; gap:8px; }
+    .pagination-btn { padding:8px 12px; border:1px solid #e2e8f0; background:white; border-radius:6px; cursor:pointer; font-size:14px; transition:all 0.2s; }
+    .pagination-btn:hover:not(:disabled) { background:#f1f5f9; border-color:#cbd5e1; }
+    .pagination-btn:disabled { opacity:0.5; cursor:not-allowed; }
+    .pagination-btn.active { background:#2563eb; color:white; border-color:#2563eb; }
+    .page-numbers { display:flex; gap:4px; }
+    .page-jump { display:flex; align-items:center; gap:8px; margin-left:20px; }
+    .jump-input { width:60px; padding:6px 8px; border:1px solid #e2e8f0; border-radius:4px; text-align:center; font-size:14px; }
+    .jump-btn { padding:6px 12px; border:1px solid #2563eb; background:#2563eb; color:white; border-radius:4px; cursor:pointer; font-size:14px; }
+    .jump-btn:hover { background:#1d4ed8; }
+
     /* Search Section */
     .search-section {
       background: white;
@@ -306,68 +323,161 @@
               <th width="140px">支付平台手续费</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>US001</td>
-              <td><span class="business-tag">Advertising</span></td>
-              <td><span class="platform-tag">Stripe</span></td>
-              <td><span class="status-badge status-success">支付成功</span></td>
-              <td>2024-01-15 10:20</td>
-              <td>2024-01-15 10:22</td>
-              <td>USD</td>
-              <td class="amount-large amount-positive">1,000.00</td>
-              <td>USD</td>
-              <td class="amount-large amount-positive">1,000.00</td>
-              <td class="amount-large amount-positive">1,000.00</td>
-              <td>$29.30</td>
-            </tr>
-            <tr>
-              <td>US002</td>
-              <td><span class="business-tag">Fulfillment</span></td>
-              <td><span class="platform-tag">PayPal</span></td>
-              <td><span class="status-badge status-pending">待支付</span></td>
-              <td>2024-01-16 14:05</td>
-              <td>-</td>
-              <td>USD</td>
-              <td class="amount-large">500.00</td>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
-              <td>$24.80</td>
-            </tr>
-            <tr>
-              <td>US003</td>
-              <td><span class="business-tag">Advertising</span></td>
-              <td><span class="platform-tag">Stripe</span></td>
-              <td><span class="status-badge status-failed">支付失败</span></td>
-              <td>2024-01-16 09:12</td>
-              <td>-</td>
-              <td>USD</td>
-              <td class="amount-large">200.00</td>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
-              <td>$6.46</td>
-            </tr>
-          </tbody>
+          <tbody></tbody>
         </table>
+      </div>
+      <div class="pagination-container">
+        <div class="pagination-left">
+          <div class="pagination-controls">
+            <span>每页显示：</span>
+            <select id="pageSize" class="page-size-select">
+              <option value="10">10条</option>
+              <option value="20">20条</option>
+              <option value="50">50条</option>
+              <option value="100">100条</option>
+            </select>
+          </div>
+          <div class="pagination-info">
+            <span id="paginationInfo">显示第 1-3 条，共 3 条记录</span>
+          </div>
+        </div>
+        <div class="pagination">
+          <button id="firstPage" class="pagination-btn">首页</button>
+          <button id="prevPage" class="pagination-btn">上一页</button>
+          <div id="pageNumbers" class="page-numbers"></div>
+          <button id="nextPage" class="pagination-btn">下一页</button>
+          <button id="lastPage" class="pagination-btn">末页</button>
+          <div class="page-jump">
+            <span>跳转到</span>
+            <input type="number" id="jumpToPage" class="jump-input" min="1" placeholder="页码">
+            <button id="jumpBtn" class="jump-btn">跳转</button>
+          </div>
+        </div>
       </div>
     </div>
   </main>
 
   <script>
-    // 页面加载动画
-    document.addEventListener('DOMContentLoaded', function() {
-      const rows = document.querySelectorAll('tbody tr');
-      rows.forEach((row, index) => {
-        row.style.opacity = '0';
-        row.style.transform = 'translateY(20px)';
-        setTimeout(() => {
-          row.style.transition = 'all 0.3s ease';
-          row.style.opacity = '1';
-          row.style.transform = 'translateY(0)';
-        }, index * 100);
+    // 模拟数据（由原静态行迁移）
+    const rechargeData = [
+      { merchantId:'US001', business:'Advertising', platform:'Stripe', status:'success', submitTime:'2024-01-15 10:20', rechargeTime:'2024-01-15 10:22', payCurrency:'USD', payAmount:'1,000.00', inCurrency:'USD', inAmount:'1,000.00', walletIncrease:'1,000.00', fee:'$29.30' },
+      { merchantId:'US002', business:'Fulfillment', platform:'PayPal', status:'pending', submitTime:'2024-01-16 14:05', rechargeTime:'-', payCurrency:'USD', payAmount:'500.00', inCurrency:'-', inAmount:'-', walletIncrease:'-', fee:'$24.80' },
+      { merchantId:'US003', business:'Advertising', platform:'Stripe', status:'failed', submitTime:'2024-01-16 09:12', rechargeTime:'-', payCurrency:'USD', payAmount:'200.00', inCurrency:'-', inAmount:'-', walletIncrease:'-', fee:'$6.46' }
+    ];
+
+    const tbody = document.querySelector('.recharge-table tbody');
+    let currentPage = 1;
+    let pageSize = 10;
+    let filteredData = [];
+
+    function renderTableRows(list){
+      tbody.innerHTML = '';
+      list.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.merchantId}</td>
+          <td><span class="business-tag">${r.business}</span></td>
+          <td><span class="platform-tag">${r.platform}</span></td>
+          <td>${renderStatus(r.status)}</td>
+          <td>${r.submitTime}</td>
+          <td>${r.rechargeTime}</td>
+          <td>${r.payCurrency}</td>
+          <td class="amount-large ${r.payAmount && r.payAmount!=='-' ? 'amount-positive' : ''}">${r.payAmount}</td>
+          <td>${r.inCurrency}</td>
+          <td class="amount-large ${r.inAmount && r.inAmount!=='-' ? 'amount-positive' : ''}">${r.inAmount}</td>
+          <td class="amount-large ${r.walletIncrease && r.walletIncrease!=='-' ? 'amount-positive' : ''}">${r.walletIncrease}</td>
+          <td>${r.fee}</td>
+        `;
+        tbody.appendChild(tr);
       });
+    }
+
+    function renderStatus(status){
+      if(status==='success') return '<span class="status-badge status-success">支付成功</span>';
+      if(status==='pending') return '<span class="status-badge status-pending">待支付</span>';
+      if(status==='failed') return '<span class="status-badge status-failed">支付失败</span>';
+      return status || '-';
+    }
+
+    function filterData(){
+      // 预留筛选：当前示例直接使用全部数据
+      filteredData = [...rechargeData];
+      currentPage = 1;
+    }
+
+    function render(){
+      const startIndex = (currentPage - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      const pageData = filteredData.slice(startIndex, endIndex);
+      renderTableRows(pageData);
+      updatePagination();
+    }
+
+    function updatePagination(){
+      const total = filteredData.length;
+      const totalPages = Math.ceil(total / pageSize) || 1;
+      const start = total === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+      const end = Math.min(currentPage * pageSize, total);
+      document.getElementById('paginationInfo').textContent = `显示第 ${start}-${end} 条，共 ${total} 条记录`;
+
+      document.getElementById('firstPage').disabled = currentPage === 1;
+      document.getElementById('prevPage').disabled = currentPage === 1;
+      document.getElementById('nextPage').disabled = currentPage === totalPages;
+      document.getElementById('lastPage').disabled = currentPage === totalPages;
+
+      const pageNumbers = document.getElementById('pageNumbers');
+      pageNumbers.innerHTML = '';
+      const maxVisible = 5;
+      let startPage = Math.max(1, currentPage - Math.floor(maxVisible/2));
+      let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+      if (endPage - startPage + 1 < maxVisible) startPage = Math.max(1, endPage - maxVisible + 1);
+      for(let i=startPage;i<=endPage;i++){
+        const btn = document.createElement('button');
+        btn.className = `pagination-btn ${i===currentPage?'active':''}`;
+        btn.textContent = i;
+        btn.onclick = () => goToPage(i);
+        pageNumbers.appendChild(btn);
+      }
+    }
+
+    function goToPage(page){
+      const totalPages = Math.ceil(filteredData.length / pageSize) || 1;
+      if(page>=1 && page<=totalPages){
+        currentPage = page;
+        render();
+      }
+    }
+
+    function changePageSize(size){
+      pageSize = parseInt(size);
+      currentPage = 1;
+      render();
+    }
+
+    // 分页事件
+    document.getElementById('pageSize').addEventListener('change', e=>changePageSize(e.target.value));
+    document.getElementById('firstPage').addEventListener('click', ()=>goToPage(1));
+    document.getElementById('prevPage').addEventListener('click', ()=>goToPage(currentPage-1));
+    document.getElementById('nextPage').addEventListener('click', ()=>goToPage(currentPage+1));
+    document.getElementById('lastPage').addEventListener('click', ()=>{
+      const totalPages = Math.ceil(filteredData.length / pageSize) || 1;
+      goToPage(totalPages);
+    });
+    document.getElementById('jumpBtn').addEventListener('click', ()=>{
+      const v = parseInt(document.getElementById('jumpToPage').value);
+      if(v) goToPage(v);
+    });
+    document.getElementById('jumpToPage').addEventListener('keypress', (e)=>{
+      if(e.key==='Enter'){
+        const v = parseInt(e.target.value);
+        if(v) goToPage(v);
+      }
+    });
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      filterData();
+      render();
     });
   </script>
 </body>
