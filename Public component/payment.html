@@ -709,7 +709,7 @@
         
 
         <!-- 到账主体展示（只读） -->
-        <div class="entity-selector">
+        <div class="entity-selector" style="display: none;">
           <label data-zh="到账主体" data-en="Recipient Entity">到账主体</label>
           <div id="entityDisplay" style="font-weight: 700; font-size:14px; padding: 10px 12px; border: 2px solid var(--border); border-radius: 8px; background: var(--card);">BESTFULFILL LIMITED</div>
         </div>
@@ -797,6 +797,7 @@
         <div class="amount-input" id="onlineAmountInput" style="display: none;">
           <label for="amountInput" data-zh="支付金额" data-en="Payment Amount">支付金额</label>
           <input type="number" id="amountInput" placeholder="请输入支付金额" step="0.01" min="0">
+          <div id="feeTip" style="margin-top:8px;display:none;font-size:14px;"></div>
         </div>
 
         <!-- 操作按钮 -->
@@ -1047,8 +1048,26 @@
           
           updateAccountDetails();
           updateActionArea();
+          // 在线方式切换后更新手续费提示；线下则隐藏
+          const amountEl = document.getElementById('amountInput');
+          if (currentType === 'online') {
+            updateFeeTip();
+          } else {
+            const tipDiv = document.getElementById('feeTip');
+            if (tipDiv) { tipDiv.style.display = 'none'; tipDiv.innerHTML = ''; }
+          }
         });
       });
+
+      // 金额输入实时更新手续费提示
+      const amountInputEl = document.getElementById('amountInput');
+      if (amountInputEl) {
+        amountInputEl.addEventListener('input', function() {
+          if (currentType === 'online') {
+            updateFeeTip();
+          }
+        });
+      }
 
     }
 
@@ -1298,6 +1317,12 @@
       const onlineAmountInput = document.getElementById('onlineAmountInput');
       const payButton = document.getElementById('payButton');
       const uploadSection = document.getElementById('uploadSection');
+      const accountDetails = document.getElementById('accountDetails');
+      const actionTitle = document.querySelector('.action-title');
+      const warningMessage = document.querySelector('.warning-message');
+      const tipsSection = document.querySelector('.tips-section');
+      const backBtn = document.getElementById('backBtn');
+      const cancelButton = document.getElementById('cancelButton');
       
       if (currentType === 'online') {
         // 在线支付
@@ -1305,13 +1330,69 @@
         payButton.textContent = '立即支付';
         payButton.onclick = handleOnlinePayment;
         uploadSection.classList.remove('active');
+        // 在线模式隐藏账户信息与提示，仅显示金额与操作
+        if (accountDetails) accountDetails.style.display = 'none';
+        if (actionTitle) actionTitle.style.display = 'none';
+        if (warningMessage) warningMessage.style.display = 'none';
+        if (tipsSection) tipsSection.style.display = 'none';
+        if (backBtn) backBtn.classList.remove('show');
+        if (payButton) payButton.style.display = 'block';
+        if (cancelButton) cancelButton.style.display = 'none';
+        // 更新手续费提示
+        updateFeeTip();
       } else {
         // 线下转账
         onlineAmountInput.style.display = 'none';
         payButton.textContent = '确认转账信息';
         payButton.onclick = handleOfflinePayment;
         uploadSection.classList.remove('active');
+        // 恢复账户信息与提示
+        if (accountDetails) accountDetails.style.display = 'block';
+        if (actionTitle) actionTitle.style.display = 'block';
+        if (warningMessage) warningMessage.style.display = 'block';
+        if (tipsSection) tipsSection.style.display = 'block';
+        const tipDiv = document.getElementById('feeTip');
+        if (tipDiv) { tipDiv.style.display = 'none'; tipDiv.innerHTML = ''; }
       }
+    }
+
+    // 在线支付手续费提示（参考button.html）
+    function updateFeeTip() {
+      const tipDiv = document.getElementById('feeTip');
+      if (!tipDiv) return;
+      const amount = parseFloat(document.getElementById('amountInput').value);
+      const platform = currentMethod; // 'stripe' | 'paypal'
+      let tip = '';
+      let show = false;
+      if ((platform === 'stripe' || platform === 'paypal') && !isNaN(amount) && amount > 0) {
+        let pay = 0;
+        // 模型：Stripe 2.9% + 0.3；PayPal 3.9% + 0.3（按需可与后端对齐）
+        if (platform === 'stripe') {
+          pay = (amount + 0.3) / (1 - 0.029);
+        } else if (platform === 'paypal') {
+          pay = (amount + 0.3) / (1 - 0.039);
+        }
+        pay = Math.round(pay * 100) / 100;
+        const fee = Math.max(0, Math.round((pay - amount) * 100) / 100);
+        if (currentLanguage === 'zh') {
+          tip = `预计支付金额约为：<span style='color:#ef4444;font-weight:bold;'>$${pay}</span> USD<br>` +
+                `手续费约为：<span style='color:#ef4444;font-weight:bold;'>$${fee}</span> USD。<br>` +
+                `<span style='color:#64748b;'>注：地区/币种/卡类型可能影响手续费，最终以平台为准。</span>`;
+        } else {
+          tip = `Estimated payment: <span style='color:#ef4444;font-weight:bold;'>$${pay}</span> USD<br>` +
+                `Fee approx.: <span style='color:#ef4444;font-weight:bold;'>$${fee}</span> USD.<br>` +
+                `<span style='color:#64748b;'>Note: Region/currency/card type may affect fee; final by provider.</span>`;
+        }
+        show = true;
+      } else if ((platform === 'stripe' || platform === 'paypal') && (isNaN(amount) || amount <= 0)) {
+        tip = currentLanguage === 'zh' ? '<span style="color:#ef4444;">请输入有效金额以计算手续费</span>' : '<span style="color:#ef4444;">Enter a valid amount to see fees</span>';
+        show = true;
+      } else {
+        tip = '';
+        show = false;
+      }
+      tipDiv.innerHTML = tip;
+      tipDiv.style.display = show ? 'block' : 'none';
     }
 
     // 处理在线支付
