@@ -714,10 +714,23 @@
           <div id="entityDisplay" style="font-weight: 700; font-size:14px; padding: 10px 12px; border: 2px solid var(--border); border-radius: 8px; background: var(--card);">BESTFULFILL LIMITED</div>
         </div>
 
-        <!-- 支付币种展示（只读） -->
+        <!-- 支付币种（可选） -->
         <div class="currency-selector">
           <label data-zh="支付币种" data-en="Payment Currency">支付币种</label>
-          <div id="paymentCurrencyDisplay" style="display:inline-block; padding:8px 14px; border:2px solid var(--border); border-radius:8px; background:var(--card); font-weight:700;">USD</div>
+          <div class="currency-buttons" id="payCurrencyButtons">
+            <button class="currency-btn active" data-paycur="USD">USD</button>
+            <button class="currency-btn" data-paycur="EUR">EUR</button>
+            <button class="currency-btn" data-paycur="GEP">GEP</button>
+            <button class="currency-btn" data-paycur="HKD">HKD</button>
+          </div>
+          <div style="margin-top:8px;color:var(--muted);font-size:12px;" data-zh="选择您使用的支付币种" data-en="Select the currency you will pay with">选择您使用的支付币种</div>
+        </div>
+
+        <!-- 左侧支付金额输入（用于汇率转换提示） -->
+        <div class="amount-input" id="leftAmountBlock">
+          <label for="leftAmountInput" data-zh="支付金额" data-en="Payment Amount">支付金额</label>
+          <input type="number" id="leftAmountInput" placeholder="请输入支付金额" step="0.01" min="0">
+          <div id="fxHint" style="margin-top:8px; font-size:13px; color: var(--muted);"></div>
         </div>
 
         <!-- 支付方式选择 -->
@@ -863,6 +876,7 @@
     let currentEntity = 'bestfulfill'; // 由业务类型决定
     let currentBizType = 'fulfillment'; // 默认履约
     let currentLanguage = 'zh';
+    let payCurrency = 'USD'; // 新增：客户选择的支付币种
 
     // 支付方式配置数据
     const paymentMethods = {
@@ -994,6 +1008,7 @@
       updateLanguage();
       updateEntityDisplay();
       updatePaymentCurrencyDisplay();
+      updateLeftFxHint();
     });
 
     // 初始化事件监听器
@@ -1030,6 +1045,7 @@
           autoSelectFirstAvailableMethod();
           updateAccountDetails();
           updateActionArea();
+          updateLeftFxHint();
         });
       });
 
@@ -1070,6 +1086,27 @@
       }
 
     }
+
+    // 支付币种与金额输入事件绑定
+    (function bindPayCurrencyAndAmount() {
+      const payCurContainer = document.getElementById('payCurrencyButtons');
+      if (payCurContainer) {
+        payCurContainer.addEventListener('click', function(e) {
+          const btn = e.target.closest('.currency-btn');
+          if (!btn) return;
+          payCurContainer.querySelectorAll('.currency-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          payCurrency = btn.dataset.paycur;
+          updateLeftFxHint();
+        });
+      }
+      const leftAmountInput = document.getElementById('leftAmountInput');
+      if (leftAmountInput) {
+        leftAmountInput.addEventListener('input', function() {
+          updateLeftFxHint();
+        });
+      }
+    })();
 
     // 更新语言
     function updateLanguage() {
@@ -1310,6 +1347,30 @@
     function updatePaymentCurrencyDisplay() {
       const display = document.getElementById('paymentCurrencyDisplay');
       display.textContent = currentCurrency;
+    }
+
+    // 汇率换算提示（支付币种→默认币种）
+    function updateLeftFxHint() {
+      const hint = document.getElementById('fxHint');
+      if (!hint) return;
+      const amount = parseFloat(document.getElementById('leftAmountInput')?.value || '');
+      // 简单演示汇率：以USD为基准（示例）
+      const rateToUSD = { USD: 1.0, EUR: 1.08, GEP: 1.27, HKD: 0.128, GBP: 1.27, CHF: 1.12 };
+      const from = payCurrency;
+      const to = currentCurrency; // 默认币种
+      const valid = rateToUSD[from] && rateToUSD[to];
+      if (!valid || isNaN(amount) || amount <= 0) { hint.innerHTML = ''; return; }
+      const rate = (rateToUSD[from] / rateToUSD[to]);
+      const estimated = Math.round(amount * rate * 100) / 100;
+      const rateStr = Math.round(rate * 100000) / 100000;
+      if (from !== to) {
+        const line1 = currentLanguage === 'zh' ? '您的支付币种与默认币种不一致，将转换为默认币种入账' : 'Your payment currency differs from the default and will be converted.';
+        const line2 = (currentLanguage === 'zh' ? '目前汇率为：' : 'Current rate: ') + `${from}→${to} = ${rateStr}`;
+        const line3 = (currentLanguage === 'zh' ? '钱包预计增加' : 'Estimated wallet credit: ') + `${to} ${estimated}`;
+        hint.innerHTML = `${line1}<br>${line2}<br>${line3}`;
+      } else {
+        hint.innerHTML = '';
+      }
     }
 
     // 更新操作区域
