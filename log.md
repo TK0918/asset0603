@@ -2826,6 +2826,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 - 已完成transfer-audit.html分页功能（基于现有DOM行分页显示）
 - 已完成receiving-ledger.html分页功能（与导出/本地存储兼容）
 - 已完成exchange-rate-config.html分页功能（与筛选联动）
+ - exchange-rate-config.html：编辑模式禁用状态修改，保存时不变更状态，仅允许变更类型与数值；新增/覆盖仍可设置状态。
 - 分页功能包括：每页显示条数选择、分页导航、跳转功能
 - 分页样式统一，支持响应式布局
 - 分页与现有筛选功能完美结合

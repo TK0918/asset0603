@@ -534,6 +534,9 @@
       modal.style.display = 'flex';
       
       if (config) {
+        // 记录编辑模式标识
+        modal.dataset.mode = 'edit';
+        modal.dataset.editId = String(config.id);
         // 编辑模式
         document.getElementById('mBaseCurrency').value = config.baseCurrency;
         document.getElementById('mTargetCurrency').value = config.targetCurrency;
@@ -549,9 +552,14 @@
         // 禁用币种选择
         document.getElementById('mBaseCurrency').disabled = true;
         document.getElementById('mTargetCurrency').disabled = true;
+        // 禁用状态编辑（编辑模式不可修改状态）
+        document.getElementById('mStatus').disabled = true;
         
         updateConfigTypeDisplay();
       } else {
+        // 新增模式标识
+        delete modal.dataset.mode;
+        delete modal.dataset.editId;
         // 新增模式
         document.getElementById('mBaseCurrency').value = 'USD';
         document.getElementById('mTargetCurrency').value = 'CNY';
@@ -561,6 +569,8 @@
         // 启用币种选择
         document.getElementById('mBaseCurrency').disabled = false;
         document.getElementById('mTargetCurrency').disabled = false;
+        // 启用状态下拉（新增可设置初始状态）
+        document.getElementById('mStatus').disabled = false;
         
         updateConfigTypeDisplay();
       }
@@ -573,6 +583,9 @@
       // 重置禁用状态
       document.getElementById('mBaseCurrency').disabled = false;
       document.getElementById('mTargetCurrency').disabled = false;
+      document.getElementById('mStatus').disabled = false;
+      delete modal.dataset.mode;
+      delete modal.dataset.editId;
     }
 
     function updateConfigTypeDisplay() {
@@ -660,6 +673,10 @@
 
     // 保存配置
     document.getElementById('btnSave').addEventListener('click', () => {
+      const modal = document.getElementById('modalEdit');
+      const mode = modal.dataset.mode || 'create';
+      const editId = modal.dataset.editId ? Number(modal.dataset.editId) : null;
+
       const baseCurrency = document.getElementById('mBaseCurrency').value;
       const targetCurrency = document.getElementById('mTargetCurrency').value;
       const configType = document.querySelector('input[name="configType"]:checked').value;
@@ -671,62 +688,44 @@
         showToast('请填写完整信息');
         return;
       }
-      
-      // 检查是否已存在相同币种对的配置
-      const existingConfig = rateConfigs.find(c => 
-        c.baseCurrency === baseCurrency && 
-        c.targetCurrency === targetCurrency
-      );
-      
-      if (existingConfig && !document.getElementById('mBaseCurrency').disabled) {
-        if (confirm('该币种对已存在配置，是否覆盖？')) {
-          existingConfig.configType = configType;
-          existingConfig.value = value;
-          existingConfig.status = status;
-          existingConfig.updateTime = new Date().toLocaleString('zh-CN', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-          }).replace(/\//g, '-');
-          existingConfig.updateUser = 'admin';
-        } else {
-          return;
-        }
+
+      if(mode === 'edit' && editId){
+        // 编辑模式：不允许修改状态与币种，仅更新类型与数值
+        const cfg = rateConfigs.find(c=>c.id===editId);
+        if(!cfg){ showToast('配置不存在'); return; }
+        cfg.configType = configType;
+        cfg.value = value;
+        // cfg.status 保持不变
+        cfg.updateTime = new Date().toLocaleString('zh-CN', {
+          year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'
+        }).replace(/\//g, '-');
+        cfg.updateUser = 'admin';
       } else {
-        // 新增配置
-        const newConfig = {
-          id: Date.now(),
-          baseCurrency,
-          targetCurrency,
-          configType,
-          value,
-          status,
-          updateUser: 'admin',
-          createTime: new Date().toLocaleString('zh-CN', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-          }).replace(/\//g, '-'),
-          updateTime: new Date().toLocaleString('zh-CN', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-          }).replace(/\//g, '-')
-        };
-        
-        rateConfigs.push(newConfig);
+        // 新增模式：若存在同币种对，询问是否覆盖（覆盖时允许更新状态）
+        const existingConfig = rateConfigs.find(c => c.baseCurrency===baseCurrency && c.targetCurrency===targetCurrency);
+        if(existingConfig){
+          if(confirm('该币种对已存在配置，是否覆盖？')){
+            existingConfig.configType = configType;
+            existingConfig.value = value;
+            existingConfig.status = status;
+            existingConfig.updateTime = new Date().toLocaleString('zh-CN', {
+              year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'
+            }).replace(/\//g, '-');
+            existingConfig.updateUser = 'admin';
+          } else {
+            return;
+          }
+        } else {
+          const nowStr = new Date().toLocaleString('zh-CN', {
+            year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'
+          }).replace(/\//g, '-');
+          const newConfig = { id: Date.now(), baseCurrency, targetCurrency, configType, value, status, updateUser:'admin', createTime: nowStr, updateTime: nowStr };
+          rateConfigs.push(newConfig);
+        }
       }
-      
+
       closeModal();
+      applyFilter();
       render();
       showToast('配置保存成功');
     });
