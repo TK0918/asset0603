@@ -695,7 +695,7 @@
             <div class="select-card active defcur-card" data-currency="USD">USD</div>
             <div class="select-card defcur-card" data-currency="EUR">EUR</div>
             <div class="select-card defcur-card" data-currency="GBP">GBP</div>
-            <div class="select-card defcur-card" data-currency="CHF">CHF</div>
+            <div class="select-card defcur-card" data-currency="HKD">HKD</div>
           </div>
         </div>
       </div>
@@ -721,7 +721,7 @@
             <button class="currency-btn active" data-paycur="USD">USD</button>
             <button class="currency-btn" data-paycur="EUR">EUR</button>
             <button class="currency-btn" data-paycur="GEP">GEP</button>
-            <button class="currency-btn" data-paycur="HKD">HKD</button>
+            <button class="currency-btn" data-paycur="HKD" id="hkdBtn">HKD</button>
           </div>
           <div style="margin-top:8px;color:var(--muted);font-size:12px;" data-zh="选择您使用的支付币种" data-en="Select the currency you will pay with">选择您使用的支付币种</div>
         </div>
@@ -788,6 +788,10 @@
                 <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiByeD0iNCIgZmlsbD0iIzAwNkZGRiIvPgo8L3N2Zz4K" alt="PingPong" class="method-logo">
                 <span data-zh="PingPong" data-en="PingPong">PingPong</span>
               </button>
+              <button class="method-btn" data-method="bank" data-type="offline">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiByeD0iNCIgZmlsbD0iIzAwNkZGRiIvPgo8L3N2Zz4K" alt="Bank" class="method-logo">
+                <span data-zh="Bank" data-en="Bank">Bank</span>
+              </button>
             </div>
           </div>
         </div>
@@ -851,12 +855,17 @@
           
           <div class="form-group">
             <label for="transferAmount" data-zh="转账金额" data-en="Transfer Amount">转账金额</label>
-            <input type="number" id="transferAmount" placeholder="请输入实际转账金额" step="0.01" min="0" required>
+            <input type="number" id="transferAmount" placeholder="请输入实际转账金额" step="0.01" min="0" readonly>
           </div>
           
           <div class="form-group">
-            <label for="transferNote" data-zh="备注信息" data-en="Remarks">备注信息</label>
-            <textarea id="transferNote" placeholder="请输入备注信息（可选）"></textarea>
+            <label for="transactionId" data-zh="交易ID" data-en="Transaction ID">交易ID</label>
+            <input type="text" id="transactionId" placeholder="请输入交易ID" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="paymentAccount" data-zh="支付账户" data-en="Payment Account">支付账户</label>
+            <input type="text" id="paymentAccount" placeholder="请输入支付账户" required>
           </div>
           
           <div class="action-buttons" style="margin-top: 20px;">
@@ -996,12 +1005,27 @@
           bankCode: '007',
           bankAddress: 'PingPong Address'
         }
+      },
+      bank: {
+        name: { zh: 'Bank', en: 'Bank' },
+        type: 'offline',
+        account: {
+          bankName: { zh: 'Wise Payments Limited', en: 'Wise Payments Limited' },
+          accountHolder: 'BESTADS LIMITED',
+          accountNumber: '54330067',
+          sortCode: '23-08-01',
+          iban: 'GB32TRWI23080154330067',
+          swiftCode: 'TRWIGB2LXXX',
+          bankCode: '008',
+          bankAddress: '1st Floor, Worship Square, 65 Clifton Street, London, EC2A 4JE, United Kingdom'
+        }
       }
     };
 
     // 初始化
     document.addEventListener('DOMContentLoaded', function() {
       initializeEventListeners();
+      updatePaymentCurrencyVisibility();
       applyFiltersByDefaultCurrency();
       autoSelectFirstAvailableMethod();
       updateAccountDetails();
@@ -1031,6 +1055,7 @@
           currentBizType = this.dataset.biz; // fulfillment | ads
           currentEntity = currentBizType === 'fulfillment' ? 'bestfulfill' : 'muxue';
           updateEntityDisplay();
+          updatePaymentCurrencyVisibility();
         });
       });
 
@@ -1275,6 +1300,37 @@
             <span class="detail-value">${account.accountHolder}</span>
           </div>
         `;
+      } else if (currentMethod === 'bank') {
+        accountInfo = `
+          <div class="detail-item">
+            <span class="detail-label" data-zh="姓名" data-en="Name">姓名</span>
+            <span class="detail-value">${account.accountHolder}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="账号" data-en="Account number">账号</span>
+            <span class="detail-value">${account.accountNumber} <button class="copy-btn" onclick="copyToClipboard('${account.accountNumber}')" data-zh="复制" data-en="Copy">复制</button></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="Sort code" data-en="Sort code">Sort code</span>
+            <span class="detail-value">${account.sortCode}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="IBAN" data-en="IBAN">IBAN</span>
+            <span class="detail-value">${account.iban} <button class="copy-btn" onclick="copyToClipboard('${account.iban}')" data-zh="复制" data-en="Copy">复制</button></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="Swift/BIC" data-en="Swift/BIC">Swift/BIC</span>
+            <span class="detail-value">${account.swiftCode} <button class="copy-btn" onclick="copyToClipboard('${account.swiftCode}')" data-zh="复制" data-en="Copy">复制</button></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="银行名称" data-en="Bank name">银行名称</span>
+            <span class="detail-value">${account.bankName[currentLanguage] || account.bankName}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" data-zh="银行地址" data-en="Bank address">银行地址</span>
+            <span class="detail-value">${account.bankAddress}</span>
+          </div>
+        `;
       }
       
       accountInfoContent.innerHTML = accountInfo;
@@ -1298,26 +1354,29 @@
         });
         offlineContainer.querySelectorAll('.method-btn').forEach(b => {
           const m = b.dataset.method;
-          b.style.display = (m === 'payoneer' || m === 'airwallex' || m === 'worldfirst' || m === 'pingpong' || m === 'hsbc-usd') ? 'flex' : 'none';
+          b.style.display = (m === 'hsbc-usd' || m === 'wise-usd' || m === 'payoneer' || m === 'airwallex' || m === 'worldfirst' || m === 'pingpong' || m === 'bank') ? 'flex' : 'none';
         });
       } else if (currentCurrency === 'EUR') {
         // 在线无; 线下: Wise EUR(SEPA)
         onlineContainer.querySelectorAll('.method-btn').forEach(b => b.style.display = 'none');
         offlineContainer.querySelectorAll('.method-btn').forEach(b => {
           const m = b.dataset.method;
-          b.style.display = (m === 'wise-eur') ? 'flex' : 'none';
+          b.style.display = (m === 'hsbc-usd' || m === 'wise-eur' || m === 'payoneer' || m === 'airwallex' || m === 'worldfirst' || m === 'pingpong' || m === 'bank') ? 'flex' : 'none';
         });
       } else if (currentCurrency === 'GBP') {
         // 在线无; 线下: Wise GBP(domestic)
         onlineContainer.querySelectorAll('.method-btn').forEach(b => b.style.display = 'none');
         offlineContainer.querySelectorAll('.method-btn').forEach(b => {
           const m = b.dataset.method;
-          b.style.display = (m === 'wise-gbp') ? 'flex' : 'none';
+          b.style.display = (m === 'hsbc-usd' || m === 'wise-gbp' || m === 'payoneer' || m === 'airwallex' || m === 'worldfirst' || m === 'pingpong' || m === 'bank') ? 'flex' : 'none';
         });
-      } else if (currentCurrency === 'CHF') {
-        // 未指定规则，默认全部隐藏在线、线下全部隐藏
+      } else if (currentCurrency === 'HKD') {
+        // 在线无; 线下: HSBC/Wise/Payoneer/Airwallex/Worldfirst/PingPong/Bank
         onlineContainer.querySelectorAll('.method-btn').forEach(b => b.style.display = 'none');
-        offlineContainer.querySelectorAll('.method-btn').forEach(b => b.style.display = 'none');
+        offlineContainer.querySelectorAll('.method-btn').forEach(b => {
+          const m = b.dataset.method;
+          b.style.display = (m === 'hsbc-usd' || m === 'wise-usd' || m === 'payoneer' || m === 'airwallex' || m === 'worldfirst' || m === 'pingpong' || m === 'bank') ? 'flex' : 'none';
+        });
       }
 
       // 清除已选active
@@ -1349,13 +1408,31 @@
       display.textContent = currentCurrency;
     }
 
+    // 更新支付币种可见性（广告场景下隐藏HKD）
+    function updatePaymentCurrencyVisibility() {
+      const hkdBtn = document.getElementById('hkdBtn');
+      if (hkdBtn) {
+        if (currentBizType === 'ads') {
+          hkdBtn.style.display = 'none';
+          // 如果当前选择的是HKD，切换到USD
+          if (payCurrency === 'HKD') {
+            payCurrency = 'USD';
+            document.querySelector('.currency-btn[data-paycur="USD"]').classList.add('active');
+            document.querySelector('.currency-btn[data-paycur="HKD"]').classList.remove('active');
+          }
+        } else {
+          hkdBtn.style.display = 'block';
+        }
+      }
+    }
+
     // 汇率换算提示（支付币种→默认币种）
     function updateLeftFxHint() {
       const hint = document.getElementById('fxHint');
       if (!hint) return;
       const amount = parseFloat(document.getElementById('leftAmountInput')?.value || '');
       // 简单演示汇率：以USD为基准（示例）
-      const rateToUSD = { USD: 1.0, EUR: 1.08, GEP: 1.27, HKD: 0.128, GBP: 1.27, CHF: 1.12 };
+      const rateToUSD = { USD: 1.0, EUR: 1.08, GEP: 1.27, HKD: 0.128, GBP: 1.27, HKD: 1.12 };
       const from = payCurrency;
       const to = currentCurrency; // 默认币种
       const valid = rateToUSD[from] && rateToUSD[to];
@@ -1496,6 +1573,25 @@
       document.querySelector('.tips-section').style.display = 'none';
       document.getElementById('backBtn').classList.add('show');
       
+      // 设置转账金额为左侧输入的金额
+      const leftAmount = document.getElementById('leftAmountInput').value;
+      const transferAmountInput = document.getElementById('transferAmount');
+      if (transferAmountInput && leftAmount) {
+        transferAmountInput.value = leftAmount;
+      }
+      
+      // 设置默认转账时间为当前时间
+      const transferTimeInput = document.getElementById('transferTime');
+      if (transferTimeInput) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        transferTimeInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+      }
+      
       // 更新按钮
       const payButton = document.getElementById('payButton');
       const cancelButton = document.getElementById('cancelButton');
@@ -1536,6 +1632,8 @@
     function submitTransfer() {
       const transferTime = document.getElementById('transferTime').value;
       const transferAmount = document.getElementById('transferAmount').value;
+      const transactionId = document.getElementById('transactionId').value;
+      const paymentAccount = document.getElementById('paymentAccount').value;
       const fileInput = document.getElementById('fileInput');
       
       if (!transferTime) {
@@ -1545,6 +1643,16 @@
       
       if (!transferAmount || transferAmount <= 0) {
         alert(currentLanguage === 'zh' ? '请输入有效的转账金额' : 'Please enter a valid transfer amount');
+        return;
+      }
+      
+      if (!transactionId) {
+        alert(currentLanguage === 'zh' ? '请输入交易ID' : 'Please enter transaction ID');
+        return;
+      }
+      
+      if (!paymentAccount) {
+        alert(currentLanguage === 'zh' ? '请输入支付账户' : 'Please enter payment account');
         return;
       }
       
@@ -1587,7 +1695,8 @@
       document.getElementById('fileInput').value = '';
       document.getElementById('transferTime').value = '';
       document.getElementById('transferAmount').value = '';
-      document.getElementById('transferNote').value = '';
+      document.getElementById('transactionId').value = '';
+      document.getElementById('paymentAccount').value = '';
       document.querySelector('.upload-btn').textContent = currentLanguage === 'zh' ? '选择文件' : 'Select File';
       document.querySelector('.upload-btn').style.background = '';
     }

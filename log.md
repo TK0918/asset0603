@@ -2882,3 +2882,23 @@ document.addEventListener('DOMContentLoaded', async function() {
 - 分页功能包括：每页显示条数选择、分页导航、跳转功能
 - 分页样式统一，支持响应式布局
 - 分页与现有筛选功能完美结合
+
+## 2025-01-15 支付组件调整
+
+### 修改内容
+- 文件：`Public component/payment.html`
+- 调整支付币种：广告场景下去掉HKD选项
+- 更新支付方式过滤规则：
+  - USD支持在线支付（PayPal、Stripe）和线下转账（HSBC、Wise、Payoneer、Airwallex、Worldfirst、PingPong、Bank）
+  - EUR/GEP/HKD仅支持线下转账（HSBC、Wise、Payoneer、Airwallex、Worldfirst、PingPong、Bank）
+- 添加Bank支付方式，与Wise展示相同账户信息
+- 更新上传表单：
+  - 添加交易ID（必填）、支付账户（必填）字段
+  - 转账金额设为只读，自动读取左侧支付金额
+  - 转账日期默认当前时间，支持修改
+  - 移除备注信息字段
+- 完善JavaScript逻辑：
+  - 新增支付币种可见性控制函数
+  - 更新支付方式过滤规则
+  - 优化账户详情显示逻辑
+  - 完善表单验证和提交逻辑
