@@ -720,7 +720,7 @@
           <div class="currency-buttons" id="payCurrencyButtons">
             <button class="currency-btn active" data-paycur="USD">USD</button>
             <button class="currency-btn" data-paycur="EUR">EUR</button>
-            <button class="currency-btn" data-paycur="GEP">GEP</button>
+            <button class="currency-btn" data-paycur="GBP">GBP</button>
             <button class="currency-btn" data-paycur="HKD" id="hkdBtn">HKD</button>
           </div>
           <div style="margin-top:8px;color:var(--muted);font-size:12px;" data-zh="选择您使用的支付币种" data-en="Select the currency you will pay with">选择您使用的支付币种</div>
@@ -1027,6 +1027,7 @@
       initializeEventListeners();
       updatePaymentCurrencyVisibility();
       applyFiltersByDefaultCurrency();
+      updatePaymentMethodsByPayCurrency(); // 根据支付币种更新支付方式
       autoSelectFirstAvailableMethod();
       updateAccountDetails();
       updateLanguage();
@@ -1123,6 +1124,7 @@
           btn.classList.add('active');
           payCurrency = btn.dataset.paycur;
           updateLeftFxHint();
+          updatePaymentMethodsByPayCurrency();
         });
       }
       const leftAmountInput = document.getElementById('leftAmountInput');
@@ -1383,6 +1385,33 @@
       document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
     }
 
+    // 根据支付币种更新支付方式显示
+    function updatePaymentMethodsByPayCurrency() {
+      const onlineContainer = document.getElementById('onlineMethods');
+      const offlineContainer = document.getElementById('offlineMethods');
+      
+      // 如果支付币种是EUR、GBP或HKD，隐藏在线支付方式
+      if (payCurrency === 'EUR' || payCurrency === 'GBP' || payCurrency === 'HKD') {
+        onlineContainer.querySelectorAll('.method-btn').forEach(b => b.style.display = 'none');
+        // 确保线下支付方式显示
+        offlineContainer.querySelectorAll('.method-btn').forEach(b => b.style.display = 'flex');
+      } else {
+        // 对于USD等其他币种，根据默认币种规则显示
+        applyFiltersByDefaultCurrency();
+      }
+      
+      // 清除已选active并自动选择第一个可用的线下方式
+      document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
+      const visibleBtn = Array.from(document.querySelectorAll('.method-btn')).find(b => b.style.display !== 'none');
+      if (visibleBtn) {
+        visibleBtn.classList.add('active');
+        currentMethod = visibleBtn.dataset.method;
+        currentType = visibleBtn.dataset.type;
+        updateAccountDetails();
+        updateActionArea();
+      }
+    }
+
     // 自动选择首个可用方式
     function autoSelectFirstAvailableMethod() {
       const visibleBtn = Array.from(document.querySelectorAll('.method-btn')).find(b => b.style.display !== 'none');
@@ -1432,7 +1461,7 @@
       if (!hint) return;
       const amount = parseFloat(document.getElementById('leftAmountInput')?.value || '');
       // 简单演示汇率：以USD为基准（示例）
-      const rateToUSD = { USD: 1.0, EUR: 1.08, GEP: 1.27, HKD: 0.128, GBP: 1.27, HKD: 1.12 };
+      const rateToUSD = { USD: 1.0, EUR: 1.08, GBP: 1.27, HKD: 0.128, GBP: 1.27, HKD: 1.12 };
       const from = payCurrency;
       const to = currentCurrency; // 默认币种
       const valid = rateToUSD[from] && rateToUSD[to];

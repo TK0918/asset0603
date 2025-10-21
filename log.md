@@ -1789,7 +1789,7 @@ Public component/
 ### [优化] 支付组件-支付币种选择与汇率提示改造 - 2025-09-25
 **修改内容：**
 - `Public component/payment.html` 左侧：
-  - 将原“支付币种（只读）”改为可选按钮组，支持 USD / EUR / GEP / HKD；下方新增说明文案“选择您使用的支付币种”。
+  - 将原“支付币种（只读）”改为可选按钮组，支持 USD / EUR / GBP / HKD；下方新增说明文案“选择您使用的支付币种”。
   - 在支付币种与支付方式之间新增“支付金额”输入框（左侧），用于实时展示汇率转换提示。
   - 新增汇率提示：当支付币种与默认币种不一致时显示“三行提示”：
     1) “您的支付币种与默认币种不一致，将转换为默认币种入账”；
@@ -2890,7 +2890,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 - 调整支付币种：广告场景下去掉HKD选项
 - 更新支付方式过滤规则：
   - USD支持在线支付（PayPal、Stripe）和线下转账（HSBC、Wise、Payoneer、Airwallex、Worldfirst、PingPong、Bank）
-  - EUR/GEP/HKD仅支持线下转账（HSBC、Wise、Payoneer、Airwallex、Worldfirst、PingPong、Bank）
+  - EUR/GBP/HKD仅支持线下转账（HSBC、Wise、Payoneer、Airwallex、Worldfirst、PingPong、Bank）
 - 添加Bank支付方式，与Wise展示相同账户信息
 - 更新上传表单：
   - 添加交易ID（必填）、支付账户（必填）字段
@@ -2902,3 +2902,19 @@ document.addEventListener('DOMContentLoaded', async function() {
   - 更新支付方式过滤规则
   - 优化账户详情显示逻辑
   - 完善表单验证和提交逻辑
+
+## 2025-01-15 支付组件支付币种限制调整
+
+### 修改内容
+- 文件：`Public component/payment.html`
+- 新增支付币种限制功能：当支付币种选择EUR、GBP、HKD时，隐藏在线支付方式，只显示银行转账
+- 技术实现：
+  - 新增 `updatePaymentMethodsByPayCurrency()` 函数，根据支付币种动态控制支付方式显示
+  - 在支付币种按钮点击事件中调用该函数
+  - 在页面初始化时调用该函数，确保首屏正确显示
+  - 当支付币种为EUR、GBP、HKD时，隐藏所有在线支付方式（PayPal、Stripe）
+  - 当支付币种为USD等其他币种时，按原有默认币种规则显示支付方式
+- 用户体验：
+  - 选择受限币种时自动切换到第一个可用的银行转账方式
+  - 保持账户详情和操作区域的正确更新
+  - 确保语言切换和所有交互功能正常工作
