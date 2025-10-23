@@ -544,6 +544,248 @@
       font-weight: 600;
     }
 
+    /* Adjust Amount Modal Styles */
+    .adjust-modal .modal-content {
+      max-width: 800px;
+    }
+
+    .customer-search-section {
+      background: #f8fafc;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .customer-search-row {
+      display: flex;
+      gap: 15px;
+      align-items: end;
+      margin-bottom: 15px;
+    }
+
+    .customer-search-group {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .customer-search-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #374151;
+      font-size: 14px;
+    }
+
+    .customer-search-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+
+    .customer-search-input:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    .customer-balance-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 10px;
+    }
+
+    .customer-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .customer-name {
+      font-weight: 600;
+      color: #1e293b;
+      font-size: 16px;
+    }
+
+    .customer-id {
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    .balance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    .balance-item {
+      text-align: center;
+      padding: 10px;
+      background: #f8fafc;
+      border-radius: 6px;
+    }
+
+    .balance-label {
+      font-size: 12px;
+      color: #64748b;
+      margin-bottom: 5px;
+    }
+
+    .balance-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .adjust-form-section {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .form-group {
+      flex: 1;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #374151;
+      font-size: 14px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    .adjust-type-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .image-upload-section {
+      margin-top: 10px;
+    }
+
+    .image-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .image-preview-item {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      border: 2px dashed #d1d5db;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #f9fafb;
+    }
+
+    .image-preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-preview-item .remove-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: rgba(239, 68, 68, 0.8);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .image-preview-item .remove-btn:hover {
+      background: rgba(239, 68, 68, 1);
+    }
+
+    .adjust-type-btn {
+      flex: 1;
+      padding: 10px 15px;
+      border: 2px solid #e2e8f0;
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .adjust-type-btn.active {
+      border-color: #2563eb;
+      background: #2563eb;
+      color: white;
+    }
+
+    .adjust-type-btn:hover {
+      border-color: #2563eb;
+    }
+
+    .adjust-summary {
+      background: #f0f9ff;
+      border: 1px solid #0ea5e9;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+    }
+
+    .adjust-summary-title {
+      font-weight: 600;
+      color: #0c4a6e;
+      margin-bottom: 10px;
+    }
+
+    .adjust-summary-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+
+    .adjust-summary-label {
+      color: #0c4a6e;
+    }
+
+    .adjust-summary-value {
+      font-weight: 600;
+      color: #0c4a6e;
+    }
+
     /* Responsive Design */
     @media (max-width: 768px) {
       .search-row {
@@ -568,6 +810,26 @@
 
       .detail-grid {
         grid-template-columns: 1fr;
+      }
+
+      .customer-search-row {
+        flex-direction: column;
+      }
+
+      .customer-search-group {
+        min-width: 100%;
+      }
+
+      .form-row {
+        flex-direction: column;
+      }
+
+      .adjust-type-buttons {
+        flex-direction: column;
+      }
+
+      .balance-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
   </style>
@@ -689,6 +951,7 @@
           <button class="btn btn-primary">搜索</button>
           <button class="btn btn-secondary">重置</button>
           <button class="btn btn-success">导出Excel</button>
+          <button class="btn btn-primary" onclick="openAdjustAmountModal()">调整金额</button>
         </div>
       </div>
     </div>
@@ -909,7 +1172,130 @@
     </div>
   </div>
 
+  <!-- 调整金额模态框 -->
+  <div class="modal adjust-modal" id="adjustAmountModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">调整金额</h2>
+        <button class="close-btn" onclick="closeAdjustModal()">&times;</button>
+      </div>
+      
+      <!-- 客户搜索区域 -->
+      <div class="customer-search-section">
+        <h4 style="margin-bottom: 15px; color: #374151;">客户筛选</h4>
+        <div class="customer-search-row">
+          <div class="customer-search-group">
+            <label>客户信息</label>
+            <input type="text" class="customer-search-input" id="customerSearchInput" placeholder="支持商户ID、商户名称、商户邮箱、资金账户ID模糊搜索">
+          </div>
+          <div class="customer-search-group">
+            <button class="btn btn-primary" onclick="searchCustomer()">搜索客户</button>
+          </div>
+        </div>
+        
+        <!-- 客户余额展示区域 -->
+        <div id="customerBalanceCard" class="customer-balance-card" style="display: none;">
+          <div class="customer-info">
+            <div>
+              <div class="customer-name" id="selectedCustomerName">Apple Inc.</div>
+              <div class="customer-id" id="selectedCustomerId">账户ID: US001</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 12px; color: #64748b;">所属业务</div>
+              <div style="font-weight: 600; color: #1e293b;">Advertising</div>
+            </div>
+          </div>
+          <div class="balance-grid">
+            <div class="balance-item">
+              <div class="balance-label">真实金额</div>
+              <div class="balance-value" id="realAmount">$1,500,000.00</div>
+            </div>
+            <div class="balance-item">
+              <div class="balance-label">冻结金额</div>
+              <div class="balance-value" id="frozenAmount">$50,000.00</div>
+            </div>
+            <div class="balance-item">
+              <div class="balance-label">信用额度</div>
+              <div class="balance-value" id="creditLimit">$2,000,000.00</div>
+            </div>
+            <div class="balance-item">
+              <div class="balance-label">可用额度</div>
+              <div class="balance-value" id="availableLimit">$1,950,000.00</div>
+            </div>
+            <div class="balance-item">
+              <div class="balance-label">已用额度</div>
+              <div class="balance-value" id="usedLimit">$50,000.00</div>
+            </div>
+            <div class="balance-item">
+              <div class="balance-label">默认币种</div>
+              <div class="balance-value" id="defaultCurrency">USD</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 调整表单区域 -->
+      <div class="adjust-form-section">
+        <h4 style="margin-bottom: 15px; color: #374151;">金额调整</h4>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>调整类型</label>
+            <div class="adjust-type-buttons">
+              <button class="adjust-type-btn active" data-type="increase" onclick="selectAdjustType('increase')">增加金额</button>
+              <button class="adjust-type-btn" data-type="decrease" onclick="selectAdjustType('decrease')">减少金额</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>调整金额 (USD)</label>
+            <input type="number" class="form-input" id="adjustAmountInput" placeholder="请输入调整金额" oninput="updateAdjustSummary()">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>调整原因</label>
+          <textarea class="form-input" id="adjustReasonInput" rows="3" placeholder="请输入调整原因"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>相关截图 (最多10张)</label>
+          <div class="image-upload-section">
+            <input type="file" id="imageUpload" accept="image/*" multiple style="display: none;" onchange="handleImageUpload(event)">
+            <button type="button" class="btn btn-secondary" onclick="document.getElementById('imageUpload').click()">选择图片</button>
+            <div id="imagePreview" class="image-preview"></div>
+          </div>
+        </div>
+
+        <!-- 调整预览 -->
+        <div id="adjustSummary" class="adjust-summary" style="display: none;">
+          <div class="adjust-summary-title">调整预览</div>
+          <div class="adjust-summary-item">
+            <span class="adjust-summary-label">调整类型:</span>
+            <span class="adjust-summary-value" id="summaryAdjustType">增加</span>
+          </div>
+          <div class="adjust-summary-item">
+            <span class="adjust-summary-label">调整金额:</span>
+            <span class="adjust-summary-value" id="summaryAdjustAmount">0</span>
+          </div>
+          <div class="adjust-summary-item">
+            <span class="adjust-summary-label">调整后余额:</span>
+            <span class="adjust-summary-value" id="summaryNewBalance">0</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 30px;">
+        <button class="btn btn-secondary" onclick="closeAdjustModal()">取消</button>
+        <button class="btn btn-primary" onclick="confirmAdjustAmount()" id="confirmAdjustBtn" disabled>确认调整</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // 全局变量
+    let selectedCustomer = null;
+    let currentAdjustType = 'increase';
+
     // Mouse-following tooltip functionality
     const tooltip = document.getElementById('mouseTooltip');
     
@@ -965,10 +1351,270 @@
       document.getElementById('detailModal').classList.remove('show');
     }
 
+    // 调整金额模态框相关函数
+    function openAdjustAmountModal() {
+      document.getElementById('adjustAmountModal').classList.add('show');
+      resetAdjustForm();
+    }
+
+    function closeAdjustModal() {
+      document.getElementById('adjustAmountModal').classList.remove('show');
+      resetAdjustForm();
+    }
+
+    function resetAdjustForm() {
+      // 重置表单
+      document.getElementById('customerSearchInput').value = '';
+      document.getElementById('adjustAmountInput').value = '';
+      document.getElementById('adjustReasonInput').value = '';
+      
+      // 重置调整类型
+      selectAdjustType('increase');
+      
+      // 隐藏客户余额卡片和调整预览
+      document.getElementById('customerBalanceCard').style.display = 'none';
+      document.getElementById('adjustSummary').style.display = 'none';
+      document.getElementById('confirmAdjustBtn').disabled = true;
+      
+      // 重置图片上传
+      uploadedImages = [];
+      updateImagePreview();
+      
+      selectedCustomer = null;
+    }
+
+    // 客户搜索功能
+    function searchCustomer() {
+      const searchInput = document.getElementById('customerSearchInput').value.trim();
+
+      if (!searchInput) {
+        alert('请输入客户信息进行搜索');
+        return;
+      }
+
+      // 模拟客户搜索API调用
+      // 这里使用模拟数据，实际项目中应该调用后端API
+      const mockCustomers = [
+        {
+          id: 'US001',
+          name: 'Apple Inc.',
+          email: 'contact@apple.com',
+          business: 'Advertising',
+          balances: {
+            real: 1500000,
+            frozen: 50000,
+            creditLimit: 2000000,
+            availableLimit: 1950000,
+            usedLimit: 50000
+          },
+          defaultCurrency: 'USD'
+        },
+        {
+          id: 'US002',
+          name: 'Microsoft Corporation',
+          email: 'finance@microsoft.com',
+          business: 'Technology',
+          balances: {
+            real: 2800000,
+            frozen: 120000,
+            creditLimit: 3000000,
+            availableLimit: 2880000,
+            usedLimit: 120000
+          },
+          defaultCurrency: 'USD'
+        },
+        {
+          id: 'US003',
+          name: 'Google LLC',
+          email: 'payments@google.com',
+          business: 'Advertising',
+          balances: {
+            real: 3200000,
+            frozen: 80000,
+            creditLimit: 4000000,
+            availableLimit: 3920000,
+            usedLimit: 80000
+          },
+          defaultCurrency: 'USD'
+        }
+      ];
+
+      // 模糊搜索逻辑
+      const foundCustomer = mockCustomers.find(customer => 
+        customer.id.toLowerCase().includes(searchInput.toLowerCase()) ||
+        customer.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+        customer.email.toLowerCase().includes(searchInput.toLowerCase()) ||
+        customer.id.toLowerCase().includes(searchInput.toLowerCase())
+      );
+
+      if (foundCustomer) {
+        selectedCustomer = foundCustomer;
+        displayCustomerBalance(foundCustomer);
+        document.getElementById('confirmAdjustBtn').disabled = false;
+      } else {
+        alert('未找到匹配的客户，请检查输入信息');
+        document.getElementById('customerBalanceCard').style.display = 'none';
+        document.getElementById('confirmAdjustBtn').disabled = true;
+      }
+    }
+
+    function displayCustomerBalance(customer) {
+      document.getElementById('selectedCustomerName').textContent = customer.name;
+      document.getElementById('selectedCustomerId').textContent = `账户ID: ${customer.id}`;
+      document.getElementById('realAmount').textContent = `$${formatNumber(customer.balances.real)}`;
+      document.getElementById('frozenAmount').textContent = `$${formatNumber(customer.balances.frozen)}`;
+      document.getElementById('creditLimit').textContent = `$${formatNumber(customer.balances.creditLimit)}`;
+      document.getElementById('availableLimit').textContent = `$${formatNumber(customer.balances.availableLimit)}`;
+      document.getElementById('usedLimit').textContent = `$${formatNumber(customer.balances.usedLimit)}`;
+      document.getElementById('defaultCurrency').textContent = customer.defaultCurrency;
+      
+      document.getElementById('customerBalanceCard').style.display = 'block';
+    }
+
+    // 图片上传功能
+    let uploadedImages = [];
+
+    function handleImageUpload(event) {
+      const files = Array.from(event.target.files);
+      
+      if (uploadedImages.length + files.length > 10) {
+        alert('最多只能上传10张图片');
+        return;
+      }
+
+      files.forEach(file => {
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const imageData = {
+              id: Date.now() + Math.random(),
+              file: file,
+              url: e.target.result
+            };
+            uploadedImages.push(imageData);
+            updateImagePreview();
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    function updateImagePreview() {
+      const preview = document.getElementById('imagePreview');
+      preview.innerHTML = '';
+
+      uploadedImages.forEach(image => {
+        const item = document.createElement('div');
+        item.className = 'image-preview-item';
+        item.innerHTML = `
+          <img src="${image.url}" alt="上传的图片">
+          <button class="remove-btn" onclick="removeImage('${image.id}')">&times;</button>
+        `;
+        preview.appendChild(item);
+      });
+    }
+
+    function removeImage(imageId) {
+      uploadedImages = uploadedImages.filter(img => img.id !== imageId);
+      updateImagePreview();
+    }
+
+    // 调整类型选择
+    function selectAdjustType(type) {
+      currentAdjustType = type;
+      document.querySelectorAll('.adjust-type-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.querySelector(`[data-type="${type}"]`).classList.add('active');
+      updateAdjustSummary();
+    }
+
+    // 更新调整预览
+    function updateAdjustSummary() {
+      const amount = parseFloat(document.getElementById('adjustAmountInput').value) || 0;
+      
+      if (amount > 0 && selectedCustomer) {
+        const currentBalance = selectedCustomer.balances.real;
+        const newBalance = currentAdjustType === 'increase' 
+          ? currentBalance + amount 
+          : currentBalance - amount;
+
+        document.getElementById('summaryAdjustType').textContent = currentAdjustType === 'increase' ? '增加' : '减少';
+        document.getElementById('summaryAdjustAmount').textContent = `${currentAdjustType === 'increase' ? '+' : '-'}$${formatNumber(amount)}`;
+        document.getElementById('summaryNewBalance').textContent = `$${formatNumber(newBalance)}`;
+        
+        document.getElementById('adjustSummary').style.display = 'block';
+      } else {
+        document.getElementById('adjustSummary').style.display = 'none';
+      }
+    }
+
+    // 确认调整金额
+    function confirmAdjustAmount() {
+      if (!selectedCustomer) {
+        alert('请先搜索并选择客户');
+        return;
+      }
+
+      const amount = parseFloat(document.getElementById('adjustAmountInput').value);
+      const reason = document.getElementById('adjustReasonInput').value.trim();
+
+      if (!amount || amount <= 0) {
+        alert('请输入有效的调整金额');
+        return;
+      }
+
+      if (!reason) {
+        alert('请输入调整原因');
+        return;
+      }
+
+      // 生成交易单号
+      const transactionId = 'TX' + new Date().getFullYear() + 
+        String(new Date().getMonth() + 1).padStart(2, '0') + 
+        String(new Date().getDate()).padStart(2, '0') + 
+        String(new Date().getHours()).padStart(2, '0') + 
+        String(new Date().getMinutes()).padStart(2, '0') + 
+        String(new Date().getSeconds()).padStart(2, '0');
+
+      // 确认对话框
+      const confirmMessage = `确认调整客户 ${selectedCustomer.name} 的金额吗？\n\n` +
+        `调整类型: ${currentAdjustType === 'increase' ? '增加' : '减少'}\n` +
+        `调整金额: $${formatNumber(amount)}\n` +
+        `调整原因: ${reason}\n` +
+        `上传图片: ${uploadedImages.length} 张\n\n` +
+        `交易单号: ${transactionId}`;
+
+      if (confirm(confirmMessage)) {
+        // 这里应该调用后端API提交调整请求
+        alert(`调整成功！\n交易单号: ${transactionId}\n\n调整类型: ${currentAdjustType === 'increase' ? '增加' : '减少'}\n调整金额: $${formatNumber(amount)}`);
+        
+        // 重置表单
+        document.getElementById('customerSearchInput').value = '';
+        document.getElementById('adjustAmountInput').value = '';
+        document.getElementById('adjustReasonInput').value = '';
+        document.getElementById('customerBalanceCard').style.display = 'none';
+        document.getElementById('adjustSummary').style.display = 'none';
+        document.getElementById('confirmAdjustBtn').disabled = true;
+        uploadedImages = [];
+        updateImagePreview();
+        selectedCustomer = null;
+        
+        // 关闭模态框
+        closeAdjustModal();
+      }
+    }
+
     // 点击模态框外部关闭
     document.getElementById('detailModal').addEventListener('click', function(e) {
       if (e.target === this) {
         closeModal();
+      }
+    });
+
+    document.getElementById('adjustAmountModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeAdjustModal();
       }
     });
 
