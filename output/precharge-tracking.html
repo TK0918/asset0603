@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>预充追踪 - 资金中台管理系统</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #f8fafc;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Header */
+    header {
+      background: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: #2563eb;
+      text-decoration: none;
+    }
+
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      gap: 30px;
+    }
+
+    .nav-menu li {
+      position: relative;
+    }
+
+    .nav-menu li a {
+      text-decoration: none;
+      color: #64748b;
+      font-weight: 500;
+      transition: color 0.3s ease;
+      padding: 10px 15px;
+      border-radius: 8px;
+      display: block;
+    }
+
+    .nav-menu li a:hover,
+    .nav-menu li a.active {
+      color: #2563eb;
+      background: rgba(37, 99, 235, 0.1);
+    }
+
+    /* 下拉菜单样式 */
+    .dropdown {
+      position: relative;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: white;
+      min-width: 200px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+      z-index: 1000;
+      padding: 8px 0;
+      border: 1px solid #e2e8f0;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .dropdown-content a {
+      padding: 12px 20px;
+      display: block;
+      border-radius: 0;
+      font-size: 14px;
+    }
+
+    .dropdown-content a:hover {
+      background: rgba(37, 99, 235, 0.1);
+      color: #2563eb;
+    }
+
+    /* Page styles */
+    .page-header {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 30px;
+      border-left: 4px solid #2563eb;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 10px;
+    }
+
+    .page-description {
+      color: #64748b;
+      font-size: 16px;
+    }
+
+    /* 分页样式 */
+    .pagination-controls { display:flex; align-items:center; gap:8px; }
+    .page-size-select { padding:6px 12px; border:1px solid #e2e8f0; border-radius:6px; font-size:14px; }
+    .pagination-container { display:flex; justify-content:space-between; align-items:center; padding:20px 25px; border-top:1px solid #e2e8f0; background:#f8fafc; }
+    .pagination-left { display:flex; align-items:center; gap:20px; }
+    .pagination-info { color:#64748b; font-size:14px; }
+    .pagination { display:flex; align-items:center; gap:8px; }
+    .pagination-btn { padding:8px 12px; border:1px solid #e2e8f0; background:white; border-radius:6px; cursor:pointer; font-size:14px; transition:all 0.2s; }
+    .pagination-btn:hover:not(:disabled) { background:#f1f5f9; border-color:#cbd5e1; }
+    .pagination-btn:disabled { opacity:0.5; cursor:not-allowed; }
+    .pagination-btn.active { background:#2563eb; color:white; border-color:#2563eb; }
+    .page-numbers { display:flex; gap:4px; }
+    .page-jump { display:flex; align-items:center; gap:8px; margin-left:20px; }
+    .jump-input { width:60px; padding:6px 8px; border:1px solid #e2e8f0; border-radius:4px; text-align:center; font-size:14px; }
+    .jump-btn { padding:6px 12px; border:1px solid #2563eb; background:#2563eb; color:white; border-radius:4px; cursor:pointer; font-size:14px; }
+    .jump-btn:hover { background:#1d4ed8; }
+
+    .search-section {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 25px;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 20px;
+      align-items: end;
+      flex-wrap: wrap;
+    }
+
+    .search-group {
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .search-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-primary { background: #2563eb; color: white; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-secondary { background: #6b7280; color: white; }
+    .btn-secondary:hover { background: #4b5563; }
+    .btn-success { background: #059669; color: white; }
+    .btn-success:hover { background: #047857; }
+    .btn-danger { background: #dc2626; color: white; }
+    .btn-danger:hover { background: #b91c1c; }
+    .btn-small {
+      padding: 4px 8px;
+      font-size: 11px;
+      border-radius: 4px;
+    }
+
+    /* Table Container */
+    .table-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 25px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .table-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      position: relative;
+    }
+
+    .tracking-table {
+      width: 100%;
+      min-width: 2400px;
+      border-collapse: collapse;
+      position: relative;
+    }
+
+    .tracking-table th,
+    .tracking-table td {
+      padding: 12px 8px;
+      text-align: left;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .tracking-table th {
+      background: #f8fafc;
+      font-weight: 600;
+      color: #374151;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    /* Fixed columns */
+    .tracking-table th:nth-child(1),
+    .tracking-table th:nth-child(2),
+    .tracking-table th:nth-child(3),
+    .tracking-table td:nth-child(1),
+    .tracking-table td:nth-child(2),
+    .tracking-table td:nth-child(3) {
+      position: sticky;
+      left: 0;
+      background: white;
+      z-index: 15;
+    }
+
+    .tracking-table th:nth-child(2),
+    .tracking-table td:nth-child(2) { left: 120px; }
+    .tracking-table th:nth-child(3),
+    .tracking-table td:nth-child(3) { left: 270px; }
+
+    /* Fixed operation column */
+    .tracking-table th:last-child,
+    .tracking-table td:last-child {
+      position: sticky;
+      right: 0;
+      background: white;
+      z-index: 15;
+    }
+
+    .tracking-table tr:hover {
+      background: #f8fafc;
+    }
+
+    .tracking-table tr:hover td:nth-child(1),
+    .tracking-table tr:hover td:nth-child(2),
+    .tracking-table tr:hover td:nth-child(3),
+    .tracking-table tr:hover td:last-child {
+      background: #f8fafc;
+    }
+
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .risk-severe {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .risk-medium {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .tag-bad-debt {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    .tag-following {
+      background: #dbeafe;
+      color: #1e40af;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    .tag-settled {
+      background: #dcfce7;
+      color: #166534;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    .amount-large {
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .amount-positive { color: #059669; }
+
+    .action-buttons {
+      display: flex;
+      gap: 6px;
+    }
+
+    .remark-cell {
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 12px;
+      color: #374151;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 700px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .modal-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #64748b;
+    }
+
+    .detail-section {
+      margin-bottom: 20px;
+    }
+
+    .detail-section h4 {
+      color: #374151;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      background: #f8fafc;
+      border-radius: 6px;
+    }
+
+    .detail-label {
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .detail-value {
+      color: #1e293b;
+      font-weight: 600;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+      resize: vertical;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .tag-options {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tag-option {
+      padding: 8px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+      background: white;
+    }
+
+    .tag-option:hover {
+      border-color: #2563eb;
+      background: rgba(37, 99, 235, 0.05);
+    }
+
+    .tag-option.selected {
+      border-color: #2563eb;
+      background: #2563eb;
+      color: white;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .search-row {
+        flex-direction: column;
+      }
+
+      .search-group {
+        min-width: 100%;
+      }
+
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <a href="index.html" class="logo">资金中台</a>
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="index.html">首页</a></li>
+          <li class="dropdown">
+            <a href="customer-management.html">账户管理</a>
+            <div class="dropdown-content">
+              <a href="customer-management.html">账户管理</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="online-recharge.html">转账和收款</a>
+            <div class="dropdown-content">
+              <a href="online-recharge.html">在线充值</a>
+              <a href="transfer-audit.html">转账审核</a>
+              <a href="precharge-tracking.html" class="active">预充追踪</a>
+              <a href="account-config.html">收款账户</a>
+              <a href="receiving-ledger.html">收款明细</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="transaction-details.html">交易管理</a>
+            <div class="dropdown-content">
+              <a href="transaction-details.html">交易明细</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="credit-audit.html">额度管理</a>
+            <div class="dropdown-content">
+              <a href="credit-audit.html">信用额度</a>
+              <a href="credit-bill.html">额度账单</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="../Public component/button.html" target="_blank">公共组件</a>
+            <div class="dropdown-content">
+              <a href="../Public component/button.html" target="_blank">充值转账组件</a>
+              <a href="../Public component/payment.html" target="_blank">支付组件</a>
+              <a href="../Public component/payment2.html" target="_blank">支付组件(三列)</a>
+              <a href="../Public component/view.html" target="_blank">钱包余额组件</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="exchange-rate-detail.html">汇率管理</a>
+            <div class="dropdown-content">
+              <a href="exchange-rate-detail.html">中国人民银行汇率</a>
+              <a href="exchange-rate-config.html">汇率浮动配置</a>
+              <a href="hqy-business-exchange.html">灏仟亿业务汇率</a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- 页面标题和描述 -->
+    <div class="page-header">
+      <h1 class="page-title">预充追踪</h1>
+      <p class="page-description">追踪预充记录，管理风险等级，记录跟进信息，支持坏账记录和飞书通知</p>
+    </div>
+
+    <div class="search-section">
+      <div class="search-row">
+        <div class="search-group">
+          <label>商户ID</label>
+          <input type="text" class="search-input" id="search-entity-id" placeholder="输入商户ID">
+        </div>
+        <div class="search-group">
+          <label>商户名称</label>
+          <input type="text" class="search-input" id="search-entity-name" placeholder="输入商户名称">
+        </div>
+        <div class="search-group">
+          <label>风险等级</label>
+          <select class="search-input" id="search-risk-level">
+            <option value="">全部</option>
+            <option value="严重">严重</option>
+            <option value="中等">中等</option>
+          </select>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-primary" onclick="doSearch()">搜索</button>
+          <button class="btn btn-secondary" onclick="resetSearch()">重置</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <div class="table-header">
+        <h3 class="table-title">预充追踪列表</h3>
+      </div>
+      
+      <div class="table-wrapper">
+        <table class="tracking-table">
+          <thead>
+            <tr>
+              <th width="120px">商户ID</th>
+              <th width="150px">商户名称</th>
+              <th width="150px">提交转账审核人员</th>
+              <th width="150px">提交转账审核时间</th>
+              <th width="150px">预充申请人</th>
+              <th width="80px">预充币种</th>
+              <th width="100px">预充金额</th>
+              <th width="100px">风险等级</th>
+              <th width="120px">转账审核滞留天数</th>
+              <th width="150px">最后跟进人</th>
+              <th width="150px">最后跟进时间</th>
+              <th width="100px">跟进标签</th>
+              <th width="200px">跟进备注</th>
+              <th width="100px">操作</th>
+            </tr>
+          </thead>
+          <tbody id="trackingTbody">
+            <!-- 数据将通过JavaScript动态生成 -->
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination-container">
+        <div class="pagination-left">
+          <div class="pagination-controls">
+            <span>每页显示：</span>
+            <select id="pageSize" class="page-size-select">
+              <option value="10">10条</option>
+              <option value="20">20条</option>
+              <option value="50">50条</option>
+              <option value="100">100条</option>
+            </select>
+          </div>
+          <div class="pagination-info">
+            <span id="paginationInfo">显示第 1-0 条，共 0 条记录</span>
+          </div>
+        </div>
+        <div class="pagination">
+          <button id="firstPage" class="pagination-btn">首页</button>
+          <button id="prevPage" class="pagination-btn">上一页</button>
+          <div id="pageNumbers" class="page-numbers"></div>
+          <button id="nextPage" class="pagination-btn">下一页</button>
+          <button id="lastPage" class="pagination-btn">末页</button>
+          <div class="page-jump">
+            <span>跳转到</span>
+            <input type="number" id="jumpToPage" class="jump-input" min="1" placeholder="页码">
+            <button id="jumpBtn" class="jump-btn">跳转</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 跟进弹窗 -->
+  <div class="modal" id="followupModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">跟进记录</h2>
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="detail-section">
+        <h4>预充信息</h4>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">商户ID</span>
+            <span class="detail-value" id="f-entity-id"></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">商户名称</span>
+            <span class="detail-value" id="f-entity-name"></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">预充币种</span>
+            <span class="detail-value" id="f-currency"></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">预充金额</span>
+            <span class="detail-value amount-positive" id="f-amount"></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">风险等级</span>
+            <span class="detail-value" id="f-risk-level"></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">滞留天数</span>
+            <span class="detail-value" id="f-days"></span>
+          </div>
+        </div>
+      </div>
+      <div class="detail-section">
+        <h4>跟进信息</h4>
+        <div class="form-group">
+          <label>跟进标签</label>
+          <div class="tag-options">
+            <div class="tag-option" data-tag="坏账" onclick="selectTag(this)">坏账</div>
+            <div class="tag-option" data-tag="跟进中" onclick="selectTag(this)">跟进中</div>
+            <div class="tag-option" data-tag="已结清" onclick="selectTag(this)">已结清</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>跟进备注</label>
+          <textarea class="form-input" id="f-remark" rows="5" placeholder="请输入跟进备注（最多1000字符）" maxlength="1000"></textarea>
+          <div style="text-align: right; margin-top: 4px; color: #64748b; font-size: 12px;">
+            <span id="f-remark-count">0</span>/1000
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; justify-content:flex-end;">
+          <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+          <button class="btn btn-primary" onclick="saveFollowup()">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 模拟预充追踪数据
+    let trackingData = [
+      {
+        entityId: 'US004',
+        entityName: 'Amazon.com Inc.',
+        submitPerson: '张经理 (zhang@example.com)',
+        submitTime: '2024-01-16 10:20:00',
+        prechargePerson: '李经理 (li@example.com)',
+        prechargeCurrency: 'USD',
+        prechargeAmount: 15000,
+        riskLevel: '中等',
+        retentionDays: 5,
+        lastFollowupPerson: '王经理 (wang@example.com)',
+        lastFollowupTime: '2024-01-20 14:30:00',
+        followupTag: '跟进中',
+        followupRemark: '客户转账仍在待匹配状态，已联系客户确认转账情况，等待回复。'
+      },
+      {
+        entityId: 'US007',
+        entityName: 'Netflix Inc.',
+        submitPerson: '客户',
+        submitTime: '2024-01-16 13:45:00',
+        prechargePerson: '赵经理 (zhao@example.com)',
+        prechargeCurrency: 'USD',
+        prechargeAmount: 50000,
+        riskLevel: '严重',
+        retentionDays: 3,
+        lastFollowupPerson: '钱经理 (qian@example.com)',
+        lastFollowupTime: '2024-01-19 10:15:00',
+        followupTag: '坏账',
+        followupRemark: '退回转账审核申请，客户可用余额不足，无法回收预充金额。已记录坏账并发送飞书通知。'
+      },
+      {
+        entityId: 'US005',
+        entityName: 'Meta Platforms Inc.',
+        submitPerson: '客户',
+        submitTime: '2024-01-16 11:30:00',
+        prechargePerson: '孙经理 (sun@example.com)',
+        prechargeCurrency: 'USD',
+        prechargeAmount: 25000,
+        riskLevel: '中等',
+        retentionDays: 6,
+        lastFollowupPerson: '周经理 (zhou@example.com)',
+        lastFollowupTime: '2024-01-21 09:20:00',
+        followupTag: '跟进中',
+        followupRemark: '已预充客户25000 USD，转账审核仍在待匹配状态。已联系客户确认转账凭证，客户表示已转账，等待银行处理。'
+      },
+      {
+        entityId: 'US010',
+        entityName: 'Adobe Inc.',
+        submitPerson: '客户',
+        submitTime: '2024-01-17 09:00:00',
+        prechargePerson: '吴经理 (wu@example.com)',
+        prechargeCurrency: 'USD',
+        prechargeAmount: 80000,
+        riskLevel: '中等',
+        retentionDays: 4,
+        lastFollowupPerson: '-',
+        lastFollowupTime: '-',
+        followupTag: '-',
+        followupRemark: '-'
+      },
+      {
+        entityId: 'US006',
+        entityName: 'Tesla Inc.',
+        submitPerson: '客户',
+        submitTime: '2024-01-15 08:15:00',
+        prechargePerson: '郑经理 (zheng@example.com)',
+        prechargeCurrency: 'USD',
+        prechargeAmount: 30000,
+        riskLevel: '中等',
+        retentionDays: 7,
+        lastFollowupPerson: '王经理 (wang@example.com)',
+        lastFollowupTime: '2024-01-22 11:00:00',
+        followupTag: '已结清',
+        followupRemark: '客户转账已到账并完成审核，预充金额已正常入账，问题已解决。'
+      }
+    ];
+
+    let filteredData = [...trackingData];
+    let currentPage = 1;
+    let pageSize = 10;
+    let currentRowIndex = -1;
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      renderTable();
+      initPagination();
+      
+      // 备注字数统计
+      document.getElementById('f-remark').addEventListener('input', function(){
+        document.getElementById('f-remark-count').textContent = this.value.length;
+      });
+    });
+
+    // 搜索功能
+    function doSearch() {
+      const entityId = document.getElementById('search-entity-id').value.trim().toLowerCase();
+      const entityName = document.getElementById('search-entity-name').value.trim().toLowerCase();
+      const riskLevel = document.getElementById('search-risk-level').value;
+
+      filteredData = trackingData.filter(item => {
+        const matchId = !entityId || item.entityId.toLowerCase().includes(entityId);
+        const matchName = !entityName || item.entityName.toLowerCase().includes(entityName);
+        const matchRisk = !riskLevel || item.riskLevel === riskLevel;
+        return matchId && matchName && matchRisk;
+      });
+
+      currentPage = 1;
+      renderTable();
+      renderPage();
+    }
+
+    // 重置搜索
+    function resetSearch() {
+      document.getElementById('search-entity-id').value = '';
+      document.getElementById('search-entity-name').value = '';
+      document.getElementById('search-risk-level').value = '';
+      filteredData = [...trackingData];
+      currentPage = 1;
+      renderTable();
+      renderPage();
+    }
+
+    // 渲染表格
+    function renderTable() {
+      const tbody = document.getElementById('trackingTbody');
+      tbody.innerHTML = '';
+
+      const startIndex = (currentPage - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      const pageData = filteredData.slice(startIndex, endIndex);
+
+      if(pageData.length === 0){
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td colspan="14" style="text-align:center; color:#64748b; padding:40px;">暂无数据</td>';
+        tbody.appendChild(tr);
+        return;
+      }
+
+      pageData.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        const riskClass = item.riskLevel === '严重' ? 'risk-severe' : 'risk-medium';
+        const tagClass = item.followupTag === '坏账' ? 'tag-bad-debt' : 
+                        item.followupTag === '跟进中' ? 'tag-following' : 
+                        item.followupTag === '已结清' ? 'tag-settled' : '';
+        
+        tr.innerHTML = `
+          <td>${item.entityId}</td>
+          <td>${item.entityName}</td>
+          <td>${item.submitPerson}</td>
+          <td>${item.submitTime}</td>
+          <td>${item.prechargePerson}</td>
+          <td>${item.prechargeCurrency}</td>
+          <td class="amount-large amount-positive">${item.prechargeAmount.toLocaleString()}</td>
+          <td><span class="status-badge ${riskClass}">${item.riskLevel}</span></td>
+          <td>${item.retentionDays} 天</td>
+          <td>${item.lastFollowupPerson}</td>
+          <td>${item.lastFollowupTime}</td>
+          <td>${item.followupTag !== '-' ? `<span class="${tagClass}">${item.followupTag}</span>` : '-'}</td>
+          <td class="remark-cell" title="${item.followupRemark !== '-' ? item.followupRemark : ''}">${item.followupRemark !== '-' ? item.followupRemark : '-'}</td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn btn-primary btn-small" onclick="openFollowup(${startIndex + index})">跟进</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // 打开跟进弹窗
+    function openFollowup(index) {
+      currentRowIndex = index;
+      const item = filteredData[index];
+      
+      document.getElementById('f-entity-id').textContent = item.entityId;
+      document.getElementById('f-entity-name').textContent = item.entityName;
+      document.getElementById('f-currency').textContent = item.prechargeCurrency;
+      document.getElementById('f-amount').textContent = item.prechargeAmount.toLocaleString();
+      document.getElementById('f-risk-level').textContent = item.riskLevel;
+      document.getElementById('f-days').textContent = item.retentionDays + ' 天';
+
+      // 回显现有跟进信息
+      const tagOptions = document.querySelectorAll('.tag-option');
+      tagOptions.forEach(opt => {
+        opt.classList.remove('selected');
+        if(opt.dataset.tag === item.followupTag){
+          opt.classList.add('selected');
+        }
+      });
+
+      document.getElementById('f-remark').value = item.followupRemark !== '-' ? item.followupRemark : '';
+      document.getElementById('f-remark-count').textContent = document.getElementById('f-remark').value.length;
+
+      document.getElementById('followupModal').classList.add('show');
+    }
+
+    // 选择跟进标签
+    function selectTag(element) {
+      const tagOptions = document.querySelectorAll('.tag-option');
+      tagOptions.forEach(opt => opt.classList.remove('selected'));
+      element.classList.add('selected');
+    }
+
+    // 保存跟进
+    function saveFollowup() {
+      const selectedTag = document.querySelector('.tag-option.selected');
+      const remark = document.getElementById('f-remark').value.trim();
+
+      if(!selectedTag){
+        alert('请选择跟进标签');
+        return;
+      }
+
+      const tag = selectedTag.dataset.tag;
+      const currentUser = '当前用户 (current@example.com)';
+      const currentTime = new Date().toLocaleString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }).replace(/\//g, '-');
+
+      // 更新数据
+      const item = filteredData[currentRowIndex];
+      item.followupTag = tag;
+      item.followupRemark = remark || '-';
+      item.lastFollowupPerson = currentUser;
+      item.lastFollowupTime = currentTime;
+
+      // 同步更新原始数据
+      const originalIndex = trackingData.findIndex(d => d.entityId === item.entityId && d.submitTime === item.submitTime);
+      if(originalIndex !== -1){
+        trackingData[originalIndex] = {...item};
+      }
+
+      alert('跟进记录已保存');
+      renderTable();
+      closeModal();
+    }
+
+    // 关闭弹窗
+    function closeModal() {
+      document.getElementById('followupModal').classList.remove('show');
+    }
+
+    // 分页功能
+    function initPagination(){
+      renderPage();
+      document.getElementById('pageSize').addEventListener('change', (e)=>{ 
+        pageSize=parseInt(e.target.value); 
+        currentPage=1; 
+        renderTable();
+        renderPage(); 
+      });
+      document.getElementById('firstPage').addEventListener('click', ()=>goToPage(1));
+      document.getElementById('prevPage').addEventListener('click', ()=>goToPage(currentPage-1));
+      document.getElementById('nextPage').addEventListener('click', ()=>goToPage(currentPage+1));
+      document.getElementById('lastPage').addEventListener('click', ()=>{ 
+        const tp = Math.max(1, Math.ceil(filteredData.length/pageSize)); 
+        goToPage(tp); 
+      });
+      document.getElementById('jumpBtn').addEventListener('click', ()=>{ 
+        const v=parseInt(document.getElementById('jumpToPage').value); 
+        if(v) goToPage(v); 
+      });
+      document.getElementById('jumpToPage').addEventListener('keypress', (e)=>{ 
+        if(e.key==='Enter'){ 
+          const v=parseInt(e.target.value); 
+          if(v) goToPage(v);
+        } 
+      });
+    }
+
+    function renderPage(){
+      const total = filteredData.length;
+      const totalPages = Math.max(1, Math.ceil(total/pageSize));
+      if(currentPage>totalPages) currentPage=totalPages;
+      const startIndex = (currentPage-1)*pageSize;
+      const endIndex = startIndex + pageSize;
+      
+      // 更新信息
+      const start = total===0?0:startIndex+1;
+      const end = Math.min(endIndex,total);
+      document.getElementById('paginationInfo').textContent = `显示第 ${start}-${end} 条，共 ${total} 条记录`;
+      
+      // 更新按钮状态
+      document.getElementById('firstPage').disabled = currentPage===1;
+      document.getElementById('prevPage').disabled = currentPage===1;
+      document.getElementById('nextPage').disabled = currentPage===totalPages;
+      document.getElementById('lastPage').disabled = currentPage===totalPages;
+      
+      // 更新页码
+      const pn = document.getElementById('pageNumbers');
+      pn.innerHTML='';
+      const maxVisible=5; 
+      let sp=Math.max(1,currentPage-Math.floor(maxVisible/2)); 
+      let ep=Math.min(totalPages, sp+maxVisible-1); 
+      if(ep-sp+1<maxVisible) sp=Math.max(1, ep-maxVisible+1);
+      for(let i=sp;i<=ep;i++){ 
+        const b=document.createElement('button'); 
+        b.className=`pagination-btn ${i===currentPage?'active':''}`; 
+        b.textContent=i; 
+        b.onclick=()=>goToPage(i); 
+        pn.appendChild(b);
+      }
+    }
+
+    function goToPage(p){ 
+      const tp=Math.max(1, Math.ceil(filteredData.length/pageSize)); 
+      if(p>=1 && p<=tp){ 
+        currentPage=p; 
+        renderTable();
+        renderPage(); 
+      } 
+    }
+
+    // 点击模态框外部关闭
+    document.getElementById('followupModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>
+
