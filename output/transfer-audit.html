@@ -355,10 +355,7 @@
     .status-approved { background: #dcfce7; color: #166534; }
     .status-rejected { background: #fee2e2; color: #991b1b; }
     .precharge-none { color: #64748b; }
-    .precharge-applying { background: #fef3c7; color: #92400e; }
     .precharge-success { background: #dcfce7; color: #166534; }
-    .precharge-failed { background: #fee2e2; color: #991b1b; }
-    .precharge-canceled { color: #94a3b8; }
 
     .amount-large {
       font-weight: 600;
@@ -942,17 +939,17 @@
                 </div>
               </td>
             </tr>
-            <!-- 预充失败 + 待匹配（可以重新申请） -->
-            <tr data-status="待匹配" data-precharge-status="预充失败">
+            <!-- 预充成功 + 待匹配（更多示例） -->
+            <tr data-status="待匹配" data-precharge-status="预充成功">
               <td><input type="checkbox" class="row-select"></td>
               <td>US007</td>
               <td>finance@netflix.com</td>
               <td>Netflix Inc.</td>
               <td>2024-01-16 13:45</td>
               <td><span class="status-badge status-pending">待匹配</span></td>
-              <td><span class="status-badge precharge-failed">预充失败</span></td>
+              <td><span class="status-badge precharge-success">预充成功</span></td>
               <td>USD</td>
-              <td class="amount-large amount-negative">50,000</td>
+              <td class="amount-large amount-positive">12,000</td>
               <td><span class="business-tag">Fulfillment</span></td>
               <td><span class="platform-tag">Bank Transfer</span></td>
               <td>BT202401160001</td>
@@ -967,22 +964,21 @@
               <td class="audit-remark">-</td>
               <td>
                 <div class="action-buttons">
-                  <button class="btn btn-primary btn-small" onclick="openPrecharge(this)">预充</button>
                   <button class="btn btn-primary btn-small" onclick="openMatch('match', this)">匹配</button>
                 </div>
               </td>
             </tr>
-            <!-- 预充取消 + 审核通过（因为审核通过导致预充被取消） -->
-            <tr data-status="审核通过" data-precharge-status="预充取消">
+            <!-- 预充成功 + 审核通过（更多示例） -->
+            <tr data-status="审核通过" data-precharge-status="预充成功">
               <td><input type="checkbox" class="row-select" disabled></td>
               <td>US008</td>
               <td>payment@nvidia.com</td>
               <td>NVIDIA Corporation</td>
               <td>2024-01-14 15:20</td>
               <td><span class="status-badge status-approved">审核通过</span></td>
-              <td><span class="status-badge precharge-canceled">预充取消</span></td>
+              <td><span class="status-badge precharge-success">预充成功</span></td>
               <td>USD</td>
-              <td class="amount-large">20,000</td>
+              <td class="amount-large amount-positive">20,000</td>
               <td><span class="business-tag">Advertising</span></td>
               <td><span class="platform-tag">Stripe</span></td>
               <td>ST202401140002</td>
@@ -994,23 +990,23 @@
               <td>周经理</td>
               <td>USD</td>
               <td class="amount-large amount-positive">60,000</td>
-              <td class="audit-remark">审核通过，预充申请已取消</td>
+              <td class="audit-remark">审核通过，预充已成功</td>
               <td>
                 <div class="action-buttons">
                 </div>
               </td>
             </tr>
-            <!-- 预充取消 + 审核失败（因为审核失败导致预充被取消） -->
-            <tr data-status="审核失败" data-precharge-status="预充取消">
+            <!-- 预充成功 + 审核失败（预充成功但审核失败） -->
+            <tr data-status="审核失败" data-precharge-status="预充成功">
               <td><input type="checkbox" class="row-select" disabled></td>
               <td>US009</td>
               <td>accounting@oracle.com</td>
               <td>Oracle Corporation</td>
               <td>2024-01-13 14:10</td>
               <td><span class="status-badge status-rejected">审核失败</span></td>
-              <td><span class="status-badge precharge-canceled">预充取消</span></td>
+              <td><span class="status-badge precharge-success">预充成功</span></td>
               <td>USD</td>
-              <td class="amount-large">18,000</td>
+              <td class="amount-large amount-positive">18,000</td>
               <td><span class="business-tag">Fulfillment</span></td>
               <td><span class="platform-tag">PayPal</span></td>
               <td>PP202401130002</td>
@@ -1022,38 +1018,9 @@
               <td>吴经理</td>
               <td>-</td>
               <td>-</td>
-              <td class="audit-remark">转账信息不匹配，预充申请已取消</td>
+              <td class="audit-remark">转账信息不匹配，审核失败</td>
               <td>
                 <div class="action-buttons">
-                </div>
-              </td>
-            </tr>
-            <!-- 预充申请中 + 待匹配（正在审批中） -->
-            <tr data-status="待匹配" data-precharge-status="预充申请中">
-              <td><input type="checkbox" class="row-select"></td>
-              <td>US010</td>
-              <td>finance@adobe.com</td>
-              <td>Adobe Inc.</td>
-              <td>2024-01-17 09:00</td>
-              <td><span class="status-badge status-pending">待匹配</span></td>
-              <td><span class="status-badge precharge-applying">预充申请中</span></td>
-              <td>USD</td>
-              <td class="amount-large">80,000</td>
-              <td><span class="business-tag">Advertising</span></td>
-              <td><span class="platform-tag">Wise</span></td>
-              <td>WS202401170001</td>
-              <td><a href="#" class="screenshot-link" onclick="viewScreenshot('screenshot11.jpg')">查看</a></td>
-              <td>-</td>
-              <td>-</td>
-              <td class="audit-remark">-</td>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
-              <td class="audit-remark">-</td>
-              <td>
-                <div class="action-buttons">
-                  <button class="btn btn-primary btn-small" onclick="openMatch('match', this)">匹配</button>
                 </div>
               </td>
             </tr>
@@ -1072,7 +1039,7 @@
             </select>
           </div>
           <div class="pagination-info">
-            <span id="paginationInfo">显示第 1-4 条，共 4 条记录</span>
+            <span id="paginationInfo">显示第 1-10 条，共 10 条记录</span>
           </div>
         </div>
         <div class="pagination">
@@ -1445,7 +1412,7 @@
   <div class="modal" id="prechargeModal">
     <div class="modal-content" style="max-width:900px;">
       <div class="modal-header">
-        <h2 class="modal-title">预充申请</h2>
+        <h2 class="modal-title">预充</h2>
         <button class="close-btn" onclick="closeModal()">&times;</button>
       </div>
       <div class="detail-section">
@@ -1468,7 +1435,6 @@
           <div class="detail-item"><span class="detail-label">客户预充上限币种</span><span class="detail-value" id="pc-limit-ccy"></span></div>
           <div class="detail-item"><span class="detail-label">客户预充上限金额</span><span class="detail-value amount-positive" id="pc-limit-amount"></span></div>
           <div class="detail-item"><span class="detail-label">客户已预充金额</span><span class="detail-value" id="pc-charged-amount"></span></div>
-          <div class="detail-item"><span class="detail-label">客户预充申请中金额</span><span class="detail-value" id="pc-applying-amount"></span></div>
           <div class="detail-item" style="grid-column: 1 / -1; background: #eff6ff; border: 2px solid #2563eb;">
             <span class="detail-label" style="font-weight: 600; color: #1e40af;">客户可预充金额</span>
             <span class="detail-value" style="font-weight: 700; color: #1e40af; font-size: 18px;" id="pc-available-amount"></span>
@@ -1476,13 +1442,13 @@
         </div>
       </div>
       <div class="detail-section">
-        <h4>预充申请</h4>
+        <h4>预充信息</h4>
         <div class="form-group">
-          <label>*客户本次申请预充金额</label>
+          <label>*预充金额</label>
           <input type="number" class="form-input" id="pc-apply-amount" placeholder="请输入预充金额" min="0" step="0.01">
         </div>
         <div class="form-group">
-          <label>*客户本次申请备注</label>
+          <label>*预充备注</label>
           <textarea class="form-input" id="pc-apply-remark" rows="3" placeholder="请输入备注信息（最多500字符）" maxlength="500"></textarea>
           <div style="text-align: right; margin-top: 4px; color: #64748b; font-size: 12px;">
             <span id="pc-remark-count">0</span>/500
@@ -1490,7 +1456,7 @@
         </div>
         <div style="display:flex; gap:10px; justify-content:flex-end;">
           <button class="btn btn-secondary" onclick="closeModal()">取消</button>
-          <button class="btn btn-primary" id="pc-submit">提交申请</button>
+          <button class="btn btn-primary" id="pc-submit">提交预充</button>
         </div>
       </div>
     </div>
@@ -1778,9 +1744,6 @@
         // 存储匹配信息到行数据
         row.dataset.matchedData = JSON.stringify(pickedRow);
         
-        // 检查是否需要中断预充申请
-        checkPrechargeInterrupt(row);
-        
         document.getElementById('matchModal').classList.remove('show');
       };
       
@@ -1826,9 +1789,6 @@
           console.log(`记录坏账：预充金额 ${prechargeAmount.toLocaleString()} ${prechargeCurrency}，可用余额 ${availableBalance.toLocaleString()} ${prechargeCurrency}`);
           alert('已记录坏账，飞书通知已发送');
         }
-        
-        // 检查是否需要中断预充申请
-        checkPrechargeInterrupt(row);
         
         document.getElementById('matchModal').classList.remove('show');
       };
@@ -1892,9 +1852,6 @@
           }catch(err){}
         }
         
-        // 检查是否需要中断预充申请
-        checkPrechargeInterrupt(row);
-        
         document.getElementById('confirmModal').classList.remove('show');
       };
       
@@ -1907,9 +1864,6 @@
         tds[16].textContent = new Date().toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(/\//g,'-');
         tds[17].textContent = '当前用户';
         tds[20].textContent = '拒绝入账';
-        
-        // 检查是否需要中断预充申请
-        checkPrechargeInterrupt(row);
         
         document.getElementById('confirmModal').classList.remove('show');
       };
@@ -1928,8 +1882,8 @@
         return;
       }
       
-      // 预充失败状态可以重新申请
-      if(prechargeStatus !== '无预充' && prechargeStatus !== '预充失败'){
+      // 只有无预充状态才能预充
+      if(prechargeStatus !== '无预充'){
         alert('当前预充状态不允许重新申请');
         return;
       }
@@ -1958,38 +1912,68 @@
         'US001': {
           limitCcy: 'USD',
           limitAmount: 100000,
-          chargedAmount: 20000,  // 已预充金额（待匹配状态下的成功预充）
-          applyingAmount: 5000   // 申请中金额（待匹配状态下的申请中预充）
+          chargedAmount: 20000  // 已预充金额（待匹配状态下的成功预充）
         },
         'US002': {
           limitCcy: 'USD',
           limitAmount: 50000,
-          chargedAmount: 10000,
-          applyingAmount: 0
+          chargedAmount: 10000
         },
         'US003': {
           limitCcy: 'USD',
           limitAmount: 200000,
-          chargedAmount: 50000,
-          applyingAmount: 10000
+          chargedAmount: 50000
+        },
+        'US004': {
+          limitCcy: 'USD',
+          limitAmount: 150000,
+          chargedAmount: 15000
+        },
+        'US005': {
+          limitCcy: 'USD',
+          limitAmount: 80000,
+          chargedAmount: 25000
+        },
+        'US006': {
+          limitCcy: 'USD',
+          limitAmount: 120000,
+          chargedAmount: 30000
+        },
+        'US007': {
+          limitCcy: 'USD',
+          limitAmount: 60000,
+          chargedAmount: 12000
+        },
+        'US008': {
+          limitCcy: 'USD',
+          limitAmount: 90000,
+          chargedAmount: 20000
+        },
+        'US009': {
+          limitCcy: 'USD',
+          limitAmount: 70000,
+          chargedAmount: 18000
+        },
+        'US010': {
+          limitCcy: 'USD',
+          limitAmount: 180000,
+          chargedAmount: 80000
         }
       };
       
       const prechargeInfo = mockPrechargeData[entityId] || {
         limitCcy: 'USD',
         limitAmount: 0,
-        chargedAmount: 0,
-        applyingAmount: 0
+        chargedAmount: 0
       };
       
       // 填充预充额度信息
       document.getElementById('pc-limit-ccy').textContent = prechargeInfo.limitCcy;
       document.getElementById('pc-limit-amount').textContent = prechargeInfo.limitAmount.toLocaleString();
       document.getElementById('pc-charged-amount').textContent = prechargeInfo.chargedAmount.toLocaleString();
-      document.getElementById('pc-applying-amount').textContent = prechargeInfo.applyingAmount.toLocaleString();
       
-      // 计算可预充金额
-      const availableAmount = prechargeInfo.limitAmount - prechargeInfo.chargedAmount - prechargeInfo.applyingAmount;
+      // 计算可预充金额（不再减去申请中金额）
+      const availableAmount = prechargeInfo.limitAmount - prechargeInfo.chargedAmount;
       document.getElementById('pc-available-amount').textContent = Math.max(0, availableAmount).toLocaleString();
       
       // 清空输入
@@ -2030,26 +2014,20 @@
           return;
         }
         
-        // 判断是否需要审批
-        const needApproval = applyAmount > window.currentAvailableAmount;
+        // 检查金额是否在可预充范围内
         const prechargeCurrency = window.currentPrechargeInfo.limitCcy || 'USD';
         
-        if(needApproval){
-          // 需要飞书审批
-          if(confirm(`申请金额 ${applyAmount.toLocaleString()} 超过可预充金额 ${window.currentAvailableAmount.toLocaleString()}，将触发飞书审批流程。是否继续？`)){
-            // 更新状态为预充申请中
-            updatePrechargeStatus(row, '预充申请中', prechargeCurrency, applyAmount);
-            alert('预充申请已提交，等待飞书审批');
-            document.getElementById('prechargeModal').classList.remove('show');
-          }
-        } else {
-          // 立即成功
-          if(confirm(`确认提交预充申请，金额：${applyAmount.toLocaleString()}？`)){
-            // 更新状态为预充成功
-            updatePrechargeStatus(row, '预充成功', prechargeCurrency, applyAmount);
-            alert('预充成功！');
-            document.getElementById('prechargeModal').classList.remove('show');
-          }
+        if(applyAmount > window.currentAvailableAmount){
+          alert(`预充金额 ${applyAmount.toLocaleString()} 超过可预充金额 ${window.currentAvailableAmount.toLocaleString()}，无法提交预充`);
+          return;
+        }
+        
+        // 金额允许，直接成功
+        if(confirm(`确认提交预充，金额：${applyAmount.toLocaleString()} ${prechargeCurrency}？`)){
+          // 更新状态为预充成功
+          updatePrechargeStatus(row, '预充成功', prechargeCurrency, applyAmount);
+          alert('预充成功！');
+          document.getElementById('prechargeModal').classList.remove('show');
         }
       };
     }
@@ -2065,17 +2043,8 @@
           case '无预充':
             statusBadge.className += 'precharge-none';
             break;
-          case '预充申请中':
-            statusBadge.className += 'precharge-applying';
-            break;
           case '预充成功':
             statusBadge.className += 'precharge-success';
-            break;
-          case '预充失败':
-            statusBadge.className += 'precharge-failed';
-            break;
-          case '预充取消':
-            statusBadge.className += 'precharge-canceled';
             break;
         }
       }
@@ -2084,23 +2053,11 @@
       if(status === '无预充'){
         tds[7].textContent = '-';
         tds[8].textContent = '-';
-      } else if(status === '预充取消'){
-        // 预充取消时保留原有币种和金额显示
+      } else if(status === '预充成功'){
+        // 预充成功时显示币种和金额
         if(currency && amount){
           tds[7].textContent = currency;
-          tds[8].textContent = amount.toLocaleString();
-        }
-      } else {
-        // 预充成功、预充失败、预充申请中时显示币种和金额
-        if(currency && amount){
-          tds[7].textContent = currency;
-          if(status === '预充成功'){
-            tds[8].innerHTML = `<span class="amount-large amount-positive">${amount.toLocaleString()}</span>`;
-          } else if(status === '预充失败'){
-            tds[8].innerHTML = `<span class="amount-large amount-negative">${amount.toLocaleString()}</span>`;
-          } else {
-            tds[8].innerHTML = `<span class="amount-large">${amount.toLocaleString()}</span>`;
-          }
+          tds[8].innerHTML = `<span class="amount-large amount-positive">${amount.toLocaleString()}</span>`;
         } else {
           tds[7].textContent = '-';
           tds[8].textContent = '-';
@@ -2108,24 +2065,6 @@
       }
       
       row.dataset.prechargeStatus = status;
-      
-      // 如果预充申请中，但转账审核状态变为已确认或审核失败，则中断预充申请
-      const auditStatus = row.dataset.status;
-      if(status === '预充申请中' && (auditStatus === '审核通过' || auditStatus === '审核失败')){
-        // 保留原有币种和金额
-        const oldCurrency = tds[7].textContent;
-        const oldAmount = tds[8].textContent;
-        updatePrechargeStatus(row, '预充取消', oldCurrency !== '-' ? oldCurrency : null, oldAmount !== '-' ? parseFloat(oldAmount.replace(/,/g, '')) : null);
-      }
-    }
-    
-    // 监听审核状态变化，自动中断预充申请
-    function checkPrechargeInterrupt(row){
-      const auditStatus = row.dataset.status;
-      const prechargeStatus = row.dataset.prechargeStatus;
-      if(prechargeStatus === '预充申请中' && (auditStatus === '审核通过' || auditStatus === '审核失败')){
-        updatePrechargeStatus(row, '预充取消');
-      }
     }
 
     // 打开处理弹窗
@@ -2231,9 +2170,6 @@
           localStorage.setItem('receivingLedgerRows', JSON.stringify(newLedger));
         }catch(err){}
         
-        // 检查是否需要中断预充申请
-        checkPrechargeInterrupt(row);
-        
         document.getElementById('processModal').classList.remove('show');
       };
       document.getElementById('p-reject').onclick = ()=>{
@@ -2244,9 +2180,6 @@
         const tds = row.querySelectorAll('td');
         tds[13].textContent = new Date().toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(/\//g,'-');
         tds[14].textContent = '当前用户';
-        
-        // 检查是否需要中断预充申请
-        checkPrechargeInterrupt(row);
         
         document.getElementById('processModal').classList.remove('show');
       };
