@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>日终余额</title>
+  <style>
+    :root { --primary:#2563eb; --bg:#f8fafc; --card:#ffffff; --text:#111827; --muted:#6b7280; --border:#e5e7eb; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Helvetica Neue",sans-serif; background:var(--bg); color:var(--text); }
+    header { background: white; box-shadow: 0 2px 10px rgba(0,0,0,.1); position: sticky; top:0; z-index:1000; }
+    .header-content { display:flex; justify-content:space-between; align-items:center; padding:15px 30px; }
+    .logo { font-size:24px; font-weight:700; color:#2563eb; text-decoration:none; }
+    .nav-menu { display:flex; list-style:none; gap:30px; }
+    .nav-menu li { position:relative; }
+    .nav-menu li a { text-decoration:none; color:#64748b; font-weight:500; padding:10px 15px; border-radius:8px; display:block; }
+    .nav-menu li a:hover, .nav-menu li a.active { color:#2563eb; background:rgba(37,99,235,.1); }
+    /* 下拉菜单样式 */
+    .dropdown { position:relative; }
+    .dropdown-content { display:none; position:absolute; top:100%; left:0; background:white; min-width:200px; box-shadow:0 4px 12px rgba(0,0,0,.15); border-radius:8px; z-index:1000; padding:8px 0; border:1px solid #e2e8f0; }
+    .dropdown:hover .dropdown-content { display:block; }
+    .dropdown-content a { padding:12px 20px; display:block; border-radius:0; font-size:14px; }
+    .dropdown-content a:hover { background:rgba(37,99,235,.1); color:#2563eb; }
+
+    /* Page Header */
+    .page-header {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 30px;
+      border-left: 4px solid #2563eb;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 10px;
+    }
+
+    .page-description {
+      color: #64748b;
+      font-size: 16px;
+    }
+
+    .container { max-width:1400px; margin:24px auto; padding:0 16px; }
+    .card { background:var(--card); border:1px solid var(--border); border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,.04); }
+    .card-header { padding:16px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .title { font-size:18px; font-weight:700; }
+    .btn { 
+      padding: 12px 24px; 
+      border: none; 
+      border-radius: 8px; 
+      font-weight: 500; 
+      cursor: pointer; 
+      transition: all 0.3s ease; 
+      font-size: 14px; 
+      text-decoration: none; 
+      display: inline-block; 
+      text-align: center; 
+    }
+    .btn-primary { background: #2563eb; color: white; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-secondary { background: #6b7280; color: white; }
+    .btn-secondary:hover { background: #4b5563; }
+
+    /* 搜索区域样式 */
+    .search-section {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 25px;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 20px;
+      align-items: end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .search-group {
+      flex: 1;
+      min-width: 150px;
+      max-width: 200px;
+    }
+
+    .search-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    /* 表格容器样式 */
+    .table-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 25px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .table-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .table-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      position: relative;
+    }
+
+    .balance-table {
+      width: 100%;
+      min-width: 1000px;
+      border-collapse: collapse;
+      position: relative;
+    }
+
+    .balance-table th,
+    .balance-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 14px;
+    }
+
+    .balance-table th {
+      background: #f8fafc;
+      font-weight: 600;
+      color: #374151;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .balance-table tr:hover {
+      background: #f8fafc;
+    }
+
+    /* 金额样式 */
+    .amount-positive {
+      color: #059669;
+      font-weight: 500;
+    }
+
+    .amount-negative {
+      color: #dc2626;
+      font-weight: 500;
+    }
+
+    /* 分页样式 */
+    .pagination-container { display:flex; justify-content:space-between; align-items:center; padding:20px 25px; border-top:1px solid var(--border); background:#f8fafc; }
+    .pagination-left { display:flex; align-items:center; gap:20px; }
+    .pagination-controls { display:flex; align-items:center; gap:8px; }
+    .page-size-select { padding:6px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px; }
+    .pagination-info { color:#64748b; font-size:14px; }
+    .pagination { display:flex; align-items:center; gap:8px; }
+    .pagination-btn { padding:8px 12px; border:1px solid var(--border); background:white; border-radius:6px; cursor:pointer; font-size:14px; transition:all 0.2s; }
+    .pagination-btn:hover:not(:disabled) { background:#f1f5f9; border-color:#cbd5e1; }
+    .pagination-btn:disabled { opacity:0.5; cursor:not-allowed; }
+    .pagination-btn.active { background:var(--primary); color:white; border-color:var(--primary); }
+    .page-numbers { display:flex; gap:4px; }
+    .page-jump { display:flex; align-items:center; gap:8px; margin-left:20px; }
+    .jump-input { width:60px; padding:6px 8px; border:1px solid var(--border); border-radius:4px; text-align:center; font-size:14px; }
+    .jump-btn { padding:6px 12px; border:1px solid var(--primary); background:var(--primary); color:white; border-radius:4px; cursor:pointer; font-size:14px; }
+    .jump-btn:hover { background:#1d4ed8; }
+
+    /* Modal样式 */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .modal-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #64748b;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close-btn:hover {
+      color: #1e293b;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    .form-input:disabled {
+      background: #f1f5f9;
+      cursor: not-allowed;
+    }
+
+    .form-info {
+      margin-top: 8px;
+      padding: 10px;
+      background: #f8fafc;
+      border-radius: 6px;
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    .form-warning {
+      margin-top: 8px;
+      padding: 10px;
+      background: #fef3c7;
+      border-radius: 6px;
+      color: #92400e;
+      font-size: 13px;
+      border-left: 3px solid #f59e0b;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .btn-small {
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .search-row {
+        flex-direction: column;
+      }
+
+      .search-group {
+        min-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <a href="index.html" class="logo">资金中台</a>
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="index.html">首页</a></li>
+          <li class="dropdown">
+            <a href="customer-management.html">账户管理</a>
+            <div class="dropdown-content">
+              <a href="customer-management.html">账户管理</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="online-recharge.html">转账和收款</a>
+            <div class="dropdown-content">
+              <a href="online-recharge.html">在线充值</a>
+              <a href="transfer-audit.html">转账审核</a>
+              <a href="account-config.html">收款账户</a>
+              <a href="receiving-ledger.html">收款明细</a>
+              <a href="daily-balance.html" class="active">日终余额</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="transaction-details.html">交易管理</a>
+            <div class="dropdown-content">
+              <a href="transaction-details.html">交易明细</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="credit-audit.html">额度管理</a>
+            <div class="dropdown-content">
+              <a href="credit-audit.html">信用额度</a>
+              <a href="credit-bill.html">额度账单</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="../Public component/button.html" target="_blank">公共组件</a>
+            <div class="dropdown-content">
+              <a href="../Public component/button.html" target="_blank">充值转账组件</a>
+              <a href="../Public component/payment.html" target="_blank">支付组件</a>
+              <a href="../Public component/payment2.html" target="_blank">支付组件(三列)</a>
+              <a href="../Public component/view.html" target="_blank">钱包余额组件</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="exchange-rate-detail.html">汇率管理</a>
+            <div class="dropdown-content">
+              <a href="exchange-rate-detail.html">中国人民银行汇率</a>
+              <a href="exchange-rate-config.html">汇率浮动配置</a>
+              <a href="hqy-business-exchange.html">灏仟亿业务汇率</a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <div class="container">
+    <!-- 页面标题和描述 -->
+    <div class="page-header">
+      <h1 class="page-title">日终余额</h1>
+      <p class="page-description">查看和管理各支付账户不同币种每日的最终余额记录</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="title">日终余额列表</div>
+      </div>
+
+      <div class="search-section">
+        <div class="search-row">
+          <div class="search-group">
+            <label>支付平台</label>
+            <select class="search-input" id="fPlatform">
+              <option value="">全部</option>
+              <option value="PayPal">PayPal</option>
+              <option value="Stripe">Stripe</option>
+              <option value="Wise">Wise</option>
+              <option value="Airwallex">Airwallex</option>
+              <option value="Payoneer">Payoneer</option>
+              <option value="PingPong">PingPong</option>
+            </select>
+          </div>
+          <div class="search-group">
+            <label>账户别名</label>
+            <input class="search-input" id="fAlias" placeholder="输入账户别名关键词" />
+          </div>
+          <div class="search-group">
+            <label>币种</label>
+            <select class="search-input" id="fCurrency">
+              <option value="">全部</option>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+              <option value="CHF">CHF</option>
+              <option value="CNY">CNY</option>
+            </select>
+          </div>
+          <div class="search-group">
+            <label>日终日期</label>
+            <input type="date" class="search-input" id="fDate" />
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn btn-primary" id="btnSearch">搜索</button>
+            <button class="btn btn-secondary" id="btnReset">重置</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-header">
+          <h3 class="table-title">日终余额列表</h3>
+          <div class="table-actions">
+            <button class="btn btn-primary" id="btnAdd">新增</button>
+          </div>
+        </div>
+        
+        <div class="table-wrapper">
+          <table class="balance-table" id="tbl">
+            <thead>
+              <tr>
+                <th width="120px">支付平台</th>
+                <th width="150px">账户别名</th>
+                <th width="100px">币种</th>
+                <th width="150px">日终余额</th>
+                <th width="120px">日终日期</th>
+                <th width="150px">更新时间</th>
+                <th width="100px">操作人</th>
+                <th width="100px">操作</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        
+        <div class="pagination-container">
+          <div class="pagination-left">
+            <div class="pagination-controls">
+              <span>每页显示：</span>
+              <select id="pageSize" class="page-size-select">
+                <option value="10">10条</option>
+                <option value="20">20条</option>
+                <option value="50">50条</option>
+                <option value="100">100条</option>
+              </select>
+            </div>
+            <div class="pagination-info">
+              <span id="paginationInfo">显示第 1-10 条，共 0 条记录</span>
+            </div>
+          </div>
+          <div class="pagination">
+            <button id="firstPage" class="pagination-btn">首页</button>
+            <button id="prevPage" class="pagination-btn">上一页</button>
+            <div id="pageNumbers" class="page-numbers"></div>
+            <button id="nextPage" class="pagination-btn">下一页</button>
+            <button id="lastPage" class="pagination-btn">末页</button>
+            <div class="page-jump">
+              <span>跳转到</span>
+              <input type="number" id="jumpToPage" class="jump-input" min="1" placeholder="页码">
+              <button id="jumpBtn" class="jump-btn">跳转</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增弹窗 -->
+  <div id="addModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">新增日终余额</h3>
+        <button class="close-btn" onclick="closeAddModal()">&times;</button>
+      </div>
+      <form id="addForm">
+        <div class="form-group">
+          <label>支付平台 <span style="color: red;">*</span></label>
+          <select class="form-input" id="addPlatform" required>
+            <option value="">请选择支付平台</option>
+            <option value="PayPal">PayPal</option>
+            <option value="Stripe">Stripe</option>
+            <option value="Wise">Wise</option>
+            <option value="Airwallex">Airwallex</option>
+            <option value="Payoneer">Payoneer</option>
+            <option value="PingPong">PingPong</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>账户别名 <span style="color: red;">*</span></label>
+          <select class="form-input" id="addAlias" required disabled>
+            <option value="">请先选择支付平台</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>币种 <span style="color: red;">*</span></label>
+          <select class="form-input" id="addCurrency" required>
+            <option value="">请选择币种</option>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+            <option value="CHF">CHF</option>
+            <option value="CNY">CNY</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>日终日期 <span style="color: red;">*</span></label>
+          <input type="date" class="form-input" id="addDate" required />
+        </div>
+        <div class="form-group">
+          <label>日终余额 <span style="color: red;">*</span></label>
+          <input type="number" step="0.01" class="form-input" id="addBalance" placeholder="请输入日终余额（支持正负数）" required />
+          <div id="addBalanceInfo" class="form-info" style="display: none;"></div>
+          <div id="addBalanceWarning" class="form-warning" style="display: none;"></div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary btn-small" onclick="closeAddModal()">取消</button>
+          <button type="submit" class="btn btn-primary btn-small">提交</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 编辑弹窗 -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">编辑日终余额</h3>
+        <button class="close-btn" onclick="closeEditModal()">&times;</button>
+      </div>
+      <form id="editForm">
+        <input type="hidden" id="editId" />
+        <div class="form-group">
+          <label>日终余额 <span style="color: red;">*</span></label>
+          <input type="number" step="0.01" class="form-input" id="editBalance" placeholder="请输入日终余额（支持正负数，允许0）" required />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary btn-small" onclick="closeEditModal()">取消</button>
+          <button type="submit" class="btn btn-primary btn-small">提交</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // 账户别名数据（根据支付平台）
+    const accountAliases = {
+      'PayPal': ['PayPal-NA#1', 'PayPal-EU#1', 'PayPal-UK#1', 'PayPal-SG#2', 'PayPal-CA#1', 'PayPal-AU#1', 'PayPal-JP#1', 'PayPal-MX#1', 'PayPal-IN#1'],
+      'Stripe': ['Stripe-US#2', 'Stripe-UK#1', 'Stripe-EU#3', 'Stripe-CA#1', 'Stripe-AU#1', 'Stripe-SG#1', 'Stripe-DE#1', 'Stripe-FR#1', 'Stripe-NL#1', 'Stripe-IT#1'],
+      'Wise': ['Wise-EU#1', 'Wise-UK#2', 'Wise-EU#3', 'Wise-SG#4', 'Wise-US#1', 'Wise-CA#1', 'Wise-AU#1', 'Wise-JP#1', 'Wise-MX#1', 'Wise-IN#1'],
+      'Airwallex': ['AWX-HK#1', 'AWX-AU#2', 'AWX-US#2', 'AWX-SG#1', 'AWX-UK#1', 'AWX-EU#1', 'AWX-CA#1', 'AWX-JP#1', 'AWX-MX#1', 'AWX-IN#1'],
+      'Payoneer': ['Payo-EU#1', 'Payo-US#2', 'Payo-UK#3', 'Payo-CA#1', 'Payo-AU#1', 'Payo-SG#1', 'Payo-DE#1', 'Payo-FR#1', 'Payo-NL#1', 'Payo-IT#1'],
+      'PingPong': ['PPG-CN#1', 'PPG-US#2', 'PPG-EU#1', 'PPG-UK#1', 'PPG-AU#1', 'PPG-CA#1', 'PPG-SG#1', 'PPG-JP#1', 'PPG-MX#1', 'PPG-IN#1']
+    };
+
+    // 模拟当前操作人（实际应该从登录信息获取）
+    const currentOperator = '当前用户';
+
+    // 日终余额测试数据
+    const dailyBalanceData = [
+      { id: 1, platform: 'PayPal', alias: 'PayPal-NA#1', currency: 'USD', balance: 12500.50, date: '2025-02-03', updateTime: '2025-02-04 08:30:15', operator: '张三' },
+      { id: 2, platform: 'PayPal', alias: 'PayPal-EU#1', currency: 'EUR', balance: 8500.00, date: '2025-02-03', updateTime: '2025-02-04 08:30:20', operator: '张三' },
+      { id: 3, platform: 'PayPal', alias: 'PayPal-UK#1', currency: 'GBP', balance: 3200.00, date: '2025-02-03', updateTime: '2025-02-04 08:30:25', operator: '张三' },
+      { id: 4, platform: 'Stripe', alias: 'Stripe-US#2', currency: 'USD', balance: 15200.75, date: '2025-02-03', updateTime: '2025-02-04 08:31:10', operator: '李四' },
+      { id: 5, platform: 'Stripe', alias: 'Stripe-UK#1', currency: 'GBP', balance: 6800.50, date: '2025-02-03', updateTime: '2025-02-04 08:31:15', operator: '李四' },
+      { id: 6, platform: 'Wise', alias: 'Wise-EU#1', currency: 'EUR', balance: 12000.00, date: '2025-02-03', updateTime: '2025-02-04 08:32:00', operator: '王五' },
+      { id: 7, platform: 'Wise', alias: 'Wise-US#1', currency: 'USD', balance: 25000.00, date: '2025-02-03', updateTime: '2025-02-04 08:32:05', operator: '王五' },
+      { id: 8, platform: 'Airwallex', alias: 'AWX-HK#1', currency: 'USD', balance: 9800.25, date: '2025-02-03', updateTime: '2025-02-04 08:32:50', operator: '赵六' },
+      { id: 9, platform: 'Airwallex', alias: 'AWX-AU#2', currency: 'USD', balance: 15200.00, date: '2025-02-03', updateTime: '2025-02-04 08:32:55', operator: '赵六' },
+      { id: 10, platform: 'Payoneer', alias: 'Payo-EU#1', currency: 'USD', balance: 7500.80, date: '2025-02-03', updateTime: '2025-02-04 08:33:30', operator: '孙七' },
+      { id: 11, platform: 'Payoneer', alias: 'Payo-US#2', currency: 'USD', balance: 11200.50, date: '2025-02-03', updateTime: '2025-02-04 08:33:35', operator: '孙七' },
+      { id: 12, platform: 'PingPong', alias: 'PPG-CN#1', currency: 'USD', balance: 18500.00, date: '2025-02-03', updateTime: '2025-02-04 08:34:10', operator: '周八' },
+      { id: 13, platform: 'PingPong', alias: 'PPG-US#2', currency: 'USD', balance: 22000.75, date: '2025-02-03', updateTime: '2025-02-04 08:34:15', operator: '周八' },
+      { id: 14, platform: 'PayPal', alias: 'PayPal-SG#2', currency: 'USD', balance: 5500.00, date: '2025-02-02', updateTime: '2025-02-03 08:30:10', operator: '张三' },
+      { id: 15, platform: 'Stripe', alias: 'Stripe-EU#3', currency: 'EUR', balance: 4200.00, date: '2025-02-02', updateTime: '2025-02-03 08:31:05', operator: '李四' },
+      { id: 16, platform: 'Wise', alias: 'Wise-UK#2', currency: 'GBP', balance: 2800.00, date: '2025-02-02', updateTime: '2025-02-03 08:32:00', operator: '王五' },
+      { id: 17, platform: 'Airwallex', alias: 'AWX-SG#1', currency: 'USD', balance: 11000.50, date: '2025-02-02', updateTime: '2025-02-03 08:32:45', operator: '赵六' },
+      { id: 18, platform: 'Payoneer', alias: 'Payo-UK#3', currency: 'USD', balance: 6800.00, date: '2025-02-02', updateTime: '2025-02-03 08:33:30', operator: '孙七' },
+      { id: 19, platform: 'PingPong', alias: 'PPG-EU#1', currency: 'USD', balance: 14500.25, date: '2025-02-02', updateTime: '2025-02-03 08:34:10', operator: '周八' },
+      { id: 20, platform: 'PayPal', alias: 'PayPal-CA#1', currency: 'USD', balance: 9200.00, date: '2025-02-01', updateTime: '2025-02-02 08:30:15', operator: '张三' }
+    ];
+
+    // 使用外部数据文件中的数据
+    let rows = [];
+
+    // 从 localStorage 加载，如无则使用外部数据初始化并保存
+    function initStorage(){
+      try{
+        const cached = localStorage.getItem('dailyBalanceRows');
+        if(cached){ 
+          rows = JSON.parse(cached); 
+          console.log('从localStorage加载数据:', rows.length, '条');
+        } else { 
+          rows = [...dailyBalanceData];
+          console.log('从外部数据文件加载数据:', rows.length, '条');
+          localStorage.setItem('dailyBalanceRows', JSON.stringify(rows)); 
+        }
+      }catch(err){ 
+        console.error('数据加载失败:', err);
+        rows = [...dailyBalanceData];
+        console.log('使用默认数据:', rows.length, '条');
+      }
+    }
+
+    const tbody = document.querySelector('#tbl tbody');
+    function fmt(n){ return Number(n).toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2}); }
+    
+    // 分页变量
+    let currentPage = 1;
+    let pageSize = 10;
+    
+    // 搜索条件
+    let searchFilters = {
+      platform: '',
+      alias: '',
+      currency: '',
+      date: ''
+    };
+
+    // 过滤数据
+    function getFilteredRows() {
+      return rows.filter(row => {
+        if (searchFilters.platform && row.platform !== searchFilters.platform) return false;
+        if (searchFilters.alias && !row.alias.toLowerCase().includes(searchFilters.alias.toLowerCase())) return false;
+        if (searchFilters.currency && row.currency !== searchFilters.currency) return false;
+        if (searchFilters.date && row.date !== searchFilters.date) return false;
+        return true;
+      });
+    }
+
+    function render(){
+      const filteredRows = getFilteredRows();
+      console.log('开始渲染，数据条数:', filteredRows.length);
+      tbody.innerHTML = '';
+      const startIndex = (currentPage-1)*pageSize;
+      const endIndex = startIndex + pageSize;
+      filteredRows.slice(startIndex,endIndex).forEach(r=>{
+        const tr = document.createElement('tr');
+        const balanceClass = r.balance >= 0 ? 'amount-positive' : 'amount-negative';
+        tr.innerHTML = `
+          <td>${r.platform}</td>
+          <td>${r.alias}</td>
+          <td>${r.currency}</td>
+          <td class="${balanceClass}">${fmt(r.balance)}</td>
+          <td>${r.date}</td>
+          <td>${r.updateTime}</td>
+          <td>${r.operator}</td>
+          <td>
+            <button class="btn btn-primary btn-small" onclick="openEditModal(${r.id})">编辑</button>
+          </td>`;
+        tbody.appendChild(tr);
+      });
+      console.log('渲染完成，表格行数:', tbody.children.length);
+      try{ localStorage.setItem('dailyBalanceRows', JSON.stringify(rows)); }catch(err){}
+      updatePagination();
+    }
+
+    function updatePagination(){
+      const filteredRows = getFilteredRows();
+      const total = filteredRows.length;
+      const totalPages = Math.max(1, Math.ceil(total/pageSize));
+      if(currentPage>totalPages) currentPage=totalPages;
+      const start = total===0?0:(currentPage-1)*pageSize + 1;
+      const end = Math.min(currentPage*pageSize, total);
+      document.getElementById('paginationInfo').textContent = `显示第 ${start}-${end} 条，共 ${total} 条记录`;
+      document.getElementById('firstPage').disabled = currentPage===1;
+      document.getElementById('prevPage').disabled = currentPage===1;
+      document.getElementById('nextPage').disabled = currentPage===totalPages;
+      document.getElementById('lastPage').disabled = currentPage===totalPages;
+      const pn = document.getElementById('pageNumbers');
+      pn.innerHTML='';
+      const maxVisible = 5; let sp=Math.max(1,currentPage-Math.floor(maxVisible/2)); let ep=Math.min(totalPages, sp+maxVisible-1); if(ep-sp+1<maxVisible) sp=Math.max(1, ep-maxVisible+1);
+      for(let i=sp;i<=ep;i++){ const b=document.createElement('button'); b.className=`pagination-btn ${i===currentPage?'active':''}`; b.textContent=i; b.onclick=()=>goToPage(i); pn.appendChild(b); }
+    }
+    
+    function goToPage(p){ 
+      const filteredRows = getFilteredRows();
+      const totalPages = Math.max(1, Math.ceil(filteredRows.length/pageSize)); 
+      if(p>=1 && p<=totalPages){ currentPage=p; render(); } 
+    }
+
+    // 搜索功能
+    function doSearch() {
+      searchFilters.platform = document.getElementById('fPlatform').value;
+      searchFilters.alias = document.getElementById('fAlias').value.trim();
+      searchFilters.currency = document.getElementById('fCurrency').value;
+      searchFilters.date = document.getElementById('fDate').value;
+      currentPage = 1;
+      render();
+    }
+
+    // 重置功能
+    function resetSearch() {
+      document.getElementById('fPlatform').value = '';
+      document.getElementById('fAlias').value = '';
+      document.getElementById('fCurrency').value = '';
+      document.getElementById('fDate').value = '';
+      searchFilters = {
+        platform: '',
+        alias: '',
+        currency: '',
+        date: ''
+      };
+      currentPage = 1;
+      render();
+    }
+
+    // 检查唯一性：账户别名+币种+日期
+    function checkUniqueness(alias, currency, date, excludeId = null) {
+      return rows.find(row => {
+        if (excludeId && row.id === excludeId) return false;
+        return row.alias === alias && row.currency === currency && row.date === date;
+      });
+    }
+
+    // 获取当前时间字符串
+    function getCurrentTimeString() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
+
+    // 更新账户别名下拉框
+    function updateAliasOptions(platform) {
+      const aliasSelect = document.getElementById('addAlias');
+      aliasSelect.innerHTML = '<option value="">请先选择支付平台</option>';
+      
+      if (platform && accountAliases[platform]) {
+        aliasSelect.disabled = false;
+        accountAliases[platform].forEach(alias => {
+          const option = document.createElement('option');
+          option.value = alias;
+          option.textContent = alias;
+          aliasSelect.appendChild(option);
+        });
+      } else {
+        aliasSelect.disabled = true;
+      }
+    }
+
+    // 检查并显示唯一性信息
+    function checkAndShowUniqueness() {
+      const alias = document.getElementById('addAlias').value;
+      const currency = document.getElementById('addCurrency').value;
+      const date = document.getElementById('addDate').value;
+      const infoDiv = document.getElementById('addBalanceInfo');
+      const warningDiv = document.getElementById('addBalanceWarning');
+
+      // 隐藏所有提示
+      infoDiv.style.display = 'none';
+      warningDiv.style.display = 'none';
+
+      if (alias && currency && date) {
+        const existing = checkUniqueness(alias, currency, date);
+        if (existing) {
+          // 已存在记录，显示当前余额和警告
+          infoDiv.textContent = `当前日终余额：${fmt(existing.balance)}`;
+          infoDiv.style.display = 'block';
+          warningDiv.textContent = '已有日终余额，新增数据会覆盖现有日终余额，确认可点击提交';
+          warningDiv.style.display = 'block';
+        } else {
+          // 不存在记录，显示暂无
+          infoDiv.textContent = '暂无日终余额';
+          infoDiv.style.display = 'block';
+        }
+      }
+    }
+
+    // 打开新增弹窗
+    function openAddModal() {
+      const modal = document.getElementById('addModal');
+      const form = document.getElementById('addForm');
+      
+      // 重置表单
+      form.reset();
+      document.getElementById('addAlias').disabled = true;
+      document.getElementById('addAlias').innerHTML = '<option value="">请先选择支付平台</option>';
+      document.getElementById('addBalanceInfo').style.display = 'none';
+      document.getElementById('addBalanceWarning').style.display = 'none';
+      
+      // 设置默认日期为今天
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('addDate').value = today;
+      
+      modal.classList.add('show');
+      
+      // 绑定支付平台变化事件
+      document.getElementById('addPlatform').onchange = function() {
+        updateAliasOptions(this.value);
+        checkAndShowUniqueness();
+      };
+      
+      // 绑定账户别名、币种、日期变化事件
+      document.getElementById('addAlias').onchange = checkAndShowUniqueness;
+      document.getElementById('addCurrency').onchange = checkAndShowUniqueness;
+      document.getElementById('addDate').onchange = checkAndShowUniqueness;
+      
+      // 绑定余额输入事件
+      document.getElementById('addBalance').oninput = function() {
+        const existing = checkUniqueness(
+          document.getElementById('addAlias').value,
+          document.getElementById('addCurrency').value,
+          document.getElementById('addDate').value
+        );
+        if (existing && this.value) {
+          // 如果输入了值且已存在记录，显示警告
+          const warningDiv = document.getElementById('addBalanceWarning');
+          warningDiv.style.display = 'block';
+        }
+      };
+    }
+
+    // 关闭新增弹窗
+    function closeAddModal() {
+      const modal = document.getElementById('addModal');
+      modal.classList.remove('show');
+    }
+
+    // 打开编辑弹窗
+    function openEditModal(id) {
+      const row = rows.find(r => r.id === id);
+      if (!row) return;
+
+      const modal = document.getElementById('editModal');
+      document.getElementById('editId').value = id;
+      document.getElementById('editBalance').value = row.balance;
+      
+      modal.classList.add('show');
+    }
+
+    // 关闭编辑弹窗
+    function closeEditModal() {
+      const modal = document.getElementById('editModal');
+      modal.classList.remove('show');
+    }
+
+    // 等待DOM加载完成后再渲染
+    document.addEventListener('DOMContentLoaded', function() {
+      // 初始化数据存储
+      initStorage();
+      
+      // 绑定新增按钮
+      document.getElementById('btnAdd').addEventListener('click', openAddModal);
+      
+      // 绑定搜索和重置按钮
+      document.getElementById('btnSearch').addEventListener('click', doSearch);
+      document.getElementById('btnReset').addEventListener('click', resetSearch);
+      
+      // 绑定新增表单提交
+      document.getElementById('addForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const platform = document.getElementById('addPlatform').value;
+        const alias = document.getElementById('addAlias').value;
+        const currency = document.getElementById('addCurrency').value;
+        const date = document.getElementById('addDate').value;
+        const balance = parseFloat(document.getElementById('addBalance').value);
+        
+        // 验证
+        if (!platform || !alias || !currency || !date || isNaN(balance)) {
+          alert('请填写完整信息');
+          return;
+        }
+        
+        // 检查唯一性
+        const existing = checkUniqueness(alias, currency, date);
+        
+        if (existing) {
+          // 覆盖现有记录
+          existing.balance = balance;
+          existing.updateTime = getCurrentTimeString();
+          existing.operator = currentOperator;
+        } else {
+          // 新增记录
+          const newId = rows.length > 0 ? Math.max(...rows.map(r => r.id)) + 1 : 1;
+          rows.push({
+            id: newId,
+            platform: platform,
+            alias: alias,
+            currency: currency,
+            balance: balance,
+            date: date,
+            updateTime: getCurrentTimeString(),
+            operator: currentOperator
+          });
+        }
+        
+        // 保存到localStorage
+        try {
+          localStorage.setItem('dailyBalanceRows', JSON.stringify(rows));
+        } catch(err) {
+          console.error('保存失败:', err);
+        }
+        
+        // 关闭弹窗并刷新
+        closeAddModal();
+        render();
+        alert('保存成功');
+      });
+      
+      // 绑定编辑表单提交
+      document.getElementById('editForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const id = parseInt(document.getElementById('editId').value);
+        const balance = parseFloat(document.getElementById('editBalance').value);
+        
+        // 验证
+        if (isNaN(balance)) {
+          alert('请输入有效的日终余额');
+          return;
+        }
+        
+        // 查找记录并更新
+        const row = rows.find(r => r.id === id);
+        if (row) {
+          row.balance = balance;
+          row.updateTime = getCurrentTimeString();
+          row.operator = currentOperator;
+          
+          // 保存到localStorage
+          try {
+            localStorage.setItem('dailyBalanceRows', JSON.stringify(rows));
+          } catch(err) {
+            console.error('保存失败:', err);
+          }
+          
+          // 关闭弹窗并刷新
+          closeEditModal();
+          render();
+          alert('更新成功');
+        }
+      });
+      
+      // 点击弹窗外部关闭
+      document.getElementById('addModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+          closeAddModal();
+        }
+      });
+      
+      document.getElementById('editModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+          closeEditModal();
+        }
+      });
+      
+      // 绑定分页事件
+      document.getElementById('pageSize').addEventListener('change', (e)=>{ pageSize=parseInt(e.target.value); currentPage=1; render(); });
+      document.getElementById('firstPage').addEventListener('click', ()=>goToPage(1));
+      document.getElementById('prevPage').addEventListener('click', ()=>goToPage(currentPage-1));
+      document.getElementById('nextPage').addEventListener('click', ()=>goToPage(currentPage+1));
+      document.getElementById('lastPage').addEventListener('click', ()=>{ 
+        const filteredRows = getFilteredRows();
+        const tp=Math.max(1, Math.ceil(filteredRows.length/pageSize)); 
+        goToPage(tp); 
+      });
+      document.getElementById('jumpBtn').addEventListener('click', ()=>{ const v=parseInt(document.getElementById('jumpToPage').value); if(v) goToPage(v); });
+      document.getElementById('jumpToPage').addEventListener('keypress', (e)=>{ if(e.key==='Enter'){ const v=parseInt(e.target.value); if(v) goToPage(v);} });
+      
+      // 渲染数据
+      render();
+    });
+  </script>
+</body>
+</html>

@@ -296,6 +296,47 @@
       transition: all 0.3s ease;
     }
 
+    /* Tab样式 */
+    .tab-btn {
+      padding: 12px 24px;
+      border: none;
+      background: transparent;
+      color: #64748b;
+      font-weight: 500;
+      font-size: 14px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .tab-btn:hover {
+      color: #2563eb;
+      background: rgba(37, 99, 235, 0.05);
+    }
+
+    .tab-btn.active {
+      color: #2563eb;
+      border-bottom-color: #2563eb;
+      font-weight: 600;
+    }
+
+    .tab-nav {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid #e2e8f0;
+      background: white;
+      border-radius: 12px 12px 0 0;
+      padding: 0 20px;
+    }
+
+    .tab-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 25px;
+    }
+
 
     .modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.4); z-index:2000; }
     .modal-inner { width:860px; max-width:95vw; background:#fff; border-radius:12px; overflow:auto; border:1px solid var(--border); max-height:90vh; z-index:2001; }
@@ -358,6 +399,7 @@
               <a href="transfer-audit.html">转账审核</a>
               <a href="account-config.html">收款账户</a>
               <a href="receiving-ledger.html" class="active">收款明细</a>
+              <a href="daily-balance.html">日终余额</a>
             </div>
           </li>
           <li class="dropdown">
@@ -409,18 +451,6 @@
       <div class="search-section">
         <div class="search-row">
           <div class="search-group">
-            <label>支付平台</label>
-            <select class="search-input" id="fPlatform">
-              <option value="">全部</option>
-              <option value="PayPal">PayPal</option>
-              <option value="Wise">Wise</option>
-              <option value="Airwallex">Airwallex</option>
-              <option value="Worldfirst">Worldfirst</option>
-              <option value="Payoneer">Payoneer</option>
-              <option value="PingPong">PingPong</option>
-          </select>
-        </div>
-          <div class="search-group">
             <label>账户别名</label>
             <input class="search-input" id="fAlias" placeholder="输入账户别名关键词" />
         </div>
@@ -466,9 +496,22 @@
         </div>
       </div>
 
+      <!-- Tab导航 -->
+      <div class="tab-container">
+        <div class="tab-nav">
+          <button class="tab-btn active" data-tab="all">全部</button>
+          <button class="tab-btn" data-tab="PayPal">PayPal</button>
+          <button class="tab-btn" data-tab="Stripe">Stripe</button>
+          <button class="tab-btn" data-tab="Wise">Wise</button>
+          <button class="tab-btn" data-tab="Airwallex">Airwallex</button>
+          <button class="tab-btn" data-tab="Payoneer">Payoneer</button>
+          <button class="tab-btn" data-tab="PingPong">PingPong</button>
+        </div>
+      </div>
+
       <div class="table-container">
         <div class="table-header">
-          <h3 class="table-title">收款明细列表</h3>
+          <h3 class="table-title" id="tableTitle">收款明细列表</h3>
           <div class="table-actions">
             <button class="btn" id="btnDownloadTpl">下载Excel模板</button>
             <button class="btn" id="btnUpload">手动上传Excel</button>
@@ -866,13 +909,25 @@
     // 分页变量
     let currentPage = 1;
     let pageSize = 10;
+    
+    // Tab切换变量
+    let activeTab = 'all'; // 当前激活的Tab，默认为"全部"
+
+    // 根据当前Tab过滤数据
+    function getFilteredRows() {
+      if (activeTab === 'all') {
+        return rows;
+      }
+      return rows.filter(r => r.platform === activeTab);
+    }
 
     function render(){
-      console.log('开始渲染，数据条数:', rows.length);
+      const filteredRows = getFilteredRows();
+      console.log('开始渲染，数据条数:', filteredRows.length, '当前Tab:', activeTab);
       tbody.innerHTML = '';
       const startIndex = (currentPage-1)*pageSize;
       const endIndex = startIndex + pageSize;
-      rows.slice(startIndex,endIndex).forEach(r=>{
+      filteredRows.slice(startIndex,endIndex).forEach(r=>{
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${r.platform}</td>
@@ -895,10 +950,22 @@
       console.log('渲染完成，表格行数:', tbody.children.length);
       try{ localStorage.setItem('receivingLedgerRows', JSON.stringify(rows)); }catch(err){}
       updatePagination();
+      updateTableTitle();
+    }
+
+    // 更新表格标题
+    function updateTableTitle() {
+      const tableTitle = document.getElementById('tableTitle');
+      if (activeTab === 'all') {
+        tableTitle.textContent = '收款明细列表';
+      } else {
+        tableTitle.textContent = `${activeTab} 收款明细列表`;
+      }
     }
 
     function updatePagination(){
-      const total = rows.length;
+      const filteredRows = getFilteredRows();
+      const total = filteredRows.length;
       const totalPages = Math.max(1, Math.ceil(total/pageSize));
       if(currentPage>totalPages) currentPage=totalPages;
       const start = total===0?0:(currentPage-1)*pageSize + 1;
@@ -913,7 +980,33 @@
       const maxVisible = 5; let sp=Math.max(1,currentPage-Math.floor(maxVisible/2)); let ep=Math.min(totalPages, sp+maxVisible-1); if(ep-sp+1<maxVisible) sp=Math.max(1, ep-maxVisible+1);
       for(let i=sp;i<=ep;i++){ const b=document.createElement('button'); b.className=`pagination-btn ${i===currentPage?'active':''}`; b.textContent=i; b.onclick=()=>goToPage(i); pn.appendChild(b); }
     }
-    function goToPage(p){ const totalPages = Math.max(1, Math.ceil(rows.length/pageSize)); if(p>=1 && p<=totalPages){ currentPage=p; render(); } }
+    function goToPage(p){ 
+      const filteredRows = getFilteredRows();
+      const totalPages = Math.max(1, Math.ceil(filteredRows.length/pageSize)); 
+      if(p>=1 && p<=totalPages){ currentPage=p; render(); } 
+    }
+    
+    // Tab切换函数
+    function switchTab(tabValue) {
+      // 如果已经是当前Tab，不重复切换
+      if (activeTab === tabValue) return;
+      
+      activeTab = tabValue;
+      currentPage = 1; // 切换Tab时重置到第一页
+      
+      // 更新Tab按钮状态
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      tabButtons.forEach(btn => {
+        if (btn.dataset.tab === tabValue) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      
+      // 重新渲染
+      render();
+    }
 
 
     function openDetail(row){
@@ -940,8 +1033,9 @@
     });
 
     document.getElementById('btnExport').addEventListener('click', () => {
-      // 导出当前结果
-      const data = rows.map(r => ({
+      // 导出当前Tab的过滤结果
+      const filteredRows = getFilteredRows();
+      const data = filteredRows.map(r => ({
         支付平台: r.platform,
         账户别名: r.alias,
         交易ID: r.txId,
@@ -960,7 +1054,8 @@
       }));
       
       const csv = convertToCSV(data);
-      downloadCSV(csv, '收款明细导出.csv');
+      const filename = activeTab === 'all' ? '收款明细导出.csv' : `${activeTab}收款明细导出.csv`;
+      downloadCSV(csv, filename);
     });
 
     // CSV转换和下载工具函数
@@ -1214,6 +1309,15 @@
       // 初始化数据存储
       initStorage();
       
+      // 绑定Tab切换事件
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tabValue = btn.dataset.tab;
+          switchTab(tabValue);
+        });
+      });
+      
       // 渲染数据
       render();
       // 绑定分页事件
@@ -1221,7 +1325,11 @@
       document.getElementById('firstPage').addEventListener('click', ()=>goToPage(1));
       document.getElementById('prevPage').addEventListener('click', ()=>goToPage(currentPage-1));
       document.getElementById('nextPage').addEventListener('click', ()=>goToPage(currentPage+1));
-      document.getElementById('lastPage').addEventListener('click', ()=>{ const tp=Math.max(1, Math.ceil(rows.length/pageSize)); goToPage(tp); });
+      document.getElementById('lastPage').addEventListener('click', ()=>{ 
+        const filteredRows = getFilteredRows();
+        const tp=Math.max(1, Math.ceil(filteredRows.length/pageSize)); 
+        goToPage(tp); 
+      });
       document.getElementById('jumpBtn').addEventListener('click', ()=>{ const v=parseInt(document.getElementById('jumpToPage').value); if(v) goToPage(v); });
       document.getElementById('jumpToPage').addEventListener('keypress', (e)=>{ if(e.key==='Enter'){ const v=parseInt(e.target.value); if(v) goToPage(v);} });
       
