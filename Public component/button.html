@@ -1,158 +1,130 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>充值转账公共组件</title>
+    <title>Recharge / Transfer Component</title>
     <style>
-        /* 基础变量定义 */
         :root {
-            --primary-color: #3b82f6;
+            --primary: #3b82f6;
             --primary-hover: #2563eb;
-            --success-color: #10b981;
-            --danger-color: #ef4444;
-            --warning-color: #f59e0b;
-            --bg-color: #ffffff;
-            --surface-color: #f9fafb;
-            --text-primary: #111827;
-            --text-secondary: #6b7280;
-            --border-color: #e5e7eb;
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --danger: #ef4444;
+            --warning-bg: #fffbeb;
+            --warning-border: #fcd34d;
+            --warning-text: #d97706;
+            --bg: #ffffff;
+            --surface: #f9fafb;
+            --text: #111827;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
             --radius: 8px;
+            --shadow: 0 20px 40px -8px rgba(0,0,0,0.15);
         }
 
-        /* 深色主题 */
         [data-theme="dark"] {
-            --bg-color: #1f2937;
-            --surface-color: #374151;
-            --text-primary: #f9fafb;
-            --text-secondary: #d1d5db;
-            --border-color: #4b5563;
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            --bg: #1f2937;
+            --surface: #374151;
+            --text: #f9fafb;
+            --text-muted: #9ca3af;
+            --border: #4b5563;
+            --warning-bg: #2a2008;
+            --warning-border: #92400e;
+            --warning-text: #fbbf24;
+            --shadow: 0 20px 40px -8px rgba(0,0,0,0.4);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            transition: all 0.3s ease;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: var(--surface);
+            color: var(--text);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            transition: background 0.3s, color 0.3s;
         }
 
-        /* 示例容器 */
-        .demo-container {
+        /* Demo container */
+        .demo-wrap {
             text-align: center;
-            background: var(--surface-color);
-            padding: 40px;
-            border-radius: var(--radius);
+            background: var(--bg);
+            padding: 48px 40px;
+            border-radius: 16px;
             box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border);
         }
 
         .demo-title {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-primary);
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
         }
 
-        .demo-subtitle {
-            color: var(--text-secondary);
-            margin-bottom: 30px;
+        .demo-sub {
+            color: var(--text-muted);
             font-size: 14px;
+            margin-bottom: 28px;
         }
 
-        /* 控制按钮 */
-        .control-buttons {
+        .demo-controls {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             justify-content: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
+            margin-bottom: 28px;
         }
 
-        .control-btn {
-            padding: 8px 16px;
-            border: 1px solid var(--border-color);
-            background: var(--surface-color);
-            color: var(--text-primary);
+        .ctrl-btn {
+            padding: 7px 14px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
             border-radius: 6px;
             font-size: 12px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s;
         }
 
-        .control-btn:hover {
-            background: var(--primary-color);
+        .ctrl-btn:hover {
+            background: var(--primary);
             color: white;
-            border-color: var(--primary-color);
+            border-color: var(--primary);
         }
 
-        /* 主要按钮样式 */
-        .recharge-btn {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+        .open-btn {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: white;
             border: none;
-            padding: 16px 32px;
+            padding: 15px 36px;
             font-size: 16px;
             font-weight: 600;
             border-radius: var(--radius);
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 4px 14px rgba(59,130,246,0.35);
         }
 
-        .recharge-btn:hover {
+        .open-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 15px 25px -5px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 8px 20px rgba(59,130,246,0.45);
         }
 
-        .recharge-btn:active {
-            transform: translateY(0);
-        }
-
-        .recharge-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .recharge-btn:hover::before {
-            left: 100%;
-        }
-
-        /* 模态框样式 */
+        /* ─── Modal overlay ─── */
         .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            inset: 0;
+            background: rgba(0,0,0,0.5);
             backdrop-filter: blur(4px);
             z-index: 1000;
             display: none;
             align-items: center;
             justify-content: center;
+            padding: 20px;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.25s;
         }
 
         .modal-overlay.show {
@@ -160,17 +132,19 @@
             opacity: 1;
         }
 
+        /* ─── Modal ─── */
         .modal {
-            background: var(--bg-color);
-            border-radius: var(--radius);
+            background: var(--bg);
+            border-radius: 12px;
             box-shadow: var(--shadow);
-            width: 90%;
-            max-width: 500px;
+            border: 1px solid var(--border);
+            width: 100%;
+            max-width: 940px;
             max-height: 90vh;
-            overflow-y: auto;
-            transform: scale(0.7);
-            transition: transform 0.3s ease;
-            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.95);
+            transition: transform 0.25s;
         }
 
         .modal-overlay.show .modal {
@@ -178,968 +152,1405 @@
         }
 
         .modal-header {
-            padding: 24px 24px 0;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-shrink: 0;
         }
 
         .modal-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
-            color: var(--text-primary);
+            color: var(--text);
         }
 
         .close-btn {
-            background: none;
+            width: 30px;
+            height: 30px;
             border: none;
-            font-size: 24px;
-            color: var(--text-secondary);
+            background: none;
+            font-size: 20px;
+            color: var(--text-muted);
             cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
-            transition: all 0.2s ease;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
         }
 
         .close-btn:hover {
-            background: var(--surface-color);
-            color: var(--text-primary);
+            background: var(--surface);
+            color: var(--text);
         }
 
+        /* ─── Two-column layout ─── */
         .modal-body {
-            padding: 24px;
-        }
-
-        /* 标签页 */
-        .tab-nav {
-            display: flex;
-            background: var(--surface-color);
-            border-radius: var(--radius);
-            padding: 4px;
-            margin-bottom: 24px;
-        }
-
-        .tab-btn {
+            display: grid;
+            grid-template-columns: 430px 1fr;
             flex: 1;
-            padding: 12px 16px;
-            background: none;
-            border: none;
-            border-radius: calc(var(--radius) - 4px);
-            color: var(--text-secondary);
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        /* ─── Left Panel ─── */
+        .left-panel {
+            border-right: 1px solid var(--border);
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            padding-left: 10px;
+            border-left: 3px solid var(--primary);
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .field-label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .required-label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            color: var(--text);
             font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 14px;
+            margin-bottom: 8px;
         }
 
-        .tab-btn.active {
-            background: var(--bg-color);
-            color: var(--primary-color);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+        .required-label .star { color: var(--danger); }
 
-        /* 表单样式 */
-        .form-group {
+        /* Currency buttons */
+        .currency-group {
+            display: flex;
+            gap: 8px;
             margin-bottom: 20px;
         }
 
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--text-primary);
+        .currency-btn {
+            padding: 6px 16px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg);
+            color: var(--text);
             font-size: 14px;
-        }
-
-        .form-label.required::after {
-            content: ' *';
-            color: var(--danger-color);
-            font-weight: bold;
-        }
-
-        .form-input,
-        .form-select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            background: var(--bg-color);
-            color: var(--text-primary);
-            font-size: 14px;
-            transition: all 0.2s ease;
-        }
-
-        .form-input:focus,
-        .form-select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .form-input.error,
-        .form-select.error {
-            border-color: var(--danger-color);
-            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
-        }
-
-        .form-input::placeholder {
-            color: var(--text-secondary);
-        }
-
-        .error-message {
-            display: block;
-            color: var(--danger-color);
-            font-size: 12px;
-            margin-top: 4px;
-            min-height: 16px;
-        }
-
-        /* 文件上传 */
-        .file-upload {
-            border: 2px dashed var(--border-color);
-            border-radius: var(--radius);
-            padding: 24px;
-            text-align: center;
-            transition: all 0.2s ease;
             cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .file-upload:hover {
-            border-color: var(--primary-color);
-            background: rgba(59, 130, 246, 0.05);
+        .currency-btn:hover { border-color: var(--primary); }
+
+        .currency-btn.active {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(59,130,246,0.06);
         }
 
-        .file-upload.dragover {
-            border-color: var(--primary-color);
-            background: rgba(59, 130, 246, 0.1);
+        /* Amount input */
+        .amount-wrap {
+            position: relative;
+            margin-bottom: 20px;
         }
 
-        .file-upload-icon {
-            font-size: 48px;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-        }
-
-        .file-upload-text {
-            color: var(--text-secondary);
+        .amount-input {
+            width: 100%;
+            padding: 10px 52px 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
             font-size: 14px;
-            margin-bottom: 8px;
+            background: var(--bg);
+            color: var(--text);
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
-        .file-upload-limit {
-            color: var(--text-secondary);
+        .amount-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        }
+
+        .amount-input.error { border-color: var(--danger); }
+
+        .amount-suffix {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 13px;
+            pointer-events: none;
+        }
+
+        .field-error {
             font-size: 12px;
+            color: var(--danger);
+            margin-top: -14px;
+            margin-bottom: 12px;
+            display: none;
         }
 
-        .file-list {
-            margin-top: 16px;
+        /* Payment method heading */
+        .method-heading {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 10px;
         }
+
+        .method-group-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            margin-top: 14px;
+        }
+
+        /* Platform card */
+        .platform-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.18s;
+            background: var(--bg);
+            user-select: none;
+        }
+
+        .platform-card:hover {
+            border-color: var(--primary);
+            background: rgba(59,130,246,0.03);
+        }
+
+        .platform-card.active {
+            border-color: var(--primary);
+            background: rgba(59,130,246,0.06);
+        }
+
+        .platform-card-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .platform-single { width: 100%; }
+
+        .platform-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        /* Platform icon */
+        .p-icon {
+            width: 26px;
+            height: 26px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .p-icon svg { display: block; }
+
+        /* ─── Right Panel ─── */
+        .right-panel {
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Empty state */
+        .right-empty {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            gap: 10px;
+            text-align: center;
+        }
+
+        .right-empty svg { opacity: 0.3; }
+        .right-empty p { font-size: 14px; }
+
+        /* Account info rows */
+        .account-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 13px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 8px;
+            background: var(--bg);
+        }
+
+        .acct-label { font-size: 13px; color: var(--text-muted); }
+        .acct-value { font-size: 13px; font-weight: 500; color: var(--text); }
+
+        /* Confirm / Pay Now button */
+        .action-btn {
+            width: 100%;
+            padding: 13px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 4px;
+            margin-bottom: 16px;
+            transition: background 0.2s;
+        }
+
+        .action-btn:hover { background: var(--primary-hover); }
+
+        /* Warning box */
+        .warn-box {
+            padding: 13px 16px;
+            background: var(--warning-bg);
+            border: 1px solid var(--warning-border);
+            border-radius: var(--radius);
+            color: var(--warning-text);
+            font-size: 13px;
+            line-height: 1.55;
+            margin-bottom: 20px;
+        }
+
+        /* Friendly Reminder */
+        .reminder-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .reminder-list {
+            padding-left: 16px;
+        }
+
+        .reminder-list li {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 7px;
+            line-height: 1.55;
+        }
+
+        /* Online payment amount display */
+        .pay-display-wrap {
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        .pay-display {
+            width: 100%;
+            padding: 10px 52px 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 14px;
+            background: var(--surface);
+            color: var(--text-muted);
+        }
+
+        .pay-display-suffix {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        /* Fee info */
+        .fee-row {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .fee-row .fee-val { color: var(--danger); font-weight: 600; }
+
+        .fee-note {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            margin-top: 4px;
+            line-height: 1.5;
+        }
+
+        /* Upload form */
+        .return-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--primary);
+            font-size: 13px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            padding: 0;
+            margin-bottom: 20px;
+            transition: opacity 0.2s;
+        }
+
+        .return-link:hover { opacity: 0.75; text-decoration: underline; }
+
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 28px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--primary);
+            background: rgba(59,130,246,0.03);
+        }
+
+        .upload-area-icon { color: var(--primary); margin-bottom: 8px; }
+        .upload-area-text { font-size: 14px; color: var(--text); margin-bottom: 4px; }
+        .upload-area-hint { font-size: 12px; color: var(--text-muted); }
+
+        .file-list { margin-top: -8px; margin-bottom: 12px; }
 
         .file-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 12px;
-            background: var(--surface-color);
+            padding: 7px 12px;
+            background: var(--surface);
             border-radius: 6px;
-            margin-bottom: 8px;
-            border: 1px solid var(--border-color);
+            margin-bottom: 6px;
+            border: 1px solid var(--border);
         }
 
-        .file-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .file-name {
-            font-size: 14px;
-            color: var(--text-primary);
-        }
-
-        .file-size {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
+        .file-item-name { font-size: 13px; color: var(--text); }
+        .file-item-size { font-size: 12px; color: var(--text-muted); margin-left: 6px; }
 
         .file-remove {
-            background: var(--danger-color);
-            color: white;
+            background: none;
             border: none;
-            border-radius: 4px;
-            padding: 4px 8px;
-            font-size: 12px;
+            color: var(--text-muted);
             cursor: pointer;
-            transition: all 0.2s ease;
+            font-size: 16px;
+            line-height: 1;
+            padding: 0 2px;
+            transition: color 0.2s;
         }
 
-        .file-remove:hover {
-            background: #dc2626;
+        .file-remove:hover { color: var(--danger); }
+
+        /* Upload form fields */
+        .form-field { margin-bottom: 16px; }
+
+        .form-field-label {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 7px;
         }
 
-        /* 按钮样式 */
-        .btn {
-            padding: 12px 24px;
-            border: none;
+        .form-field-label .star { color: var(--danger); }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 14px;
+            background: var(--bg);
+            color: var(--text);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        }
+
+        .form-input.readonly {
+            background: var(--surface);
+            color: var(--text-muted);
+        }
+
+        .form-input.error { border-color: var(--danger); }
+
+        .form-input-wrap {
+            position: relative;
+        }
+
+        .form-input-wrap .form-input { padding-right: 52px; }
+
+        .form-input-suffix {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 13px;
+            pointer-events: none;
+        }
+
+        .form-field-error {
+            font-size: 12px;
+            color: var(--danger);
+            margin-top: 4px;
+            display: none;
+        }
+
+        /* Bottom button row */
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 11px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
             border-radius: var(--radius);
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
+            transition: all 0.2s;
         }
 
-        .btn-primary {
-            background: var(--primary-color);
+        .btn-cancel:hover { background: var(--surface); }
+
+        .btn-submit {
+            flex: 2;
+            padding: 11px;
+            background: var(--primary);
             color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-hover);
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background: var(--surface-color);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
-
-        .btn-secondary:hover {
-            background: var(--border-color);
-        }
-
-        .btn-full {
-            width: 100%;
-        }
-
-        /* 提示框 */
-        .alert {
-            padding: 16px;
+            border: none;
             border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover { background: var(--primary-hover); }
+
+        /* Alert modal */
+        .alert-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .alert-overlay.show { display: flex; }
+
+        .alert-box {
+            background: var(--bg);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 28px;
+            width: 90%;
+            max-width: 380px;
+            box-shadow: var(--shadow);
+        }
+
+        .alert-title { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 10px; }
+        .alert-msg { font-size: 14px; color: var(--text-muted); line-height: 1.55; margin-bottom: 20px; }
+
+        .btn-ok {
+            width: 100%;
+            padding: 11px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-ok:hover { background: var(--primary-hover); }
+
+        /* Allocation row */
+        .allocation-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
             margin-bottom: 16px;
-            border-left: 4px solid;
         }
 
-        .alert-success {
-            background: rgba(16, 185, 129, 0.1);
-            border-color: var(--success-color);
-            color: var(--success-color);
+        .allocation-group .form-field { margin-bottom: 0; }
+
+        .allocation-note {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: -10px;
+            margin-bottom: 16px;
+            line-height: 1.5;
         }
 
-        .alert-warning {
-            background: rgba(245, 158, 11, 0.1);
-            border-color: var(--warning-color);
-            color: var(--warning-color);
-        }
+        .allocation-note.warn { color: var(--danger); }
 
-        /* 响应式 */
-        @media (max-width: 640px) {
-            .modal {
-                width: 95%;
-                margin: 20px;
-            }
-            
-            .modal-body {
-                padding: 16px;
-            }
-            
-            .demo-container {
-                padding: 20px;
-            }
-            
-            .control-buttons {
-                gap: 8px;
-            }
-            
-            .control-btn {
-                padding: 6px 12px;
-                font-size: 11px;
-            }
-        }
+        .hidden { display: none !important; }
 
-        /* 动画 */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.3s ease;
-        }
-
-        /* 隐藏类 */
-        .hidden {
-            display: none !important;
+        /* Responsive */
+        @media (max-width: 720px) {
+            .modal-body { grid-template-columns: 1fr; }
+            .left-panel { border-right: none; border-bottom: 1px solid var(--border); }
         }
     </style>
 </head>
 <body>
-    <div class="demo-container">
-        <h1 class="demo-title" data-i18n="title">充值转账公共组件</h1>
-        <p class="demo-subtitle" data-i18n="subtitle">支持在线充值和线下转账功能的通用组件</p>
-        
-        <!-- 控制按钮 -->
-        <div class="control-buttons">
-            <button class="control-btn" onclick="toggleTheme()" data-i18n="toggle-theme">切换主题</button>
-            <button class="control-btn" onclick="toggleLanguage()" data-i18n="toggle-language">切换语言</button>
+    <!-- Demo entry -->
+    <div class="demo-wrap">
+        <h1 class="demo-title" data-i18n="demo-title">Recharge / Transfer Component</h1>
+        <p class="demo-sub" data-i18n="demo-sub">Click the button below to open the payment modal</p>
+        <div class="demo-controls">
+            <button class="ctrl-btn" onclick="toggleTheme()" data-i18n="toggle-theme">Toggle Theme</button>
+            <button class="ctrl-btn" id="langToggleBtn" onclick="toggleLang()">切换中文</button>
         </div>
-        
-        <!-- 主要按钮 -->
-        <button class="recharge-btn" onclick="openRechargeModal()" data-i18n="recharge-btn">充值 / 转账</button>
+        <button class="open-btn" onclick="openModal()" data-i18n="open-btn">Recharge / Transfer</button>
     </div>
 
-    <!-- 充值转账模态框 -->
-    <div class="modal-overlay" id="rechargeModal">
+    <!-- ─── Main Modal ─── -->
+    <div class="modal-overlay" id="mainModal">
         <div class="modal">
             <div class="modal-header">
-                <h2 class="modal-title" data-i18n="modal-title">充值 / 转账</h2>
-                <button class="close-btn" onclick="closeRechargeModal()">&times;</button>
+                <h2 class="modal-title" data-i18n="modal-title">Recharge/Transfer</h2>
+                <button class="close-btn" onclick="closeModal()">&#x2715;</button>
             </div>
             <div class="modal-body">
-                <!-- 标签页导航 -->
-                <div class="tab-nav">
-                    <button class="tab-btn active" onclick="switchTab('online')" data-i18n="online-recharge">在线充值</button>
-                    <button class="tab-btn" onclick="switchTab('offline')" data-i18n="offline-transfer">线下转账</button>
+
+                <!-- ─ Left Panel ─ -->
+                <div class="left-panel">
+                    <div class="section-title" data-i18n="select-method">Select Payment Method</div>
+
+                    <span class="field-label" data-i18n="payment-currency">Payment Currency</span>
+                    <div class="currency-group">
+                        <button class="currency-btn active" data-currency="USD" onclick="selectCurrency('USD')">USD</button>
+                        <button class="currency-btn" data-currency="EUR" onclick="selectCurrency('EUR')">EUR</button>
+                        <button class="currency-btn" data-currency="GBP" onclick="selectCurrency('GBP')">GBP</button>
+                        <button class="currency-btn" data-currency="HKD" onclick="selectCurrency('HKD')">HKD</button>
+                    </div>
+
+                    <div class="required-label">
+                        <span class="star">*</span>
+                        <span data-i18n="payment-amount">Payment Amount</span>
+                    </div>
+                    <div class="amount-wrap">
+                        <input type="number" class="amount-input" id="payAmount" value="100" min="1" step="0.01"
+                               oninput="onAmountChange()">
+                        <span class="amount-suffix" id="amountSuffix">USD</span>
+                    </div>
+                    <div class="field-error" id="amountError" data-i18n="err-amount">Please enter a valid amount (minimum 1)</div>
+
+                    <div class="method-heading" data-i18n="payment-method">Payment Method</div>
+
+                    <div class="method-group-label" data-i18n="online-payment">Online Payment</div>
+                    <div class="platform-card platform-single" id="card-paypal-online"
+                         onclick="selectPlatform('paypal-online')">
+                        <div class="p-icon">
+                            <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+                                <rect width="26" height="26" rx="5" fill="#1546A0"/>
+                                <text x="13" y="18" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="Arial">P</text>
+                            </svg>
+                        </div>
+                        <span class="platform-card-name">Paypal</span>
+                    </div>
+
+                    <div class="method-group-label" data-i18n="transfer-to-account">Transfer to Account</div>
+                    <div class="platform-grid">
+
+                        <div class="platform-card" id="card-payoneer" onclick="selectPlatform('payoneer')">
+                            <div class="p-icon">
+                                <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+                                    <rect width="26" height="26" rx="5" fill="#FF4B2B"/>
+                                    <text x="13" y="18" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="Arial">P</text>
+                                </svg>
+                            </div>
+                            <span class="platform-card-name">Payoneer</span>
+                        </div>
+
+                        <div class="platform-card" id="card-airwallex" onclick="selectPlatform('airwallex')">
+                            <div class="p-icon">
+                                <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+                                    <rect width="26" height="26" rx="5" fill="#C8002A"/>
+                                    <text x="13" y="18" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="Arial">A</text>
+                                </svg>
+                            </div>
+                            <span class="platform-card-name">Airwallex</span>
+                        </div>
+
+                        <div class="platform-card" id="card-worldfirst" onclick="selectPlatform('worldfirst')">
+                            <div class="p-icon">
+                                <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+                                    <rect width="26" height="26" rx="5" fill="#006B38"/>
+                                    <text x="13" y="18" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="Arial">W</text>
+                                </svg>
+                            </div>
+                            <span class="platform-card-name">Worldfirst</span>
+                        </div>
+
+                        <div class="platform-card" id="card-pingpong" onclick="selectPlatform('pingpong')">
+                            <div class="p-icon">
+                                <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+                                    <rect width="26" height="26" rx="5" fill="#2A6EF5"/>
+                                    <text x="13" y="18" text-anchor="middle" fill="white" font-size="11" font-weight="700" font-family="Arial">P</text>
+                                </svg>
+                            </div>
+                            <span class="platform-card-name">Pingpong</span>
+                        </div>
+
+                        <div class="platform-card" id="card-wise" onclick="selectPlatform('wise')">
+                            <div class="p-icon">
+                                <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+                                    <rect width="26" height="26" rx="5" fill="#9FE870"/>
+                                    <text x="13" y="18" text-anchor="middle" fill="#1a3a00" font-size="11" font-weight="700" font-family="Arial">W</text>
+                                </svg>
+                            </div>
+                            <span class="platform-card-name">Wise</span>
+                        </div>
+
+                        <div class="platform-card" id="card-paypal-transfer" onclick="selectPlatform('paypal-transfer')">
+                            <div class="p-icon">
+                                <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+                                    <rect width="26" height="26" rx="5" fill="#1546A0"/>
+                                    <text x="13" y="18" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="Arial">P</text>
+                                </svg>
+                            </div>
+                            <span class="platform-card-name">Paypal</span>
+                        </div>
+
+                        <div class="platform-card" id="card-slash" onclick="selectPlatform('slash')">
+                            <div class="p-icon">
+                                <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+                                    <rect width="26" height="26" rx="5" fill="#374151"/>
+                                    <text x="13" y="18" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="Arial">S</text>
+                                </svg>
+                            </div>
+                            <span class="platform-card-name">Slash</span>
+                        </div>
+
+                        <div class="platform-card" id="card-bank" onclick="selectPlatform('bank')">
+                            <div class="p-icon">
+                                <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+                                    <rect width="26" height="26" rx="5" fill="#D97706"/>
+                                    <text x="13" y="18" text-anchor="middle" fill="white" font-size="10" font-weight="700" font-family="Arial">BK</text>
+                                </svg>
+                            </div>
+                            <span class="platform-card-name">Bank Transfer</span>
+                        </div>
+
+                    </div>
                 </div>
 
-                <!-- 在线充值表单 -->
-                <div id="onlineForm" class="tab-content">
-                    <form id="onlineRechargeForm">
-                        <div class="form-group">
-                            <label class="form-label required" data-i18n="currency">充值币种</label>
-                            <select class="form-select" id="currency" required>
-                                <option value="USD">USD - 美元</option>
-                            </select>
-                            <span class="error-message" id="currency-error"></span>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label required" data-i18n="amount">充值金额</label>
-                            <input type="number" class="form-input" id="amount" placeholder="请输入充值金额" min="1" step="0.01" required data-i18n-placeholder="amount-placeholder">
-                            <span class="error-message" id="amount-error"></span>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label required" data-i18n="payment-platform">支付平台</label>
-                            <select class="form-select" id="paymentPlatform" required>
-                                <option value="" data-i18n="select-platform">请选择支付平台</option>
-                                <option value="stripe">Stripe</option>
-                                <option value="paypal">PayPal</option>
-                            </select>
-                            <span class="error-message" id="paymentPlatform-error"></span>
-                            <!-- 手续费提示区域 -->
-                            <div id="fee-tip" style="margin-top:8px;display:none;font-size:14px;">
-                                <!-- 动态内容 -->
-                            </div>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary btn-full" data-i18n="go-payment">去支付</button>
-                    </form>
+                <!-- ─ Right Panel ─ -->
+                <div class="right-panel" id="rightPanel">
+                    <!-- Dynamically rendered -->
                 </div>
 
-                <!-- 线下转账表单 -->
-                <div id="offlineForm" class="tab-content hidden">
-                    <form id="offlineTransferForm">
-                        <div class="form-group">
-                            <label class="form-label required" data-i18n="transfer-platform">第三方支付平台</label>
-                            <select class="form-select" id="transferPlatform" required>
-                                <option value="" data-i18n="select-platform">请选择支付平台</option>
-                                <option value="stripe">Stripe</option>
-                                <option value="paypal">PayPal</option>
-                                <option value="wise">Wise</option>
-                                <option value="remitly">Remitly</option>
-                            </select>
-                            <span class="error-message" id="transferPlatform-error"></span>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label required" data-i18n="transaction-id">交易ID</label>
-                            <input type="text" class="form-input" id="transactionId" placeholder="请输入转账交易ID" required data-i18n-placeholder="transaction-id-placeholder">
-                            <span class="error-message" id="transactionId-error"></span>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label required" data-i18n="upload-files">上传文件</label>
-                            <div class="file-upload" onclick="document.getElementById('fileInput').click()" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
-                                <div class="file-upload-icon">📁</div>
-                                <div class="file-upload-text" data-i18n="upload-text">点击或拖拽文件到此处上传</div>
-                                <div class="file-upload-limit" data-i18n="upload-limit">支持 JPG、PNG、PDF 格式，单个文件不超过 20MB，最多上传 10 个文件</div>
-                                <input type="file" id="fileInput" multiple accept=".jpg,.jpeg,.png,.pdf" style="display: none;" onchange="handleFileSelect(event)">
-                            </div>
-                            <div id="fileList" class="file-list"></div>
-                            <span class="error-message" id="files-error"></span>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary btn-full" data-i18n="submit">提交</button>
-                    </form>
-                </div>
             </div>
         </div>
     </div>
 
-    <!-- 提示模态框 -->
-    <div class="modal-overlay" id="alertModal">
-        <div class="modal" style="max-width: 400px;">
-            <div class="modal-header">
-                <h2 class="modal-title" id="alertTitle">提示</h2>
-                <button class="close-btn" onclick="closeAlertModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div id="alertMessage"></div>
-                <button class="btn btn-primary btn-full" onclick="closeAlertModal()" style="margin-top: 16px;" data-i18n="got-it">知道了</button>
-            </div>
+    <!-- Alert modal -->
+    <div class="alert-overlay" id="alertModal">
+        <div class="alert-box">
+            <div class="alert-title" id="alertTitle"></div>
+            <div class="alert-msg" id="alertMsg"></div>
+            <button class="btn-ok" onclick="closeAlert()" data-i18n="got-it">Got it</button>
         </div>
     </div>
 
     <script>
-        // 全局变量
-        let currentLang = 'zh';
-        let currentTheme = 'light';
+        /* ─────────────────────────────
+           State
+        ───────────────────────────── */
+        let lang = 'en';
+        let theme = 'light';
+        let currency = 'USD';
+        let activePlatform = null;
+        let rightState = 'empty'; // 'empty' | 'online' | 'transfer-info' | 'upload-form'
         let uploadedFiles = [];
 
-        // 多语言配置
-        const translations = {
-            zh: {
-                'title': '充值转账公共组件',
-                'subtitle': '支持在线充值和线下转账功能的通用组件',
-                'toggle-theme': '切换主题',
-                'toggle-language': '切换语言',
-                'recharge-btn': '充值 / 转账',
-                'modal-title': '充值 / 转账',
-                'online-recharge': '在线充值',
-                'offline-transfer': '线下转账',
-                'currency': '充值币种',
-                'amount': '充值金额',
-                'amount-placeholder': '请输入充值金额',
-                'payment-platform': '支付平台',
-                'select-platform': '请选择支付平台',
-                'go-payment': '去支付',
-                'transfer-platform': '第三方支付平台',
-                'transaction-id': '交易ID',
-                'transaction-id-placeholder': '请输入转账交易ID',
-                'upload-files': '上传文件',
-                'upload-text': '点击或拖拽文件到此处上传',
-                'upload-limit': '支持 JPG、PNG、PDF 格式，单个文件不超过 20MB，最多上传 10 个文件',
-                'submit': '提交',
-                'got-it': '知道了',
-                'payment-notice': '请完成支付',
-                'payment-notice-desc': '正在跳转到支付平台，请在新标签页中完成支付。',
-                'submit-success': '成功提交',
-                'submit-success-desc': '您的转账申请已成功提交，请耐心等候审核。',
-                'error': '错误',
-                'please-fill-amount': '请填写充值金额',
-                'please-select-platform': '请选择支付平台',
-                'please-fill-transaction-id': '请填写交易ID',
-                'file-too-large': '文件大小不能超过20MB',
-                'too-many-files': '最多只能上传10个文件',
-                'invalid-file-type': '仅支持JPG、PNG、PDF格式文件',
-                'remove': '移除',
-                'validation-currency': '请选择充值币种',
-                'validation-amount': '请输入有效的充值金额',
-                'validation-amount-min': '充值金额不能小于1',
-                'validation-payment-platform': '请选择支付平台',
-                'validation-transfer-platform': '请选择第三方支付平台',
-                'validation-transaction-id': '请输入转账交易ID',
-                'validation-files': '请至少上传一个文件',
-                'fee-tip-stripe': 'Stripe需要收取手续费，实际支付金额约为：',
-                'fee-tip-paypal': 'PayPal需要收取手续费，实际支付金额约为：',
-                'fee-tip-empty': '请选择支付平台和输入充值金额',
-                'fee-currency': '美元',
-                'fee-amount-label': '手续费约为：',
-                'extra-fee-note': '额外费用说明：您的地区、币种、支付卡类型等因素可能会导致手续费的变动，最终手续费以官方为准。'
-            },
+        /* ─────────────────────────────
+           Platform account data
+        ───────────────────────────── */
+        const platformAccounts = {
+            'payoneer': [
+                { label: 'Beneficiary name', labelZh: '受益人姓名', value: 'BESTTECH LIMITED' },
+                { label: 'Payoneer account', labelZh: 'Payoneer 账号', value: 'besttech002@163.com' }
+            ],
+            'airwallex': [
+                { label: 'Beneficiary name', labelZh: '受益人姓名', value: 'BESTTECH LIMITED' },
+                { label: 'Airwallex account', labelZh: 'Airwallex 账号', value: 'besttech@airwallex.com' }
+            ],
+            'worldfirst': [
+                { label: 'Beneficiary name', labelZh: '受益人姓名', value: 'BESTTECH LIMITED' },
+                { label: 'WorldFirst account', labelZh: 'WorldFirst 账号', value: 'besttech@worldfirst.com' }
+            ],
+            'pingpong': [
+                { label: 'Beneficiary name', labelZh: '受益人姓名', value: 'BESTTECH LIMITED' },
+                { label: 'PingPong account', labelZh: 'PingPong 账号', value: 'besttech@pingpong.com' }
+            ],
+            'wise': [
+                { label: 'Beneficiary name', labelZh: '受益人姓名', value: 'BESTTECH LIMITED' },
+                { label: 'Wise account', labelZh: 'Wise 账号', value: 'besttech@wise.com' }
+            ],
+            'paypal-transfer': [
+                { label: 'Beneficiary name', labelZh: '受益人姓名', value: 'BESTTECH LIMITED' },
+                { label: 'PayPal account', labelZh: 'PayPal 账号', value: 'payments@besttech.com' }
+            ],
+            'slash': [
+                { label: 'Beneficiary name', labelZh: '受益人姓名', value: 'BESTTECH LIMITED' },
+                { label: 'Slash account', labelZh: 'Slash 账号', value: 'besttech@slash.fi' }
+            ],
+            'bank': [
+                { label: 'Bank name', labelZh: '银行名称', value: 'HSBC Hong Kong' },
+                { label: 'Account name', labelZh: '账户名称', value: 'BESTTECH LIMITED' },
+                { label: 'Account number', labelZh: '账号', value: '123-456789-001' },
+                { label: 'SWIFT code', labelZh: 'SWIFT 代码', value: 'HSBCHKHHHKH' }
+            ]
+        };
+
+        /* ─────────────────────────────
+           i18n strings
+        ───────────────────────────── */
+        const i18n = {
             en: {
-                'title': 'Recharge & Transfer Component',
-                'subtitle': 'Universal component supporting online recharge and offline transfer',
-                'toggle-theme': 'Toggle Theme',
-                'toggle-language': 'Toggle Language',
-                'recharge-btn': 'Recharge / Transfer',
-                'modal-title': 'Recharge / Transfer',
-                'online-recharge': 'Online Recharge',
-                'offline-transfer': 'Offline Transfer',
-                'currency': 'Currency',
-                'amount': 'Amount',
-                'amount-placeholder': 'Please enter the amount',
-                'payment-platform': 'Payment Platform',
-                'select-platform': 'Please select a platform',
-                'go-payment': 'Go to Payment',
-                'transfer-platform': 'Third-party Payment Platform',
-                'transaction-id': 'Transaction ID',
-                'transaction-id-placeholder': 'Please enter transaction ID',
-                'upload-files': 'Upload Files',
-                'upload-text': 'Click or drag files here to upload',
-                'upload-limit': 'Support JPG, PNG, PDF formats, single file no more than 20MB, upload up to 10 files',
-                'submit': 'Submit',
+                'modal-title': 'Recharge/Transfer',
+                'select-method': 'Select Payment Method',
+                'payment-currency': 'Payment Currency',
+                'payment-amount': 'Payment Amount',
+                'payment-method': 'Payment Method',
+                'online-payment': 'Online Payment',
+                'transfer-to-account': 'Transfer to Account',
+                'err-amount': 'Please enter a valid amount (minimum 1)',
                 'got-it': 'Got it',
-                'payment-notice': 'Please complete payment',
-                'payment-notice-desc': 'Redirecting to payment platform, please complete payment in the new tab.',
-                'submit-success': 'Successfully submitted',
-                'submit-success-desc': 'Your transfer request has been successfully submitted, please wait patiently for review.',
-                'error': 'Error',
-                'please-fill-amount': 'Please fill in the amount',
-                'please-select-platform': 'Please select a platform',
-                'please-fill-transaction-id': 'Please fill in transaction ID',
-                'file-too-large': 'File size cannot exceed 20MB',
-                'too-many-files': 'You can upload up to 10 files',
-                'invalid-file-type': 'Only JPG, PNG, PDF formats are supported',
-                'remove': 'Remove',
-                'validation-currency': 'Please select a currency',
-                'validation-amount': 'Please enter a valid amount',
-                'validation-amount-min': 'Amount cannot be less than 1',
-                'validation-payment-platform': 'Please select a payment platform',
-                'validation-transfer-platform': 'Please select a third-party payment platform',
-                'validation-transaction-id': 'Please enter transaction ID',
-                'validation-files': 'Please upload at least one file',
-                'fee-tip-stripe': 'Stripe charges a processing fee. The actual payment amount is approximately: ',
-                'fee-tip-paypal': 'PayPal charges a processing fee. The actual payment amount is approximately: ',
-                'fee-tip-empty': 'Please select a payment platform and enter the amount',
-                'fee-currency': 'USD',
-                'fee-amount-label': 'Fee approximately: ',
-                'extra-fee-note': 'Additional note: Your region, currency, and card type may affect the processing fee; the final fee is determined by the provider.'
+
+                'right-title-online': 'Online Payment',
+                'right-title-transfer': 'Transfer to Account',
+                'confirm-transfer-btn': 'Confirm Transfer Details',
+                'pay-now-btn': 'Pay Now',
+                'return-link': 'Return to Account Information',
+                'upload-receipt-title': 'Please upload the bank transfer receipt',
+                'upload-receipt-hint': 'Click or drag file to this area to upload',
+                'transfer-time-label': 'Transfer Time',
+                'transfer-amount-label': 'Transfer Amount',
+                'transaction-id-label': 'Transaction ID',
+                'transaction-id-placeholder': 'Please enter transfer transaction ID',
+                'payer-name-label': 'Payer Name',
+                'payer-name-placeholder': 'Please enter the payer name',
+                'cancel-btn': 'Cancel',
+                'submit-btn': 'Submit for Review',
+
+                'warn-transfer': 'Please make sure to submit the bank transaction slip after the transfer, otherwise the payment may not be verified in time',
+                'warn-upload': 'Please submit the bank receipt after the transfer, otherwise verification may be delayed',
+
+                'fee-estimated': 'Estimated payment amount is approximately:',
+                'fee-label': 'Fee approximately:',
+                'fee-note': 'Note: Region/currency/card type may affect handling fees, subject to the platform.',
+
+                'reminder-title': 'Friendly Reminder',
+                'reminder-1': 'Do not include sensitive notes when creating a payment (e.g., "topup ads", "order"). We recommend using a numeric code instead.',
+                'reminder-2': 'Enter the correct amount, currency, and payment time. Please do not submit the same transaction more than once.',
+                'reminder-3': "Upload the payment proof/receipt. Without it, we can't verify the transfer or credit your balance in time.",
+                'reminder-4': 'After submission, your balance will be credited based on the actual received amount. Transfers submitted during business hours are processed the same day; those submitted outside business hours will be processed on the next business day.',
+                'reminder-5': 'For platform-to-platform transfers (e.g., Payoneer → Payoneer), there may be a ~10-minute delay. Please wait patiently.',
+                'reminder-6': 'For advertising funds: if the received currency is non-USD, an additional 0.6% fee applies. PayPal payments incur an additional 2.5% fee.',
+                'reminder-7': 'If you have any questions, please contact Customer Support.',
+
+                'err-transaction-id': 'Please enter the transaction ID',
+                'err-payer-name': 'Please enter the payer name',
+                'err-no-file': 'Please upload at least one file',
+                'success-title': 'Submitted',
+                'success-msg': 'Your transfer request has been submitted. Please wait for review.',
+                'pay-notice-title': 'Redirecting to Payment',
+                'pay-notice-msg': 'Opening payment page in a new tab. Please complete the payment there.',
+                'empty-hint': 'Select a payment method on the left',
+
+                'ad-alloc-label': 'Advertising (%)',
+                'fulfillment-alloc-label': 'Fulfillment (%)',
+                'alloc-placeholder': '0 ~ 100',
+                'alloc-note': 'Advertising + Fulfillment must total 100%',
+                'alloc-warn': 'Total exceeds 100%, please adjust',
+
+                'demo-title': 'Recharge / Transfer Component',
+                'demo-sub': 'Click the button below to open the payment modal',
+                'toggle-theme': 'Toggle Theme',
+                'open-btn': 'Recharge / Transfer',
+                'lang-toggle-btn': '切换中文'
+            },
+            zh: {
+                'modal-title': '充值 / 转账',
+                'select-method': '选择支付方式',
+                'payment-currency': '支付币种',
+                'payment-amount': '支付金额',
+                'payment-method': '支付方式',
+                'online-payment': '在线支付',
+                'transfer-to-account': '转账到账号',
+                'err-amount': '请输入有效金额（最小为 1）',
+                'got-it': '知道了',
+
+                'right-title-online': '在线支付',
+                'right-title-transfer': '转账账号',
+                'confirm-transfer-btn': '确认转账明细',
+                'pay-now-btn': '立即支付',
+                'return-link': '返回账号信息',
+                'upload-receipt-title': '请上传银行转账回执',
+                'upload-receipt-hint': '点击或拖拽文件到此区域上传',
+                'transfer-time-label': '转账时间',
+                'transfer-amount-label': '转账金额',
+                'transaction-id-label': '交易 ID',
+                'transaction-id-placeholder': '请输入转账交易 ID',
+                'payer-name-label': '付款人姓名',
+                'payer-name-placeholder': '请输入付款人姓名',
+                'cancel-btn': '取消',
+                'submit-btn': '提交审核',
+
+                'warn-transfer': '转账后请务必提交银行交易凭证，否则付款可能无法及时核实',
+                'warn-upload': '转账后请提交银行收据，否则核实可能会延迟',
+
+                'fee-estimated': '预计实际支付金额约为：',
+                'fee-label': '手续费约为：',
+                'fee-note': '注意：您所在的地区、币种及支付卡类型等因素可能影响手续费，以平台为准。',
+
+                'reminder-title': '温馨提示',
+                'reminder-1': '创建付款时请勿包含敏感备注（如"充值广告"、"订单"等），建议使用数字代码代替。',
+                'reminder-2': '请输入正确的金额、币种和付款时间，请勿重复提交相同的交易。',
+                'reminder-3': '请上传付款凭证/收据，否则我们无法及时核实转账或为您入账余额。',
+                'reminder-4': '提交后，您的余额将根据实际收款金额入账。工作时间内提交的转账当天处理，工作时间外提交的将在下一个工作日处理。',
+                'reminder-5': '平台间转账（如 Payoneer → Payoneer）可能有约 10 分钟延迟，请耐心等待。',
+                'reminder-6': '广告资金：如收款币种非美元，将额外收取 0.6% 手续费；PayPal 付款将额外收取 2.5% 手续费。',
+                'reminder-7': '如有任何问题，请联系客服支持。',
+
+                'err-transaction-id': '请输入交易 ID',
+                'err-payer-name': '请输入付款人姓名',
+                'err-no-file': '请至少上传一个文件',
+                'success-title': '提交成功',
+                'success-msg': '您的转账申请已提交，请等待审核。',
+                'pay-notice-title': '正在跳转支付',
+                'pay-notice-msg': '正在新标签页中打开支付页面，请在那里完成支付。',
+                'empty-hint': '请在左侧选择支付方式',
+
+                'ad-alloc-label': '广告占比 (%)',
+                'fulfillment-alloc-label': '履约占比 (%)',
+                'alloc-placeholder': '0 ~ 100',
+                'alloc-note': '广告 + 履约总和须为 100%',
+                'alloc-warn': '总和超过 100%，请重新调整',
+
+                'demo-title': '充值转账组件',
+                'demo-sub': '点击下方按钮打开支付弹窗',
+                'toggle-theme': '切换主题',
+                'open-btn': '充值 / 转账',
+                'lang-toggle-btn': 'Switch to English'
             }
         };
 
-        // 初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            updateLanguage();
-            initForms();
-        });
+        function t(key) {
+            return i18n[lang][key] || key;
+        }
 
-        // 主题切换
+        /* ─────────────────────────────
+           Theme / Language
+        ───────────────────────────── */
         function toggleTheme() {
-            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', currentTheme);
+            theme = theme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', theme);
         }
 
-        // 语言切换
-        function toggleLanguage() {
-            currentLang = currentLang === 'zh' ? 'en' : 'zh';
-            updateLanguage();
+        function toggleLang() {
+            lang = lang === 'en' ? 'zh' : 'en';
+            applyLang();
         }
 
-        // 更新语言
-        function updateLanguage() {
-            const elements = document.querySelectorAll('[data-i18n]');
-            elements.forEach(el => {
+        function applyLang() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
-                if (translations[currentLang][key]) {
-                    el.textContent = translations[currentLang][key];
-                }
+                if (i18n[lang][key]) el.textContent = i18n[lang][key];
             });
-
-            // 更新placeholder
-            const placeholderElements = document.querySelectorAll('[data-i18n-placeholder]');
-            placeholderElements.forEach(el => {
-                const key = el.getAttribute('data-i18n-placeholder');
-                if (translations[currentLang][key]) {
-                    el.placeholder = translations[currentLang][key];
-                }
-            });
-
-            // 更新HTML语言属性
-            document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
-
-            // 更新手续费提示
-            updateFeeTip();
+            // Toggle button always shows what the NEXT click will switch TO
+            const langBtn = document.getElementById('langToggleBtn');
+            if (langBtn) langBtn.textContent = lang === 'en' ? '切换中文' : 'Switch to English';
+            renderRight();
         }
 
-        // 打开充值模态框
-        function openRechargeModal() {
-            document.getElementById('rechargeModal').classList.add('show');
+        /* ─────────────────────────────
+           Modal open / close
+        ───────────────────────────── */
+        function openModal() {
+            document.getElementById('mainModal').classList.add('show');
             document.body.style.overflow = 'hidden';
         }
 
-        // 关闭充值模态框
-        function closeRechargeModal() {
-            document.getElementById('rechargeModal').classList.remove('show');
+        function closeModal() {
+            document.getElementById('mainModal').classList.remove('show');
             document.body.style.overflow = '';
-            resetForms();
+            resetState();
         }
 
-        // 切换标签页
-        function switchTab(tab) {
-            // 更新导航按钮
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-
-            // 显示对应内容
-            document.getElementById('onlineForm').classList.toggle('hidden', tab !== 'online');
-            document.getElementById('offlineForm').classList.toggle('hidden', tab !== 'offline');
+        function resetState() {
+            activePlatform = null;
+            rightState = 'empty';
+            uploadedFiles = [];
+            document.querySelectorAll('.platform-card').forEach(c => c.classList.remove('active'));
+            document.getElementById('payAmount').value = '100';
+            document.getElementById('amountError').style.display = 'none';
+            document.getElementById('payAmount').classList.remove('error');
+            renderRight();
         }
 
-        // 初始化表单
-        function initForms() {
-            // 在线充值表单
-            document.getElementById('onlineRechargeForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                handleOnlineRecharge();
+        /* ─────────────────────────────
+           Currency selection
+        ───────────────────────────── */
+        function selectCurrency(c) {
+            currency = c;
+            document.querySelectorAll('.currency-btn').forEach(b => {
+                b.classList.toggle('active', b.dataset.currency === c);
             });
-
-            // 监听金额和平台变化，实时更新手续费提示
-            document.getElementById('amount').addEventListener('input', updateFeeTip);
-            document.getElementById('paymentPlatform').addEventListener('change', updateFeeTip);
-
-            // 线下转账表单
-            document.getElementById('offlineTransferForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                handleOfflineTransfer();
-            });
-            
-            // 添加输入监听，实时清除错误状态
-            addInputListeners();
+            document.getElementById('amountSuffix').textContent = c;
+            if (rightState === 'online' || rightState === 'upload-form') renderRight();
         }
-        
-        // 添加输入监听器
-        function addInputListeners() {
-            // 在线充值表单字段
-            ['currency', 'amount', 'paymentPlatform'].forEach(fieldId => {
-                const field = document.getElementById(fieldId);
-                if (field) {
-                    field.addEventListener('input', function() {
-                        clearFieldError(fieldId);
-                    });
-                    field.addEventListener('change', function() {
-                        clearFieldError(fieldId);
-                    });
+
+        /* ─────────────────────────────
+           Amount change
+        ───────────────────────────── */
+        function onAmountChange() {
+            const val = parseFloat(document.getElementById('payAmount').value);
+            const err = document.getElementById('amountError');
+            const inp = document.getElementById('payAmount');
+            if (!val || val < 1) {
+                inp.classList.add('error');
+                err.style.display = 'block';
+            } else {
+                inp.classList.remove('error');
+                err.style.display = 'none';
+            }
+            if (rightState === 'online') renderRight();
+        }
+
+        /* ─────────────────────────────
+           Platform selection
+        ───────────────────────────── */
+        function selectPlatform(id) {
+            activePlatform = id;
+            document.querySelectorAll('.platform-card').forEach(c => c.classList.remove('active'));
+            document.getElementById('card-' + id).classList.add('active');
+            rightState = (id === 'paypal-online') ? 'online' : 'transfer-info';
+            renderRight();
+        }
+
+        /* ─────────────────────────────
+           Render right panel
+        ───────────────────────────── */
+        function renderRight() {
+            const panel = document.getElementById('rightPanel');
+            switch (rightState) {
+                case 'online':        panel.innerHTML = renderOnline();       break;
+                case 'transfer-info': panel.innerHTML = renderTransferInfo(); break;
+                case 'upload-form':   panel.innerHTML = renderUploadForm();   break;
+                default:              panel.innerHTML = renderEmpty();        break;
+            }
+            if (rightState === 'upload-form') initUploadArea();
+        }
+
+        function renderEmpty() {
+            return `
+                <div class="right-empty">
+                    <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                        <circle cx="28" cy="28" r="27" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M20 28h16M28 20v16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <p>${t('empty-hint')}</p>
+                </div>
+            `;
+        }
+
+        function calcFee(amount) {
+            const fee = Math.round(amount * 0.0438 * 100) / 100;
+            const total = Math.round((amount + fee) * 100) / 100;
+            return { fee, total };
+        }
+
+        function renderOnline() {
+            const amount = parseFloat(document.getElementById('payAmount').value) || 0;
+            const { fee, total } = calcFee(amount);
+            const curr = currency;
+            return `
+                <div class="section-title">${t('right-title-online')}</div>
+
+                <div class="pay-display-wrap">
+                    <div class="pay-display">${amount > 0 ? amount : ''}</div>
+                    <span class="pay-display-suffix">${curr}</span>
+                </div>
+
+                <button class="action-btn" onclick="handlePayNow()">${t('pay-now-btn')}</button>
+
+                ${amount > 0 ? `
+                <div class="fee-row">${t('fee-estimated')} <span class="fee-val">$${total} ${curr}</span></div>
+                <div class="fee-row">${t('fee-label')} <span class="fee-val">$${fee} ${curr}</span></div>
+                <div class="fee-note">${t('fee-note')}</div>
+                ` : ''}
+
+                <div class="warn-box">${t('warn-upload')}</div>
+
+                ${renderReminder()}
+            `;
+        }
+
+        function renderTransferInfo() {
+            const fields = platformAccounts[activePlatform] || [];
+            const rows = fields.map(f => `
+                <div class="account-row">
+                    <span class="acct-label">${lang === 'zh' ? f.labelZh : f.label}</span>
+                    <span class="acct-value">${f.value}</span>
+                </div>
+            `).join('');
+
+            return `
+                <div class="section-title">${t('right-title-transfer')}</div>
+
+                ${rows}
+
+                <button class="action-btn" onclick="goUploadForm()">${t('confirm-transfer-btn')}</button>
+
+                <div class="warn-box">${t('warn-transfer')}</div>
+
+                ${renderReminder()}
+            `;
+        }
+
+        function renderUploadForm() {
+            const amount = parseFloat(document.getElementById('payAmount').value) || 0;
+            const today = new Date().toISOString().split('T')[0];
+
+            return `
+                <button class="return-link" onclick="backToTransferInfo()">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    ${t('return-link')}
+                </button>
+
+                <div class="upload-area" id="uploadArea"
+                     onclick="document.getElementById('fileInput').click()"
+                     ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                    <div class="upload-area-icon">
+                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                            <path d="M20 28V14M20 14L14 20M20 14L26 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M10 30c-3.3 0-6-2.7-6-6 0-3 2.1-5.5 5-5.9C9.5 15.3 12 13 15 13c1.2 0 2.3.4 3.2 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M30 30c3.3 0 6-2.7 6-6 0-3-2.1-5.5-5-5.9C30.5 15.3 28 13 25 13c-1.2 0-2.3.4-3.2 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="upload-area-text">${t('upload-receipt-title')}</div>
+                    <div class="upload-area-hint">${t('upload-receipt-hint')}</div>
+                    <input type="file" id="fileInput" multiple accept=".jpg,.jpeg,.png,.pdf"
+                           style="display:none" onchange="handleFileSelect(event)">
+                </div>
+
+                <div class="file-list" id="fileList"></div>
+
+                <div class="form-field">
+                    <label class="form-field-label">
+                        <span class="star">*</span>${t('transfer-time-label')}
+                    </label>
+                    <input type="date" class="form-input" id="transferTime" value="${today}">
+                </div>
+
+                <div class="form-field">
+                    <label class="form-field-label">${t('transfer-amount-label')}</label>
+                    <div class="form-input-wrap">
+                        <input type="text" class="form-input readonly" value="${amount > 0 ? amount : ''}" readonly>
+                        <span class="form-input-suffix">${currency}</span>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label class="form-field-label">
+                        <span class="star">*</span>${t('transaction-id-label')}
+                    </label>
+                    <input type="text" class="form-input" id="transactionId"
+                           placeholder="${t('transaction-id-placeholder')}">
+                    <div class="form-field-error" id="errTransactionId">${t('err-transaction-id')}</div>
+                </div>
+
+                <div class="form-field">
+                    <label class="form-field-label">
+                        <span class="star">*</span>${t('payer-name-label')}
+                    </label>
+                    <input type="text" class="form-input" id="payerName"
+                           placeholder="${t('payer-name-placeholder')}">
+                    <div class="form-field-error" id="errPayerName">${t('err-payer-name')}</div>
+                </div>
+
+                <div class="allocation-group">
+                    <div class="form-field">
+                        <label class="form-field-label">${t('ad-alloc-label')}</label>
+                        <input type="number" class="form-input" id="adAlloc"
+                               min="0" max="100" placeholder="${t('alloc-placeholder')}"
+                               oninput="handleAllocationChange('ad')">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-field-label">${t('fulfillment-alloc-label')}</label>
+                        <input type="number" class="form-input" id="fulfillmentAlloc"
+                               min="0" max="100" placeholder="${t('alloc-placeholder')}"
+                               oninput="handleAllocationChange('fulfillment')">
+                    </div>
+                </div>
+                <div class="allocation-note" id="allocNote">${t('alloc-note')}</div>
+
+                <div class="form-field-error" id="errFile" style="display:none">${t('err-no-file')}</div>
+
+                <div class="btn-row">
+                    <button class="btn-cancel" onclick="backToTransferInfo()">${t('cancel-btn')}</button>
+                    <button class="btn-submit" onclick="handleSubmit()">${t('submit-btn')}</button>
+                </div>
+            `;
+        }
+
+        function renderReminder() {
+            return `
+                <div class="reminder-title">${t('reminder-title')}</div>
+                <ul class="reminder-list">
+                    <li>${t('reminder-1')}</li>
+                    <li>${t('reminder-2')}</li>
+                    <li>${t('reminder-3')}</li>
+                    <li>${t('reminder-4')}</li>
+                    <li>${t('reminder-5')}</li>
+                    <li>${t('reminder-6')}</li>
+                    <li>${t('reminder-7')}</li>
+                </ul>
+            `;
+        }
+
+        /* ─────────────────────────────
+           State transitions
+        ───────────────────────────── */
+        function goUploadForm() {
+            uploadedFiles = [];
+            rightState = 'upload-form';
+            renderRight();
+        }
+
+        function backToTransferInfo() {
+            rightState = 'transfer-info';
+            renderRight();
+        }
+
+        /* ─────────────────────────────
+           Allocation auto-balance
+        ───────────────────────────── */
+        function handleAllocationChange(field) {
+            const adInput = document.getElementById('adAlloc');
+            const fulfillInput = document.getElementById('fulfillmentAlloc');
+            const note = document.getElementById('allocNote');
+            if (!adInput || !fulfillInput) return;
+
+            if (field === 'ad') {
+                const val = parseFloat(adInput.value);
+                if (!isNaN(val) && val >= 0 && val <= 100) {
+                    const other = Math.round((100 - val) * 100) / 100;
+                    fulfillInput.value = other;
+                    adInput.classList.remove('error');
+                    fulfillInput.classList.remove('error');
+                    if (note) { note.textContent = t('alloc-note'); note.classList.remove('warn'); }
+                } else if (!isNaN(val) && val > 100) {
+                    adInput.classList.add('error');
+                    if (note) { note.textContent = t('alloc-warn'); note.classList.add('warn'); }
                 }
-            });
-            
-            // 线下转账表单字段
-            ['transferPlatform', 'transactionId'].forEach(fieldId => {
-                const field = document.getElementById(fieldId);
-                if (field) {
-                    field.addEventListener('input', function() {
-                        clearFieldError(fieldId);
-                    });
-                    field.addEventListener('change', function() {
-                        clearFieldError(fieldId);
-                    });
+            } else {
+                const val = parseFloat(fulfillInput.value);
+                if (!isNaN(val) && val >= 0 && val <= 100) {
+                    const other = Math.round((100 - val) * 100) / 100;
+                    adInput.value = other;
+                    adInput.classList.remove('error');
+                    fulfillInput.classList.remove('error');
+                    if (note) { note.textContent = t('alloc-note'); note.classList.remove('warn'); }
+                } else if (!isNaN(val) && val > 100) {
+                    fulfillInput.classList.add('error');
+                    if (note) { note.textContent = t('alloc-warn'); note.classList.add('warn'); }
                 }
-            });
-        }
-        
-        // 清除单个字段的错误状态
-        function clearFieldError(fieldId) {
-            const field = document.getElementById(fieldId);
-            const errorElement = document.getElementById(fieldId + '-error');
-            
-            if (field) {
-                field.classList.remove('error');
-            }
-            if (errorElement) {
-                errorElement.textContent = '';
             }
         }
 
-        // 表单验证函数
-        function validateOnlineForm() {
-            let isValid = true;
-            
-            // 清除之前的错误状态
-            clearFormErrors('onlineRechargeForm');
-            
-            // 验证币种
-            const currency = document.getElementById('currency');
-            if (!currency.value || currency.value === '') {
-                showFieldError('currency', 'validation-currency');
-                isValid = false;
+        /* ─────────────────────────────
+           Handlers
+        ───────────────────────────── */
+        function handlePayNow() {
+            const amount = parseFloat(document.getElementById('payAmount').value);
+            if (!amount || amount < 1) {
+                document.getElementById('payAmount').classList.add('error');
+                document.getElementById('amountError').style.display = 'block';
+                return;
             }
-            
-            // 验证金额
-            const amount = document.getElementById('amount');
-            if (!amount.value || amount.value === '') {
-                showFieldError('amount', 'validation-amount');
-                isValid = false;
-            } else if (parseFloat(amount.value) < 1) {
-                showFieldError('amount', 'validation-amount-min');
-                isValid = false;
-            }
-            
-            // 验证支付平台
-            const platform = document.getElementById('paymentPlatform');
-            if (!platform.value || platform.value === '') {
-                showFieldError('paymentPlatform', 'validation-payment-platform');
-                isValid = false;
-            }
-            
-            return isValid;
+            window.open(`https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amount=${amount}&currency_code=${currency}`, '_blank');
+            closeModal();
+            showAlert(t('pay-notice-title'), t('pay-notice-msg'));
         }
-        
-        function validateOfflineForm() {
-            let isValid = true;
-            
-            // 清除之前的错误状态
-            clearFormErrors('offlineTransferForm');
-            
-            // 验证支付平台
-            const platform = document.getElementById('transferPlatform');
-            if (!platform.value || platform.value === '') {
-                showFieldError('transferPlatform', 'validation-transfer-platform');
-                isValid = false;
+
+        function handleSubmit() {
+            let valid = true;
+
+            const txId = document.getElementById('transactionId');
+            const errTx = document.getElementById('errTransactionId');
+            if (!txId.value.trim()) {
+                txId.classList.add('error');
+                errTx.style.display = 'block';
+                valid = false;
+            } else {
+                txId.classList.remove('error');
+                errTx.style.display = 'none';
             }
-            
-            // 验证交易ID
-            const transactionId = document.getElementById('transactionId');
-            if (!transactionId.value || transactionId.value.trim() === '') {
-                showFieldError('transactionId', 'validation-transaction-id');
-                isValid = false;
+
+            const payer = document.getElementById('payerName');
+            const errPayer = document.getElementById('errPayerName');
+            if (!payer.value.trim()) {
+                payer.classList.add('error');
+                errPayer.style.display = 'block';
+                valid = false;
+            } else {
+                payer.classList.remove('error');
+                errPayer.style.display = 'none';
             }
-            
-            // 验证文件上传
+
+            const errFile = document.getElementById('errFile');
             if (uploadedFiles.length === 0) {
-                showFieldError('files', 'validation-files');
-                isValid = false;
+                errFile.style.display = 'block';
+                valid = false;
+            } else {
+                errFile.style.display = 'none';
             }
-            
-            return isValid;
-        }
-        
-        function showFieldError(fieldId, messageKey) {
-            const field = document.getElementById(fieldId);
-            const errorElement = document.getElementById(fieldId + '-error');
-            
-            field.classList.add('error');
-            if (errorElement) {
-                errorElement.textContent = translations[currentLang][messageKey];
-            }
-        }
-        
-        function clearFormErrors(formId) {
-            const form = document.getElementById(formId);
-            const errorFields = form.querySelectorAll('.form-input.error, .form-select.error');
-            const errorMessages = form.querySelectorAll('.error-message');
-            
-            errorFields.forEach(field => field.classList.remove('error'));
-            errorMessages.forEach(msg => msg.textContent = '');
+
+            if (!valid) return;
+
+            closeModal();
+            showAlert(t('success-title'), t('success-msg'));
         }
 
-        // 处理在线充值
-        function handleOnlineRecharge() {
-            if (!validateOnlineForm()) {
-                return;
-            }
-            
-            const amount = document.getElementById('amount').value;
-            const platform = document.getElementById('paymentPlatform').value;
-
-            // 生成支付URL（实际项目中应该从后端获取）
-            const paymentUrls = {
-                stripe: `https://checkout.stripe.com/pay?amount=${amount * 100}&currency=usd`,
-                paypal: `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amount=${amount}&currency_code=USD`
-            };
-
-            // 打开新标签页进行支付
-            window.open(paymentUrls[platform], '_blank');
-
-            // 关闭当前模态框并显示提示
-            closeRechargeModal();
-            showAlert(
-                translations[currentLang]['payment-notice'],
-                translations[currentLang]['payment-notice-desc']
-            );
+        /* ─────────────────────────────
+           File upload
+        ───────────────────────────── */
+        function initUploadArea() {
+            updateFileList();
         }
 
-        // 处理线下转账
-        function handleOfflineTransfer() {
-            if (!validateOfflineForm()) {
-                return;
-            }
-            
-            const platform = document.getElementById('transferPlatform').value;
-            const transactionId = document.getElementById('transactionId').value;
-
-            // 这里可以添加实际的提交逻辑
-            console.log('Transfer data:', {
-                platform,
-                transactionId,
-                files: uploadedFiles
-            });
-
-            // 关闭模态框并显示成功提示
-            closeRechargeModal();
-            showAlert(
-                translations[currentLang]['submit-success'],
-                translations[currentLang]['submit-success-desc']
-            );
+        function handleFileSelect(e) {
+            addFiles(Array.from(e.target.files));
+            e.target.value = '';
         }
 
-        // 文件上传处理
-        function handleFileSelect(event) {
-            const files = Array.from(event.target.files);
-            addFiles(files);
+        function handleDrop(e) {
+            e.preventDefault();
+            document.getElementById('uploadArea').classList.remove('dragover');
+            addFiles(Array.from(e.dataTransfer.files));
         }
 
-        function handleDrop(event) {
-            event.preventDefault();
-            event.target.classList.remove('dragover');
-            const files = Array.from(event.dataTransfer.files);
-            addFiles(files);
+        function handleDragOver(e) {
+            e.preventDefault();
+            document.getElementById('uploadArea').classList.add('dragover');
         }
 
-        function handleDragOver(event) {
-            event.preventDefault();
-            event.target.classList.add('dragover');
-        }
-
-        function handleDragLeave(event) {
-            event.target.classList.remove('dragover');
+        function handleDragLeave(e) {
+            document.getElementById('uploadArea').classList.remove('dragover');
         }
 
         function addFiles(files) {
             files.forEach(file => {
-                // 验证文件类型
-                if (!['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'].includes(file.type)) {
-                    showAlert(translations[currentLang]['error'], translations[currentLang]['invalid-file-type']);
-                    return;
-                }
-
-                // 验证文件大小 (20MB)
-                if (file.size > 20 * 1024 * 1024) {
-                    showAlert(translations[currentLang]['error'], translations[currentLang]['file-too-large']);
-                    return;
-                }
-
-                // 验证文件数量
-                if (uploadedFiles.length >= 10) {
-                    showAlert(translations[currentLang]['error'], translations[currentLang]['too-many-files']);
-                    return;
-                }
-
+                if (!['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'].includes(file.type)) return;
+                if (file.size > 20 * 1024 * 1024) return;
+                if (uploadedFiles.length >= 10) return;
                 uploadedFiles.push(file);
             });
-
             updateFileList();
-            
-            // 如果有文件了，清除文件错误状态
-            if (uploadedFiles.length > 0) {
-                clearFieldError('files');
-            }
+            const errFile = document.getElementById('errFile');
+            if (errFile && uploadedFiles.length > 0) errFile.style.display = 'none';
         }
 
-        function removeFile(index) {
-            uploadedFiles.splice(index, 1);
+        function removeFile(idx) {
+            uploadedFiles.splice(idx, 1);
             updateFileList();
-            
-            // 如果没有文件了，需要重新验证
-            if (uploadedFiles.length === 0) {
-                // 但不直接显示错误，等用户提交时再显示
-            }
         }
 
         function updateFileList() {
-            const fileList = document.getElementById('fileList');
-            fileList.innerHTML = '';
-
-            uploadedFiles.forEach((file, index) => {
-                const fileItem = document.createElement('div');
-                fileItem.className = 'file-item';
-                fileItem.innerHTML = `
-                    <div class="file-info">
-                        <span class="file-name">${file.name}</span>
-                        <span class="file-size">(${formatFileSize(file.size)})</span>
+            const list = document.getElementById('fileList');
+            if (!list) return;
+            list.innerHTML = uploadedFiles.map((f, i) => `
+                <div class="file-item">
+                    <div>
+                        <span class="file-item-name">${f.name}</span>
+                        <span class="file-item-size">(${fmtSize(f.size)})</span>
                     </div>
-                    <button type="button" class="file-remove" onclick="removeFile(${index})">${translations[currentLang]['remove']}</button>
-                `;
-                fileList.appendChild(fileItem);
-            });
+                    <button class="file-remove" type="button" onclick="removeFile(${i})">&#x2715;</button>
+                </div>
+            `).join('');
         }
 
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        function fmtSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
         }
 
-        // 显示提示框
-        function showAlert(title, message) {
+        /* ─────────────────────────────
+           Alert
+        ───────────────────────────── */
+        function showAlert(title, msg) {
             document.getElementById('alertTitle').textContent = title;
-            document.getElementById('alertMessage').textContent = message;
+            document.getElementById('alertMsg').textContent = msg;
             document.getElementById('alertModal').classList.add('show');
         }
 
-        // 关闭提示框
-        function closeAlertModal() {
+        function closeAlert() {
             document.getElementById('alertModal').classList.remove('show');
         }
 
-        // 重置表单
-        function resetForms() {
-            document.getElementById('onlineRechargeForm').reset();
-            document.getElementById('offlineTransferForm').reset();
-            uploadedFiles = [];
-            updateFileList();
-            
-            // 清除所有错误状态
-            clearFormErrors('onlineRechargeForm');
-            clearFormErrors('offlineTransferForm');
-            
-            // 重置到在线充值标签页
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector('.tab-btn').classList.add('active');
-            document.getElementById('onlineForm').classList.remove('hidden');
-            document.getElementById('offlineForm').classList.add('hidden');
-        }
-
-        // 手续费提示逻辑
-        function updateFeeTip() {
-            const amount = parseFloat(document.getElementById('amount').value);
-            const platform = document.getElementById('paymentPlatform').value;
-            const tipDiv = document.getElementById('fee-tip');
-            let tip = '';
-            let show = false;
-            if ((platform === 'stripe' || platform === 'paypal') && !isNaN(amount) && amount > 0) {
-                let pay = 0;
-                // 简化费率模型：Stripe 2.9% + $0.3；PayPal 3.9% + $0.3
-                if (platform === 'stripe') {
-                    pay = (amount + 0.3) / (1 - 0.029);
-                } else if (platform === 'paypal') {
-                    pay = (amount + 0.3) / (1 - 0.039);
-                }
-                pay = Math.round(pay * 100) / 100;
-                const fee = Math.max(0, Math.round((pay - amount) * 100) / 100);
-                const currency = translations[currentLang]['fee-currency'];
-                const feeLabel = translations[currentLang]['fee-amount-label'];
-                const extraNote = translations[currentLang]['extra-fee-note'];
-                tip = `${translations[currentLang][`fee-tip-${platform}`]}<span style='color:#ef4444;font-weight:bold;'>$${pay}</span> <span style='color:#ef4444;font-weight:bold;'>${currency}</span><br>` +
-                      `${feeLabel}<span style='color:#ef4444;font-weight:bold;'>$${fee}</span> <span style='color:#ef4444;font-weight:bold;'>${currency}</span>。<br>` +
-                      `<span style='color:#64748b;'>${extraNote}</span>`;
-                show = true;
-            } else if (platform && (!amount || isNaN(amount) || amount <= 0)) {
-                tip = `<span style='color:#ef4444;'>${translations[currentLang]['fee-tip-empty']}</span>`;
-                show = true;
-            } else {
-                tip = '';
-                show = false;
-            }
-            tipDiv.innerHTML = tip;
-            tipDiv.style.display = show ? 'block' : 'none';
-        }
-
-        // 点击遮罩关闭模态框
-        document.getElementById('rechargeModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeRechargeModal();
-            }
+        /* ─────────────────────────────
+           Keyboard / overlay close
+        ───────────────────────────── */
+        document.getElementById('mainModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
         });
 
         document.getElementById('alertModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeAlertModal();
-            }
+            if (e.target === this) closeAlert();
         });
 
-        // ESC键关闭模态框
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeRechargeModal();
-                closeAlertModal();
-            }
+            if (e.key === 'Escape') { closeModal(); closeAlert(); }
         });
+
+        /* ─────────────────────────────
+           Init
+        ───────────────────────────── */
+        renderRight();
     </script>
 </body>
-</html> 
+</html>
